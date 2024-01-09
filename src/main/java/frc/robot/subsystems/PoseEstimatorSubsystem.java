@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,7 +47,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field2d = new Field2d();
   private final Field2d visionField2d = new Field2d();
-  private final PhotonRunnable[] cameras;
+  
+  private PhotonRunnable[] cameras;
+  private Notifier[] cameraNotifiers;
+
   // private final PhotonRunnable photonEstimator = new PhotonRunnable("Arducam_OV9281_USB_Camera");
   
   // TODO: Figure out if notifier is necessary
@@ -58,6 +62,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     this.rotationSupplier = rotationSupplier;
     this.modulePositionSupplier = modulePositionSupplier;
     this.cameras = cameras;
+    // Initialize the array of Notifiers
+    this.cameraNotifiers = new Notifier[cameras.length];
+    for (int i = 0; i < cameras.length; i++) {
+      this.cameraNotifiers[i] = new Notifier(cameras[i]);
+    }
 
     poseEstimator =  new SwerveDrivePoseEstimator(
         Constants.Swerve.swerveKinematics,
@@ -67,9 +76,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         stateStdDevs,
         visionMeasurementStdDevs);
     
-    // Start PhotonVision thread
-    // photonNotifier.setName("PhotonRunnable");
-    // photonNotifier.startPeriodic(0.02);
+    // Start PhotonVision threads
+    for (int i = 0; i < cameraNotifiers.length; i++) {
+      cameraNotifiers[i].setName("PhotonRunnable " + i);
+      cameraNotifiers[i].startPeriodic(0.02);
+    }
   }
 
   @Override
