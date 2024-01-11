@@ -41,8 +41,6 @@ public class RobotContainer {
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser;
-    
-    
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -77,9 +75,10 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
+    
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        goToPos.onTrue(s_Swerve.goToPose(
-            new Pose2d(12, 0.1, Rotation2d.fromDegrees(0))
+        goToPos.whileTrue(s_Swerve.goToPose(
+            new Pose2d(12, 2, Rotation2d.fromDegrees(0))
         ));
 
     }

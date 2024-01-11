@@ -13,7 +13,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -61,7 +60,7 @@ public class Swerve extends SubsystemBase {
         Supplier<SwerveModulePosition[]> modSupplier = () -> getModulePositions();
 
         PoseEstimator = new PoseEstimatorSubsystem(rotSupplier, modSupplier, 
-            new PhotonRunnable("Arducam_OV9281_USB_Camera"));
+            new PhotonRunnable("Arducam11", Constants.VisionConstants.APRILTAG_CAMERA_TO_ROBOT));
 
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -105,8 +104,6 @@ public class Swerve extends SubsystemBase {
         AutoBuilder.configureHolonomic(this::getPhotonPose, this::resetPhotonPose, 
             this::getCurrentChassisSpeeds, this::drive, 
             new HolonomicPathFollowerConfig(
-            new PIDConstants(Constants.AutoConstants.TRANSLATION_kP, 0, 0),
-            new PIDConstants(Constants.AutoConstants.THETA_kP, 0, 0),
             Constants.Swerve.maxSpeed,
             Constants.Swerve.drivebaseRadius,
             new ReplanningConfig(true, false)

@@ -46,7 +46,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field2d = new Field2d();
-  private final Field2d visionField2d = new Field2d();
   
   private PhotonRunnable[] cameras;
   private Notifier[] cameraNotifiers;
@@ -97,8 +96,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         
         poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds);
 
-        visionField2d.setRobotPose(pose2d);
-        SmartDashboard.putData("Vision Field2d", visionField2d);
       }
     }
 

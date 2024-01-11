@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.VisionConstants.APRILTAG_AMBIGUITY_THRESHOLD;
-import static frc.robot.Constants.VisionConstants.APRILTAG_CAMERA_TO_ROBOT;
 import static frc.robot.Constants.VisionConstants.FIELD_LENGTH_METERS;
 import static frc.robot.Constants.VisionConstants.FIELD_WIDTH_METERS;
 
@@ -13,6 +12,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
@@ -24,8 +24,8 @@ public class PhotonRunnable implements Runnable {
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
 
-  public PhotonRunnable(String cameraName) {
-    this.photonCamera = new PhotonCamera(cameraName); // TODO: Change camera name
+  public PhotonRunnable(String cameraName, Transform3d APRILTAG_CAMERA_TO_ROBOT) {
+    this.photonCamera = new PhotonCamera(cameraName); 
     PhotonPoseEstimator photonPoseEstimator = null;
     var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     // PV estimates will always be blue, they'll get flipped by robot thread
@@ -43,6 +43,7 @@ public class PhotonRunnable implements Runnable {
     if (photonPoseEstimator != null && photonCamera != null) {
       var photonResults = photonCamera.getLatestResult();
 
+      // Consider targets underneath ambiguity threshold OR if there are multiple tags
       if (photonResults.hasTargets() 
           && (photonResults.targets.size() > 1 || photonResults.targets.get(0).getPoseAmbiguity() < APRILTAG_AMBIGUITY_THRESHOLD)) 
       {
