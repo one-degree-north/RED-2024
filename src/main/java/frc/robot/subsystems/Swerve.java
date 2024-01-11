@@ -134,6 +134,11 @@ public class Swerve extends SubsystemBase {
 
     }
 
+    public double getSpeed() {
+        return Math.hypot(getCurrentChassisSpeeds().vxMetersPerSecond, 
+        getCurrentChassisSpeeds().vyMetersPerSecond);
+    }
+
     public Rotation2d getHeading(Pose2d initial, Pose2d end) {
         double distanceX = end.getX()-initial.getX();
         double distanceY = end.getY()-initial.getY();

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.LEDSubsystem.LEDState;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,6 +39,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
+    private final LEDSubsystem s_LEDSubsystem = new LEDSubsystem(9, 60);
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser;
@@ -57,6 +59,19 @@ public class RobotContainer {
                 () -> robotCentric.getAsBoolean()
             )
         );
+
+
+        s_LEDSubsystem.setDefaultCommand(new InstantCommand(() ->
+        {
+            if (s_Swerve.getSpeed() < Constants.Swerve.maxSpeed*0.9) {
+                s_LEDSubsystem.percentage(
+                    () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
+                    0, 9);
+            }
+            else if (s_Swerve.getSpeed() >= Constants.Swerve.maxSpeed*0.9) {
+                s_LEDSubsystem.flow(0, 9);
+            }
+        }, s_LEDSubsystem));
 
         // Configure the button bindings
         configureButtonBindings();
