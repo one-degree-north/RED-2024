@@ -19,10 +19,14 @@ public class LEDSubsystem extends SubsystemBase {
   private int flowDimPixelIndex;
   private int flowStartIndex;
   private int flowEndIndex;
+  private int rangeFlow;
+  private int maxDistance;
 
   private int percentStartIndex;
   private int percentEndIndex;
   private Supplier<Double> percentSupp;
+  private int rangePercent;
+  private int percentNumberOfLeds;
 
   private LEDState lastState = LEDState.STATIC;
 
@@ -54,9 +58,27 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
+  public void flowAuto(int startIndex, int endIndex) {
+    if (lastState != LEDState.FLOWAUTO){
+      state = LEDState.FLOWAUTO;
+      this.flowStartIndex = startIndex;
+      this.flowEndIndex = endIndex;
+      this.flowDimPixelIndex = flowStartIndex;
+    }
+  }
+
   public void percentage(Supplier<Double> percentage, int startIndex, int endIndex) {
     if (lastState != LEDState.PERCENTAGE){
       state = LEDState.PERCENTAGE;
+      this.percentStartIndex = startIndex;
+      this.percentEndIndex = endIndex;
+      this.percentSupp = percentage;
+    }
+  }
+
+  public void percentageAuto(Supplier<Double> percentage, int startIndex, int endIndex) {
+    if (lastState != LEDState.PERCENTAGEAUTO){
+      state = LEDState.PERCENTAGEAUTO;
       this.percentStartIndex = startIndex;
       this.percentEndIndex = endIndex;
       this.percentSupp = percentage;
@@ -75,6 +97,14 @@ public class LEDSubsystem extends SubsystemBase {
     state = LEDState.STATIC;
     for (int i = startIndex; i <= endIndex; i++)
       m_ledBuffer.setLED(i, color);
+
+    m_led.setData(m_ledBuffer);
+  }
+
+  public void setRangeStaticRGB(int r, int g, int b, int startIndex, int endIndex) {
+    state = LEDState.STATIC;
+    for (int i = startIndex; i <= endIndex; i++)
+      m_ledBuffer.setRGB(i, r, g, b);
 
     m_led.setData(m_ledBuffer);
   }
@@ -98,8 +128,8 @@ public class LEDSubsystem extends SubsystemBase {
         break;
 
       case FLOW:
-        int rangeFlow = flowEndIndex - flowStartIndex + 1;
-        int maxDistance = (rangeFlow / 2) + (rangeFlow % 2);
+        rangeFlow = flowEndIndex - flowStartIndex + 1;
+        maxDistance = (rangeFlow / 2) + (rangeFlow % 2);
 
         for (int i=flowStartIndex; i<=flowEndIndex; i++) {
           int distanceRight = (i-flowDimPixelIndex + rangeFlow) % rangeFlow;
@@ -114,18 +144,46 @@ public class LEDSubsystem extends SubsystemBase {
         if (flowDimPixelIndex > flowEndIndex) 
           flowDimPixelIndex = flowStartIndex;
         break;
-      
+
+      case FLOWAUTO:
+        rangeFlow = flowEndIndex - flowStartIndex + 1;
+        maxDistance = (rangeFlow / 2) + (rangeFlow % 2);
+
+        for (int i=flowStartIndex; i<=flowEndIndex; i++) {
+          int distanceRight = (i-flowDimPixelIndex + rangeFlow) % rangeFlow;
+          int distanceLeft = (flowDimPixelIndex-i + rangeFlow) % rangeFlow;
+          int distance = Math.min(distanceLeft, distanceRight);
+
+          int intensity = (int) (((double)distance/(double)maxDistance) * 255.0);
+          m_ledBuffer.setRGB(i, intensity, intensity, intensity);
+        }
+
+        flowDimPixelIndex += 1;
+        if (flowDimPixelIndex > flowEndIndex) 
+          flowDimPixelIndex = flowStartIndex;
+        break;
+
       case PERCENTAGE:
-        int rangePercent = percentEndIndex-percentStartIndex+1;
-        int numberOfLeds = (int) (percentSupp.get() * rangePercent);
-        for (int i=percentStartIndex; i < percentStartIndex+numberOfLeds; i++) {
+        rangePercent = percentEndIndex-percentStartIndex+1;
+        percentNumberOfLeds = (int) (percentSupp.get() * rangePercent);
+        for (int i=percentStartIndex; i < percentStartIndex+percentNumberOfLeds; i++) {
           m_ledBuffer.setRGB(i, 255, 0, 0);
         }
-        for (int i = percentStartIndex+numberOfLeds; i<=percentEndIndex; i++) {
+        for (int i = percentStartIndex+percentNumberOfLeds; i<=percentEndIndex; i++) {
           m_ledBuffer.setRGB(i, 0, 0, 0);
         }
         break;
 
+      case PERCENTAGEAUTO:
+        rangePercent = percentEndIndex-percentStartIndex+1;
+        percentNumberOfLeds = (int) (percentSupp.get() * rangePercent);
+        for (int i=percentStartIndex; i < percentStartIndex+percentNumberOfLeds; i++) {
+          m_ledBuffer.setRGB(i, 255, 255, 255);
+        }
+        for (int i = percentStartIndex+percentNumberOfLeds; i<=percentEndIndex; i++) {
+          m_ledBuffer.setRGB(i, 0, 0, 0);
+        }
+        break;
       default:
         break;
     }
@@ -139,6 +197,8 @@ public class LEDSubsystem extends SubsystemBase {
     STATIC,
     RAINBOW,
     FLOW,
-    PERCENTAGE
+    FLOWAUTO,
+    PERCENTAGE,
+    PERCENTAGEAUTO
   }
 }

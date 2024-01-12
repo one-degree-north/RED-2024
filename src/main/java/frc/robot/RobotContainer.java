@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -59,25 +60,34 @@ public class RobotContainer {
             )
         );
 
-
         s_LEDSubsystem.setDefaultCommand(new InstantCommand(() ->
         {
             if (s_Swerve.getSpeed() < Constants.Swerve.maxSpeed*0.9) {
-                s_LEDSubsystem.percentage(
-                    () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
-                    0, 9);
+                if (DriverStation.isTeleop())
+                    s_LEDSubsystem.percentage(
+                        () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
+                        0, 23);
+                else if (DriverStation.isAutonomous())
+                    s_LEDSubsystem.percentageAuto(
+                        () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
+                        0, 23);
             }
             else if (s_Swerve.getSpeed() >= Constants.Swerve.maxSpeed*0.9) {
-                s_LEDSubsystem.flow(0, 9);
+                if (DriverStation.isTeleop())
+                    s_LEDSubsystem.flow(0, 23);
+                else if (DriverStation.isAutonomous())
+                    s_LEDSubsystem.flowAuto(0, 23);
+
             }
+            
         }, s_LEDSubsystem));
 
         // Configure the button bindings
         configureButtonBindings();
     }
 
-    /** Method is used to run teleop init commands without accessing Robot.java. Simply for ease of use */
-    public void teleopInit() {
+    public void disabledLEDBehavior() {
+        s_LEDSubsystem.setRangeStaticRGB(0, 0, 100, 0, 23);
 
     }
 
