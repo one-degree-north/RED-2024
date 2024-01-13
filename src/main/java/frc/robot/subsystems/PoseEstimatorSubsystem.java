@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,6 +47,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field2d = new Field2d();
+
+  private boolean tagSeenSinceLastDisable = false;
   
   private PhotonRunnable[] cameras;
   private Notifier[] cameraNotifiers;
@@ -92,12 +95,18 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
       var visionPose = photonEstimator.grabLatestEstimatedPose();
       if (visionPose != null) {
         // New pose from vision
+        if (!DriverStation.isEnabled()) tagSeenSinceLastDisable = true;
+        
         var pose2d = visionPose.estimatedPose.toPose2d();
         
         poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds);
 
       }
     }
+
+    // Reset tagSeenSinceLastDisable when a robot is disabled
+    if (tagSeenSinceLastDisable && DriverStation.isEnabled())
+      tagSeenSinceLastDisable = false;
 
     // Set the pose on the dashboard
     var dashboardPose = poseEstimator.getEstimatedPosition();
@@ -115,6 +124,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         pose.getX(), 
         pose.getY(),
         pose.getRotation().getDegrees());
+  }
+
+  public boolean getTagSeenSinceLastDisable() {
+    return tagSeenSinceLastDisable;
   }
 
   public Pose2d getCurrentPose() {

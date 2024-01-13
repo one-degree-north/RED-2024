@@ -60,6 +60,11 @@ public class RobotContainer {
             )
         );
 
+        // Configure the button bindings
+        configureButtonBindings();
+    }
+
+    public void standardLEDBehavior() {
         s_LEDSubsystem.setDefaultCommand(new InstantCommand(() ->
         {
             if (s_Swerve.getSpeed() < Constants.Swerve.maxSpeed*0.9) {
@@ -81,13 +86,15 @@ public class RobotContainer {
             }
             
         }, s_LEDSubsystem));
-
-        // Configure the button bindings
-        configureButtonBindings();
     }
 
     public void disabledLEDBehavior() {
-        s_LEDSubsystem.setRangeStaticRGB(0, 0, 100, 0, 23);
+
+        // Aqua for calibrated, Blue for calibrated
+        if (s_Swerve.getTagSeenSinceLastDisable())
+            s_LEDSubsystem.setRangeStaticRGB(0, 0, 255, 0, 23);
+        
+        else s_LEDSubsystem.setRangeStaticRGB(0, 255, 255, 0, 23);
 
     }
 

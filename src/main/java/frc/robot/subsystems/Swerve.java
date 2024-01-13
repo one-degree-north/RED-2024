@@ -134,6 +134,10 @@ public class Swerve extends SubsystemBase {
 
     }
 
+    public boolean getTagSeenSinceLastDisable() {
+        return PoseEstimator.getTagSeenSinceLastDisable();
+    }
+
     public double getSpeed() {
         return Math.hypot(getCurrentChassisSpeeds().vxMetersPerSecond, 
         getCurrentChassisSpeeds().vyMetersPerSecond);
