@@ -60,6 +60,8 @@ public class RobotContainer {
             )
         );
 
+        standardLEDBehavior();
+
         // Configure the button bindings
         configureButtonBindings();
     }
