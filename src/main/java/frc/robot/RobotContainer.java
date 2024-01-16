@@ -39,7 +39,8 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final LEDSubsystem s_LEDSubsystem = new LEDSubsystem(9, 60);
+    // private final LEDSubsystem s_LEDSubsystem = new LEDSubsystem(9, 60);
+    private final LEDs s_LEDs = new LEDs(9, s_Swerve);
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser;
@@ -60,45 +61,45 @@ public class RobotContainer {
             )
         );
 
-        standardLEDBehavior();
+        // standardLEDBehavior();
 
         // Configure the button bindings
         configureButtonBindings();
     }
 
-    public void standardLEDBehavior() {
-        s_LEDSubsystem.setDefaultCommand(new InstantCommand(() ->
-        {
-            if (s_Swerve.getSpeed() < Constants.Swerve.maxSpeed*0.9) {
-                if (DriverStation.isTeleop())
-                    s_LEDSubsystem.percentage(
-                        () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
-                        0, 23);
-                else if (DriverStation.isAutonomous())
-                    s_LEDSubsystem.percentageAuto(
-                        () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
-                        0, 23);
-            }
-            else if (s_Swerve.getSpeed() >= Constants.Swerve.maxSpeed*0.9) {
-                if (DriverStation.isTeleop())
-                    s_LEDSubsystem.flow(0, 23);
-                else if (DriverStation.isAutonomous())
-                    s_LEDSubsystem.flowAuto(0, 23);
+    // public void standardLEDBehavior() {
+    //     s_LEDSubsystem.setDefaultCommand(new InstantCommand(() ->
+    //     {
+    //         if (s_Swerve.getSpeed() < Constants.Swerve.maxSpeed*0.9) {
+    //             if (DriverStation.isTeleop())
+    //                 s_LEDSubsystem.percentage(
+    //                     () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
+    //                     0, 23);
+    //             else if (DriverStation.isAutonomous())
+    //                 s_LEDSubsystem.percentageAuto(
+    //                     () -> s_Swerve.getSpeed()/Constants.Swerve.maxSpeed, 
+    //                     0, 23);
+    //         }
+    //         else if (s_Swerve.getSpeed() >= Constants.Swerve.maxSpeed*0.9) {
+    //             if (DriverStation.isTeleop())
+    //                 s_LEDSubsystem.flow(0, 23);
+    //             else if (DriverStation.isAutonomous())
+    //                 s_LEDSubsystem.flowAuto(0, 23);
 
-            }
+    //         }
             
-        }, s_LEDSubsystem));
-    }
+    //     }, s_LEDSubsystem));
+    // }
 
-    public void disabledLEDBehavior() {
+    // public void disabledLEDBehavior() {
 
-        // Aqua for calibrated, Blue for calibrated
-        if (s_Swerve.getTagSeenSinceLastDisable())
-            s_LEDSubsystem.setRangeStaticRGB(0, 0, 255, 0, 23);
+    //     // Aqua for calibrated, Blue for calibrated
+    //     if (s_Swerve.getTagSeenSinceLastDisable())
+    //         s_LEDSubsystem.setRangeStaticRGB(0, 0, 255, 0, 23);
         
-        else s_LEDSubsystem.setRangeStaticRGB(0, 255, 255, 0, 23);
+    //     else s_LEDSubsystem.setRangeStaticRGB(0, 255, 255, 0, 23);
 
-    }
+    // }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be created by

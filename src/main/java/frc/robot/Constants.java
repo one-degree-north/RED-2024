@@ -26,7 +26,6 @@ public final class Constants {
     public static final boolean TUNING_MODE = false;
 
     public static final class Swerve {
-        public static final boolean useVision = true;
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
         // Comment out if not using supported module
@@ -89,7 +88,7 @@ public final class Constants {
 
         /* Drive Motor PID Values */
         //TODO: This must be tuned to specific robot. We can do this through Phoenix Tuner
-        public static final double driveKP = 0.05; 
+        public static final double driveKP = 0.135; 
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         //kF depricated in Phoenix 6
