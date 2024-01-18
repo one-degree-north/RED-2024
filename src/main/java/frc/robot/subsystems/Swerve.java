@@ -30,8 +30,9 @@ public class Swerve extends SubsystemBase {
     private SwerveDriveOdometry swerveOdometry;
     private SwerveModule[] mSwerveMods;
     private AHRS gyro;
-    private PoseEstimatorSubsystem PoseEstimator;
     private ChassisSpeeds chassisSpeeds;
+    public PoseEstimatorSubsystem PoseEstimator;
+
 
     public Swerve() {
 
@@ -152,12 +153,12 @@ public class Swerve extends SubsystemBase {
 
 
     // only testing on this generateonthefly method
-    public Command goToPose(Pose2d targetPose) {
+    public Command goToPose(Pose2d targetPose, double goalEndVelocity, double rotationDelayDistance) {
 
         PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
         
-        return AutoBuilder.pathfindToPose(targetPose, constraints, 0, 0);
+        return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
     }
 
     public Pose2d getOdometryPose() {

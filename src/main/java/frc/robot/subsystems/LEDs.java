@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.sql.Driver;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,7 +11,6 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.VirtualSubsystem;
 
 public class LEDs extends VirtualSubsystem {
@@ -22,7 +19,7 @@ public class LEDs extends VirtualSubsystem {
   private final Swerve m_swerve;
   private final Notifier loadingNotifier;
 
-  private Alliance alliance;
+  private Alliance alliance = null;
   private Color teleopColor;
   private Color autoColor;
 
@@ -64,40 +61,53 @@ public class LEDs extends VirtualSubsystem {
 
   @Override
   public synchronized void periodic() {
-    alliance = DriverStation.getAlliance().get();
-    if (alliance == Alliance.Red) {
-      teleopColor = Color.kRed;
-      autoColor = Color.kPink;
-    }
-    else if (alliance == Alliance.Blue) {
-      teleopColor = Color.kBlue;
-      autoColor = Color.kTurquoise;
-    }
-    else {
-      teleopColor = Color.kWhite;
-      autoColor = Color.kWhite;
+    loadingNotifier.stop();
+
+    if (DriverStation.isFMSAttached() || DriverStation.isDSAttached()) {
+      alliance = DriverStation.getAlliance().get();
     }
 
+    switch (alliance) {
+      case Red:
+        teleopColor = Color.kRed;
+        autoColor = Color.kYellow;
+        break;
+      case Blue:
+        teleopColor = Color.kBlue;
+        autoColor = Color.kPurple;
+        break;
+      default:
+        teleopColor = Color.kWhite;
+        autoColor = Color.kWhite;
+        break;
+    }
+    
 
     // This method will be called once per scheduler run
-    loadingNotifier.stop();
 
     if (DriverStation.isDisabled()) {
       if (!m_swerve.getTagSeenSinceLastDisable())
         solid(Section.FULL, Color.kWhite);
+      else if (m_swerve.PoseEstimator.allCamerasEnabled())
+        breath(Section.FULL, Color.kWhite, Color.kBlack, breathSlowDuration);
       else
         breath(Section.FULL, Color.kGreen, Color.kBlack, breathSlowDuration);
+    } 
+  
+    else if (DriverStation.isTeleopEnabled()) {
+      solid(Section.FULL, teleopColor);
+    } else if (DriverStation.isAutonomousEnabled()) {
+      solid(Section.FULL, autoColor);
+    } else if (DriverStation.isTestEnabled()) {
+      breath(Section.FULL, teleopColor, Color.kBlack, breathSlowDuration);
     }
-    else if (DriverStation.isEnabled()) {
-      if (DriverStation.isTeleop()) {
-        solid(Section.FULL, teleopColor);
-      } else if (DriverStation.isAutonomous()) {
-        solid(Section.FULL, autoColor);
-      }
+    
+
+    else if (DriverStation.isEStopped()) {
+      breath(Section.FULL, Color.kHotPink, Color.kDeepPink, breathFastDuration);
     }
 
     m_led.setData(m_ledBuffer);
-
   }
 
   private void solid(Section section, Color color) {
@@ -150,7 +160,7 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return 0;
 
-          default:
+        default:
           return 0;
       }
     }
@@ -160,7 +170,7 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return length;
         default:
-        return length;
+          return length;
       }
     }
 

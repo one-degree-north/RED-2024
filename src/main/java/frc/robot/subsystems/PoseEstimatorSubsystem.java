@@ -118,6 +118,17 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
   }
 
+  public PhotonRunnable[] getCameras() {
+    return cameras;
+  }
+
+  public boolean allCamerasEnabled() {
+    for (PhotonRunnable camera : cameras) {
+      if (!camera.isConnected()) return false;
+    }
+    return true;
+  }
+
   private String getFormattedPose() {
     var pose = getCurrentPose();
     return String.format("(%.3f, %.3f) %.2f degrees", 

@@ -59,6 +59,10 @@ public class PhotonRunnable implements Runnable {
     }  
   }
 
+  public boolean isConnected() {
+    return photonCamera.isConnected();
+  }
+
   /**
    * Gets the latest robot pose. Calling this will only return the pose once. If it returns a non-null value, it is a
    * new estimate that hasn't been returned before.
