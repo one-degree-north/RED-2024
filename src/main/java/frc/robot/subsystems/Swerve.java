@@ -31,7 +31,7 @@ public class Swerve extends SubsystemBase {
     private SwerveModule[] mSwerveMods;
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
-    public PoseEstimatorSubsystem PoseEstimator;
+    private PoseEstimatorSubsystem PoseEstimator;
 
 
     public Swerve() {
@@ -137,6 +137,10 @@ public class Swerve extends SubsystemBase {
 
     public boolean getTagSeenSinceLastDisable() {
         return PoseEstimator.getTagSeenSinceLastDisable();
+    }
+
+    public boolean allCamerasEnabled() {
+        return PoseEstimator.allCamerasEnabled();
     }
 
     public double getSpeed() {

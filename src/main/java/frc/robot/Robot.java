@@ -25,7 +25,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private Compressor c = new Compressor(PneumaticsModuleType.REVPH);
 
 
   /**
@@ -106,7 +105,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    c.enableAnalog(70, 120);
   }
 
   /** This function is called periodically during test mode. */

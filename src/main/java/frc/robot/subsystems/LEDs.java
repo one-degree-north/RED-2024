@@ -32,6 +32,8 @@ public class LEDs extends VirtualSubsystem {
   private static final double breathFastDuration = 0.25;
   private static final double breathSlowDuration = 1;
 
+  // States
+
   
   /** Creates a new LEDs. */
   public LEDs(int port, Swerve swerve) {
@@ -48,7 +50,7 @@ public class LEDs extends VirtualSubsystem {
             () -> {
               synchronized (this) {
                 breath(
-                    Section.FULL,
+                    Section.UNDERGLOW,
                     Color.kWhite,
                     Color.kBlack,
                     breathFastDuration,
@@ -66,45 +68,48 @@ public class LEDs extends VirtualSubsystem {
     if (DriverStation.isFMSAttached() || DriverStation.isDSAttached()) {
       alliance = DriverStation.getAlliance().get();
     }
-
-    switch (alliance) {
-      case Red:
-        teleopColor = Color.kRed;
-        autoColor = Color.kYellow;
-        break;
-      case Blue:
-        teleopColor = Color.kBlue;
-        autoColor = Color.kPurple;
-        break;
-      default:
-        teleopColor = Color.kWhite;
-        autoColor = Color.kWhite;
-        break;
+    if (alliance != null) {
+      switch (alliance) {
+        case Red:
+          teleopColor = Color.kRed;
+          autoColor = Color.kYellow;
+          break;
+        case Blue:
+          teleopColor = Color.kBlue;
+          autoColor = Color.kPurple;
+          break;
+        default:
+          teleopColor = Color.kBlack;
+          autoColor = Color.kBlack;
+          break;
+      }
     }
     
 
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      if (!m_swerve.getTagSeenSinceLastDisable())
-        solid(Section.FULL, Color.kWhite);
-      else if (m_swerve.PoseEstimator.allCamerasEnabled())
-        breath(Section.FULL, Color.kWhite, Color.kBlack, breathSlowDuration);
+      if (m_swerve.getTagSeenSinceLastDisable())
+        breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
+      else if (m_swerve.allCamerasEnabled())
+        breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
       else
-        breath(Section.FULL, Color.kGreen, Color.kBlack, breathSlowDuration);
-    } 
-  
-    else if (DriverStation.isTeleopEnabled()) {
-      solid(Section.FULL, teleopColor);
-    } else if (DriverStation.isAutonomousEnabled()) {
-      solid(Section.FULL, autoColor);
-    } else if (DriverStation.isTestEnabled()) {
-      breath(Section.FULL, teleopColor, Color.kBlack, breathSlowDuration);
+        solid(Section.UNDERGLOW, Color.kWhite);
     }
-    
+  
+    else if (DriverStation.isEnabled()) {
+      if (DriverStation.isTeleop()) {
+        solid(Section.UNDERGLOW, teleopColor);
+      } else if (DriverStation.isAutonomous()) {
+        solid(Section.UNDERGLOW, autoColor);
+      } else if (DriverStation.isTest()) {
+        breath(Section.UNDERGLOW, teleopColor, Color.kBlack, breathSlowDuration);
+      }
+    }
+  
 
     else if (DriverStation.isEStopped()) {
-      breath(Section.FULL, Color.kHotPink, Color.kDeepPink, breathFastDuration);
+      breath(Section.UNDERGLOW, Color.kHotPink, Color.kDeepPink, breathFastDuration);
     }
 
     m_led.setData(m_ledBuffer);
@@ -152,14 +157,19 @@ public class LEDs extends VirtualSubsystem {
     solid(section, new Color(red, green, blue));
   }
 
+  private static enum SubsystemState {
+    NOTREADY, NOTCALIBRATED, READY
+  }
+
   private static enum Section {
-    FULL;
+    FULL, UNDERGLOW;
 
     private int start() {
       switch (this) {
         case FULL:
           return 0;
-
+        case UNDERGLOW:
+          return 0;
         default:
           return 0;
       }
@@ -168,6 +178,8 @@ public class LEDs extends VirtualSubsystem {
     private int end() {
       switch (this) {
         case FULL:
+          return length;
+        case UNDERGLOW:
           return length;
         default:
           return length;
