@@ -17,9 +17,9 @@ public class AutoScore extends Command {
 
   private Command m_selectedCommand;
   private Supplier<AutoScorePosition> m_selectedPositionSupplier;
-  private Pose2d m_selectedPosition;
-  private Swerve m_swerve;
   private AutoScorePosition m_lastSelectedPosition;
+  
+  private Swerve m_swerve;
 
   public AutoScore(Supplier<AutoScorePosition> selectedPositionSupplier, Swerve swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -32,9 +32,8 @@ public class AutoScore extends Command {
   @Override
   public void initialize() {
 
-    m_selectedPosition = m_selectedPositionSupplier.get().getPose();
     m_lastSelectedPosition = m_selectedPositionSupplier.get();
-    m_selectedCommand = m_swerve.goToPose(m_selectedPosition, 0, 0, true);
+    m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0, true);
     m_selectedCommand.initialize();
   }
 
@@ -42,8 +41,7 @@ public class AutoScore extends Command {
   @Override
   public void execute() {
     if (m_selectedPositionSupplier.get() != m_lastSelectedPosition) {
-      m_selectedPosition = m_selectedPositionSupplier.get().getPose();
-      m_selectedCommand = m_swerve.goToPose(m_selectedPosition, 0, 0, true);
+      m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0, true);
     }
     m_lastSelectedPosition = m_selectedPositionSupplier.get();
     
