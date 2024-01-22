@@ -26,9 +26,9 @@ public final class Constants {
 
     public static final class PathGenerationConstants {
         // This is always from the perspective of the driver (left and right flip depending on alliance)
-        public static final Pose2d leftSpeakerScoringPose = new Pose2d();
-        public static final Pose2d middleSpeakerScoringPose = new Pose2d();
-        public static final Pose2d rightSpeakerScoringPose = new Pose2d();
+        public static final Pose2d leftSpeakerScoringPose = new Pose2d(2.83, 7.03, new Rotation2d(0));
+        public static final Pose2d middleSpeakerScoringPose = new Pose2d(2.89, 5.57, new Rotation2d(0));
+        public static final Pose2d rightSpeakerScoringPose = new Pose2d(2.91, 4.15, new Rotation2d(0));
 
         public static final Translation2d speakerPosition = 
             new Translation2d(Units.inchesToMeters(-1.5), Units.inchesToMeters(218.42));

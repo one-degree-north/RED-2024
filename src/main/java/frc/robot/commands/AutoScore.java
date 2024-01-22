@@ -7,8 +7,9 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.subsystems.Swerve;
 
 public class AutoScore extends Command {
@@ -62,15 +63,31 @@ public class AutoScore extends Command {
   public static enum AutoScorePosition {
     LEFT, CENTER, RIGHT;
     private Pose2d getPose() {
-      switch (this) {
-        case LEFT:
-          return new Pose2d(2.83, 7.03, new Rotation2d(0));
-        case CENTER:
-          return new Pose2d(2.89, 5.57, new Rotation2d(0));
-        case RIGHT:
-          return new Pose2d(2.91, 4.15, new Rotation2d(0));
-        default:
-          return new Pose2d(2.89, 5.57, new Rotation2d(0));
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+        // Swap right with left on red alliance
+        switch (this) {
+          case LEFT:
+            return PathGenerationConstants.rightSpeakerScoringPose;
+          case CENTER:
+            return PathGenerationConstants.middleSpeakerScoringPose;
+          case RIGHT:
+            return PathGenerationConstants.leftSpeakerScoringPose;
+          default:
+            return PathGenerationConstants.middleSpeakerScoringPose;
+        }
+      } else {
+        // Regular orientation since standard is blue origin
+        switch (this) {
+          case LEFT:
+            return PathGenerationConstants.leftSpeakerScoringPose;
+          case CENTER:
+            return PathGenerationConstants.middleSpeakerScoringPose;
+          case RIGHT:
+            return PathGenerationConstants.rightSpeakerScoringPose;
+          default:
+            return PathGenerationConstants.middleSpeakerScoringPose;
+        }
       }
     }
   }
