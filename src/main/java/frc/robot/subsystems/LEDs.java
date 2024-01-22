@@ -33,7 +33,7 @@ public class LEDs extends VirtualSubsystem {
   private static final double breathSlowDuration = 1;
 
   // States
-
+  private SubsystemState visionState = SubsystemState.NOTREADY;
   
   /** Creates a new LEDs. */
   public LEDs(int port, Swerve swerve) {
@@ -89,12 +89,21 @@ public class LEDs extends VirtualSubsystem {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      if (m_swerve.getTagSeenSinceLastDisable())
+      // Vision state control
+      if (m_swerve.getTagSeenSinceLastDisable()){
         breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
-      else if (m_swerve.allCamerasEnabled())
+        visionState = SubsystemState.READY;
+      }
+      else if (m_swerve.allCamerasEnabled()){
         breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
-      else
+        visionState = SubsystemState.NOTREADY;
+      }
+      else {
         solid(Section.UNDERGLOW, Color.kWhite);
+        visionState = SubsystemState.NOTREADY;
+      }
+
+
     }
   
     else if (DriverStation.isEnabled()) {
@@ -109,7 +118,7 @@ public class LEDs extends VirtualSubsystem {
   
 
     else if (DriverStation.isEStopped()) {
-      breath(Section.UNDERGLOW, Color.kHotPink, Color.kDeepPink, breathFastDuration);
+      breath(Section.FULL, Color.kHotPink, Color.kDeepPink, breathFastDuration);
     }
 
     m_led.setData(m_ledBuffer);
@@ -158,7 +167,7 @@ public class LEDs extends VirtualSubsystem {
   }
 
   private static enum SubsystemState {
-    NOTREADY, NOTCALIBRATED, READY
+    NOTREADY, READY
   }
 
   private static enum Section {
@@ -180,7 +189,7 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return length;
         case UNDERGLOW:
-          return length;
+          return 50;
         default:
           return length;
       }

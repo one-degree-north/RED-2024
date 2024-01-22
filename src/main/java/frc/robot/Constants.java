@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -19,8 +20,8 @@ public final class Constants {
     public static final double stickDeadband = 0.1;
 
     // TODO: Tune slew rate limiter to driver's preferences
-    public static final double rateLimitXY = 5;
-    public static final double rateLimitTheta = 5;
+    public static final double rateLimitXY = 1000;
+    public static final double rateLimitTheta = 1000;
 
     // Set to true for TunableNumber tuning
     public static final boolean TUNING_MODE = false;
@@ -163,7 +164,10 @@ public final class Constants {
 
         // 3D Translation from AprilTag camera to center of robot
         //TODO: Get offset values
-        public static final Transform3d APRILTAG_CAMERA_TO_ROBOT = new Transform3d(
+        public static final Transform3d APRILTAG_CAMERA_1_TO_ROBOT = new Transform3d(
+            new Translation3d(0, -0.08, -0.33),
+            new Rotation3d(0.0, 0.0, 0.0));
+        public static final Transform3d APRILTAG_CAMERA_2_TO_ROBOT = new Transform3d(
             new Translation3d(0, -0.08, -0.33),
             new Rotation3d(0.0, 0.0, 0.0));
         

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.SwerveModule;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,9 +39,6 @@ public class Swerve extends SubsystemBase {
 
         gyro = new AHRS(SerialPort.Port.kMXP);
 
-        // Reset gyro
-        gyro.reset();
-
         // Zero gyro after reset (shouldn't technically be needed)
         zeroGyro();
 
@@ -61,7 +59,8 @@ public class Swerve extends SubsystemBase {
         Supplier<SwerveModulePosition[]> modSupplier = () -> getModulePositions();
 
         PoseEstimator = new PoseEstimatorSubsystem(rotSupplier, modSupplier, 
-            new PhotonRunnable("Arducam11", Constants.VisionConstants.APRILTAG_CAMERA_TO_ROBOT));
+            new PhotonRunnable("Arducam11", Constants.VisionConstants.APRILTAG_CAMERA_1_TO_ROBOT), 
+            new PhotonRunnable("Arducam12", Constants.VisionConstants.APRILTAG_CAMERA_2_TO_ROBOT));
 
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -157,12 +156,23 @@ public class Swerve extends SubsystemBase {
 
 
     // only testing on this generateonthefly method
-    public Command goToPose(Pose2d targetPose, double goalEndVelocity, double rotationDelayDistance) {
+    public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance, boolean flipPose) {
+        var alliance = DriverStation.getAlliance();
+        Pose2d targetPose;
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            targetPose = (!flipPose ? pose : flipAlliance(pose));
+        } else {
+            targetPose = pose;
+        }
 
         PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
         
         return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
+    }
+
+    public Pose2d flipAlliance(Pose2d poseToFlip) {
+        return new Pose2d(new Translation2d(VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), poseToFlip.getY()), poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
     }
 
     public Pose2d getOdometryPose() {
