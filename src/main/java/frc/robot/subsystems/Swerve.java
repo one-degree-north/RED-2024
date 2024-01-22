@@ -142,9 +142,13 @@ public class Swerve extends SubsystemBase {
         return PoseEstimator.allCamerasEnabled();
     }
 
-    public double getSpeed() {
+    public double getTranslationalSpeed() {
         return Math.hypot(getCurrentChassisSpeeds().vxMetersPerSecond, 
         getCurrentChassisSpeeds().vyMetersPerSecond);
+    }
+
+    public double getRotationalSpeed() {
+        return Math.abs(getCurrentChassisSpeeds().omegaRadiansPerSecond);
     }
 
     public Rotation2d getHeading(Pose2d initial, Pose2d end) {
@@ -229,7 +233,7 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
 
-        SmartDashboard.putString("getPhotonPose", "(" + getPhotonPose().getX()
+        SmartDashboard.putString("Pose", "(" + getPhotonPose().getX()
         + ", " + getPhotonPose().getY() + "), " + getPhotonPose().getRotation().getDegrees());
 
         SmartDashboard.putNumber("Gyro Rotation", getYaw().getDegrees());
@@ -239,5 +243,8 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond); 
         }
+
+        SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
+        SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
     }
 }

@@ -101,7 +101,7 @@ public final class Constants {
         /* Swerve Profiling Values */
         // This must be tuned to specific robot.
         /** Meters per Second */
-        public static final double maxSpeed = 4.5; 
+        public static final double maxSpeed = 5.5; 
         /** Radians per Second */
         public static final double maxAngularVelocity = 10.0; 
 
@@ -184,12 +184,9 @@ public final class Constants {
       
     public static final class AutoConstants { 
         // TODO: These must be tuned to specific robot
-        public static final double velocityConstraint = 4.5;
-        public static final double accelerationConstraint = 4.5;
+        public static final double velocityConstraint = 5;
+        public static final double accelerationConstraint = 5;
         public static final double angularVelocityConstraint = 2 * Math.PI;
         public static final double angularAccelerationConstraint = 4 * Math.PI;
-    
-        public static final double TRANSLATION_kP = 0.1;
-        public static final double THETA_kP = 0.6;
     }
 }
