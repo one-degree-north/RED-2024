@@ -19,12 +19,9 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double stickDeadband = 0.1;
 
-    // TODO: Tune slew rate limiter to driver's preferences
-    public static final double rateLimitXY = 1000;
-    public static final double rateLimitTheta = 1000;
-
-    // Set to true for TunableNumber tuning
-    public static final boolean TUNING_MODE = false;
+    // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
+    public static final double rateLimitXY = 3;
+    public static final double rateLimitTheta = 3*Math.PI;
 
     public static final class Swerve {
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
@@ -78,7 +75,7 @@ public final class Constants {
         /* These values are used by the drive falcon to ramp in open loop and closed loop driving.
          * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc */
         public static final double openLoopRamp = 0.25;
-        public static final double closedLoopRamp = 0.0;
+        public static final double closedLoopRamp = 0.25;
 
         /* Angle Motor PID Values */
         // DISREGARD IF USING SUPPORTED MODULES
@@ -187,8 +184,8 @@ public final class Constants {
       
     public static final class AutoConstants { 
         // TODO: These must be tuned to specific robot
-        public static final double velocityConstraint = 3;
-        public static final double accelerationConstraint = 3;
+        public static final double velocityConstraint = 4.5;
+        public static final double accelerationConstraint = 4.5;
         public static final double angularVelocityConstraint = 2 * Math.PI;
         public static final double angularAccelerationConstraint = 4 * Math.PI;
     
