@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.subsystems.Swerve;
 
 public class AutoScore extends Command {
@@ -18,7 +17,7 @@ public class AutoScore extends Command {
   private Command m_selectedCommand;
   private Supplier<AutoScorePosition> m_selectedPositionSupplier;
   private AutoScorePosition m_lastSelectedPosition;
-  
+
   private Swerve m_swerve;
 
   public AutoScore(Supplier<AutoScorePosition> selectedPositionSupplier, Swerve swerve) {

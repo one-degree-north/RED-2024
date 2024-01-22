@@ -132,12 +132,17 @@ public class LEDs extends VirtualSubsystem {
     }
   }
 
-  private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
+  // TODO: Test reverse wave written by copilot
+
+  private void wave(Section section, Color c1, Color c2, double cycleLength, double duration, boolean reverse) {
     double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
-    for (int i = 0; i < section.end(); i++) {
+    int start = reverse ? section.end() - 1 : section.start();
+    int end = reverse ? section.start() - 1 : section.end();
+    int step = reverse ? -1 : 1;
+    for (int i = start; reverse ? i > end : i < end; i += step) {
       x += xDiffPerLed;
-      if (i >= section.start()) {
+      if (reverse ? i <= section.end() && i >= section.start() : i >= section.start() && i < section.end()) {
         double ratio = (Math.pow(Math.sin(x), waveExponent) + 1.0) / 2.0;
         if (Double.isNaN(ratio)) {
           ratio = (-Math.pow(Math.sin(x + Math.PI), waveExponent) + 1.0) / 2.0;
@@ -152,6 +157,27 @@ public class LEDs extends VirtualSubsystem {
       }
     }
   }
+
+  // private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
+  //   double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
+  //   double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
+  //   for (int i = 0; i < section.end(); i++) {
+  //     x += xDiffPerLed;
+  //     if (i >= section.start()) {
+  //       double ratio = (Math.pow(Math.sin(x), waveExponent) + 1.0) / 2.0;
+  //       if (Double.isNaN(ratio)) {
+  //         ratio = (-Math.pow(Math.sin(x + Math.PI), waveExponent) + 1.0) / 2.0;
+  //       }
+  //       if (Double.isNaN(ratio)) {
+  //         ratio = 0.5;
+  //       }
+  //       double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
+  //       double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
+  //       double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
+  //       m_ledBuffer.setLED(i, new Color(red, green, blue));
+  //     }
+  //   }
+  // }
 
   private void breath(Section section, Color c1, Color c2, double duration) {
     breath(section, c1, c2, duration, Timer.getFPGATimestamp());
