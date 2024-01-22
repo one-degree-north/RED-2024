@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
@@ -29,7 +30,8 @@ public final class Constants {
         public static final Pose2d middleSpeakerScoringPose = new Pose2d();
         public static final Pose2d rightSpeakerScoringPose = new Pose2d();
 
-        public static final Pose2d speakerPose = new Pose2d();
+        public static final Translation2d speakerPosition = 
+            new Translation2d(Units.inchesToMeters(-1.5), Units.inchesToMeters(218.42));
 
         public static final Pose2d ampScoringPose = new Pose2d();
 

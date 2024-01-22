@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.SwerveModule;
+import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Constants;
 
@@ -250,5 +251,6 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
         SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
+        SmartDashboard.putNumber("Distance to Speaker (m)", getPhotonPose().getTranslation().getDistance(PathGenerationConstants.speakerPosition));
     }
 }
