@@ -160,11 +160,11 @@ public class Swerve extends SubsystemBase {
 
 
     // only testing on this generateonthefly method
-    public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance, boolean flipPose) {
+    public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance, boolean willFlipPose) {
         var alliance = DriverStation.getAlliance();
         Pose2d targetPose;
         if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-            targetPose = (!flipPose ? pose : flipAlliance(pose));
+            targetPose = (!willFlipPose ? pose : flipPose(pose));
         } else {
             targetPose = pose;
         }
@@ -175,8 +175,12 @@ public class Swerve extends SubsystemBase {
         return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
     }
 
-    public Pose2d flipAlliance(Pose2d poseToFlip) {
+    public Pose2d flipPose(Pose2d poseToFlip) {
         return new Pose2d(new Translation2d(VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), poseToFlip.getY()), poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
+    }
+
+    public Rotation2d flipRotation(Rotation2d rotationToFlip) {
+        return rotationToFlip.rotateBy(Rotation2d.fromRotations(0.5));
     }
 
     public Pose2d getOdometryPose() {

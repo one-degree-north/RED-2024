@@ -17,11 +17,30 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-    public static final double stickDeadband = 0.1;
+    public static final class TeleopConstants {
+        public static final double stickDeadband = 0.1;
+        public static final double rateLimitXY = 3;
+        public static final double rateLimitTheta = 3*Math.PI;
+    }
+
+    public static final class PathGenerationConstants {
+        // This is always from the perspective of the driver (left and right flip depending on alliance)
+        public static final Pose2d leftSpeakerScoringPose = new Pose2d();
+        public static final Pose2d middleSpeakerScoringPose = new Pose2d();
+        public static final Pose2d rightSpeakerScoringPose = new Pose2d();
+
+        public static final Pose2d speakerPose = new Pose2d();
+
+        public static final Pose2d ampScoringPose = new Pose2d();
+
+        // This is always from the perspective of the driver (left and right flip depending on alliance)
+        public static final Pose2d leftSourceIntakingPose = new Pose2d();
+        public static final Pose2d middleSourceIntakingPose = new Pose2d();
+        public static final Pose2d rightSourceIntakingPose = new Pose2d();
+
+    }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
-    public static final double rateLimitXY = 3;
-    public static final double rateLimitTheta = 3*Math.PI;
 
     public static final class Swerve {
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-

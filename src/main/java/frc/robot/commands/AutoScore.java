@@ -70,7 +70,7 @@ public class AutoScore extends Command {
         case RIGHT:
           return new Pose2d(2.91, 4.15, new Rotation2d(0));
         default:
-          return new Pose2d(0, 0, new Rotation2d(0));
+          return new Pose2d(2.89, 5.57, new Rotation2d(0));
       }
     }
   }

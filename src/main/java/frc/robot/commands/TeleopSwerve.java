@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.Constants.TeleopConstants;
 import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
@@ -32,9 +33,9 @@ public class TeleopSwerve extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
 
-        this.slewRateLimiterX = new SlewRateLimiter(Constants.rateLimitXY);
-        this.slewRateLimiterY = new SlewRateLimiter(Constants.rateLimitXY);
-        this.slewRateLimiterR = new SlewRateLimiter(Constants.rateLimitTheta);
+        this.slewRateLimiterX = new SlewRateLimiter(TeleopConstants.rateLimitXY);
+        this.slewRateLimiterY = new SlewRateLimiter(TeleopConstants.rateLimitXY);
+        this.slewRateLimiterR = new SlewRateLimiter(TeleopConstants.rateLimitTheta);
     }
 
     @Override
@@ -44,9 +45,9 @@ public class TeleopSwerve extends Command {
         double strafe = strafeSup.getAsDouble();
         double rotation = rotationSup.getAsDouble();
 
-        double translationVal = MathUtil.applyDeadband(translation, Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(strafe, Constants.stickDeadband);
-        double rotationVal = MathUtil.applyDeadband(rotation, Constants.stickDeadband);
+        double translationVal = MathUtil.applyDeadband(translation, TeleopConstants.stickDeadband);
+        double strafeVal = MathUtil.applyDeadband(strafe, TeleopConstants.stickDeadband);
+        double rotationVal = MathUtil.applyDeadband(rotation, TeleopConstants.stickDeadband);
 
 
 
