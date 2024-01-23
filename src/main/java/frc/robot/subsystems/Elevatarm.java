@@ -132,6 +132,8 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatarmConstants.elevatorReverseSoftLimit;
 
     m_elevator.getConfigurator().apply(elevatorConfig);
+
+    resetToAbsolute();
   }
 
   private void resetToAbsolute() {
@@ -183,6 +185,14 @@ public class Elevatarm extends SubsystemBase {
   public boolean isLimitSwitchTripped() {
     return (m_elevatorLimitSwitchMin.get() && m_elevator.getVelocity().getValue() < 0) || 
     (m_elevatorLimitSwitchMax.get() && m_elevator.getVelocity().getValue() > 0);
+  }
+
+  public boolean isArmEncoderReset() {
+    return isArmEncoderReset;
+  }
+
+  public boolean isElevatorEncoderReset() {
+    return isElevatorEncoderReset;
   }
   
 
