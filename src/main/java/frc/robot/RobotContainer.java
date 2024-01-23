@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
@@ -83,6 +84,10 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
+    public AutoScorePosition getAutoScorePosition() {
+        return currentAutoScorePosition;
+    }
+
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -93,7 +98,8 @@ public class RobotContainer {
         /* Driver Buttons */
     
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        goToPos.whileTrue(new AutoScore(() -> currentAutoScorePosition, s_Swerve));
+        goToPos.whileTrue(new AutoScore(() ->{return getAutoScorePosition();}, s_Swerve))
+        ;
 
         setCenterAutoScore.onTrue(
             new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.CENTER)

@@ -13,15 +13,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     public static final class TeleopConstants {
         public static final double stickDeadband = 0.1;
-        public static final double rateLimitXY = 3;
-        public static final double rateLimitTheta = 3*Math.PI;
+        public static final double rateLimitXY = 15;
+        public static final double rateLimitTheta = 15*Math.PI;
     }
 
     public static final class PathGenerationConstants {

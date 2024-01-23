@@ -18,6 +18,8 @@ public class AutoScore extends Command {
   private Command m_selectedCommand;
   private Supplier<AutoScorePosition> m_selectedPositionSupplier;
   private AutoScorePosition m_lastSelectedPosition;
+  private boolean m_ended;
+
 
   private Swerve m_swerve;
 
@@ -25,14 +27,15 @@ public class AutoScore extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     m_selectedPositionSupplier = selectedPositionSupplier;
     m_swerve = swerve;
+    m_ended = false;
     addRequirements(m_swerve);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    m_lastSelectedPosition = m_selectedPositionSupplier.get();
+    m_ended = false;
+    // m_lastSelectedPosition = m_selectedPositionSupplier.get();
     m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0, true);
     m_selectedCommand.initialize();
   }
@@ -40,24 +43,34 @@ public class AutoScore extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_selectedPositionSupplier.get() != m_lastSelectedPosition) {
-      m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0, true);
+    if (m_ended) {
+      m_ended = false;
+      initialize();
     }
-    m_lastSelectedPosition = m_selectedPositionSupplier.get();
-    
     m_selectedCommand.execute();
+
+    if (m_selectedCommand.isFinished() || m_lastSelectedPosition != m_selectedPositionSupplier.get()) {
+      end(false);
+      m_ended = true;
+    }
+
+    m_lastSelectedPosition = m_selectedPositionSupplier.get();
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_selectedCommand.end(interrupted);
+    if (!m_ended) {
+      m_selectedCommand.end(interrupted);
+      m_ended = true;
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_selectedCommand.isFinished();
+    return false;
   }
 
   public static enum AutoScorePosition {
