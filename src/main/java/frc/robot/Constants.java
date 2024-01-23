@@ -55,6 +55,7 @@ public final class Constants {
         public static final double armkP = 0.0;
         public static final double armkI = 0.0;
         public static final double armkD = 0.0;
+        // Arm kG must be calculated with elevator locked fully extended
         public static final double armkG = 0.0;
         public static final double armkS = 0.0;
         public static final double armkV = 0.0;
@@ -76,6 +77,7 @@ public final class Constants {
         public static final double elevatorkP = 0.0;
         public static final double elevatorkI = 0.0;
         public static final double elevatorkD = 0.0;
+        // Elevator kG must be calculated with arm locked straight upwards
         public static final double elevatorkG = 0.0;
         public static final double elevatorkS = 0.0;
         public static final double elevatorkV = 0.0;
@@ -84,6 +86,10 @@ public final class Constants {
         public static final double elevatorAcceleration = 0.0;
 
         public static final double elevatorGearRatio = 0.0;
+
+        // Distance from pivot to center of fully retracted end effector
+        public static final double mindistanceFromPivot = 0.0;
+        public static final double maxDistanceFromPivot = 0.0;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)

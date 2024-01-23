@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -137,18 +138,27 @@ public class Elevatarm extends SubsystemBase {
   }
 
   private void resetToAbsolute() {
+    // TODO: Double check encoder ratios with design
     if (m_armEncoder.isConnected()) {
       double absolutePosition = m_armEncoder.getAbsolutePosition() - ElevatarmConstants.armAbsoluteEncoderOffset;
       m_armLeader.setPosition(absolutePosition);
       isArmEncoderReset = true;
     }
 
-    // TODO: figure out elevator conversions
     if (m_elevatorEncoder.isConnected()) {
       double absolutePosition = m_elevatorEncoder.getAbsolutePosition() - ElevatarmConstants.elevatorAbsoluteEncoderOffset;
-      m_elevator.setPosition(absolutePosition);
+      m_elevator.setPosition(absolutePosition/ElevatarmConstants.elevatorGearRatio);
       isElevatorEncoderReset = true;
     }
+  }
+
+  public Rotation2d getArmRotation2d() {
+    return Rotation2d.fromRotations(m_armLeader.getPosition().getValue());
+  }
+
+  public double getElevatorMeters() {
+    // TODO: Figure out conversion
+    return m_elevator.getPosition().getValue();
   }
 
   private void setControlArm(ControlRequest req) {
@@ -207,6 +217,17 @@ public class Elevatarm extends SubsystemBase {
     if (isLimitSwitchTripped()) {
       m_elevator.setControl(new NeutralOut());
     }
+
+    // Recalculated FF values based on each others mechanism
+
+    armPIDConfigs.kG = 
+      ElevatarmConstants.armkG*(ElevatarmConstants.mindistanceFromPivot+getElevatorMeters())
+        /(ElevatarmConstants.maxDistanceFromPivot);
+    elevatorPIDConfigs.kG = 
+      ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
+
+    m_armLeader.getConfigurator().apply(armPIDConfigs);
+    m_elevator.getConfigurator().apply(elevatorPIDConfigs);
     
     
     // This method will be called once per scheduler run
