@@ -28,17 +28,62 @@ public final class Constants {
         public static final Pose2d leftSpeakerScoringPose = new Pose2d(2.83, 7.03, new Rotation2d(0));
         public static final Pose2d middleSpeakerScoringPose = new Pose2d(2.89, 5.57, new Rotation2d(0));
         public static final Pose2d rightSpeakerScoringPose = new Pose2d(2.91, 4.15, new Rotation2d(0));
+        public static final Pose2d ampScoringPose = new Pose2d();
+
 
         public static final Translation2d speakerPosition = 
             new Translation2d(Units.inchesToMeters(-1.5), Units.inchesToMeters(218.42));
-
-        public static final Pose2d ampScoringPose = new Pose2d();
 
         // This is always from the perspective of the driver (left and right flip depending on alliance)
         public static final Pose2d leftSourceIntakingPose = new Pose2d();
         public static final Pose2d middleSourceIntakingPose = new Pose2d();
         public static final Pose2d rightSourceIntakingPose = new Pose2d();
 
+    }
+
+    public static final class ElevatarmConstants {
+        // Arm IDs
+        public static final int armLeaderID = 0;
+        public static final int armFollowerID = 0;
+        public static final int armEncoderPort = 0;
+
+        public static final double armAbsoluteEncoderOffset = 0.0;
+        public static final double armForwardSoftLimit = 0.0;
+        public static final double armReverseSoftLimit = 0.0;
+
+        // Arm MotionMagic gains
+        public static final double armkP = 0.0;
+        public static final double armkI = 0.0;
+        public static final double armkD = 0.0;
+        public static final double armkG = 0.0;
+        public static final double armkS = 0.0;
+        public static final double armkV = 0.0;
+        public static final double armkA = 0.0;
+        public static final double armCruiseVelocity = 0.0;
+        public static final double armAcceleration = 0.0;
+
+        public static final double armGearRatio = 0.0;
+
+        public static final int elevatorID = 0;
+        public static final int elevatorEncoderPort = 0;
+        public static final int elevatorLimitMinPort = 0;
+        public static final int elevatorLimitMaxPort = 0;
+
+        public static final double elevatorAbsoluteEncoderOffset = 0.0;
+        public static final double elevatorForwardSoftLimit = 0.0;
+        public static final double elevatorReverseSoftLimit = 0.0;
+
+        public static final double elevatorkP = 0.0;
+        public static final double elevatorkI = 0.0;
+        public static final double elevatorkD = 0.0;
+        public static final double elevatorkG = 0.0;
+        public static final double elevatorkS = 0.0;
+        public static final double elevatorkV = 0.0;
+        public static final double elevatorkA = 0.0;
+        public static final double elevatorCruiseVelocity = 0.0;
+        public static final double elevatorAcceleration = 0.0;
+
+        public static final double elevatorGearRatio = 0.0;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
@@ -182,11 +227,11 @@ public final class Constants {
         // 3D Translation from AprilTag camera to center of robot
         //TODO: Get offset values
         public static final Transform3d APRILTAG_CAMERA_1_TO_ROBOT = new Transform3d(
-            new Translation3d(0, -0.08, -0.33),
-            new Rotation3d(0.0, 0.0, 0.0));
+            new Translation3d(Units.inchesToMeters(5.085), Units.inchesToMeters(5.57), Units.inchesToMeters(8.85)),
+            new Rotation3d(0.0, -Units.degreesToRadians(60), -Units.degreesToRadians(45)));
         public static final Transform3d APRILTAG_CAMERA_2_TO_ROBOT = new Transform3d(
-            new Translation3d(0, -0.08, -0.33),
-            new Rotation3d(0.0, 0.0, 0.0));
+            new Translation3d(Units.inchesToMeters(-5.085), Units.inchesToMeters(-5.57), Units.inchesToMeters(8.85)),
+            new Rotation3d(0.0, -Units.degreesToRadians(60), Units.degreesToRadians(180+45)));
         
         // Calculated field length for 2023 game (used to circumvent "flipping tags" as well as mirror coordinates for red/blue alliance)
         public static final double FIELD_LENGTH_METERS = 

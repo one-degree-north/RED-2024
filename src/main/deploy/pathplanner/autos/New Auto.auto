@@ -4,14 +4,7 @@
   "command": {
     "type": "sequential",
     "data": {
-      "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Six Note Path"
-          }
-        }
-      ]
+      "commands": []
     }
   },
   "folder": null,

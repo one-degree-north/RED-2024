@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -98,8 +99,9 @@ public class RobotContainer {
         /* Driver Buttons */
     
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        goToPos.whileTrue(new AutoScorePathfind(() ->{return getAutoScorePosition();}, s_Swerve))
-        ;
+
+        // TODO: try removing method in lambda
+        goToPos.whileTrue(new AutoScorePathfind(() ->{return getAutoScorePosition();}, s_Swerve));
 
         setCenterAutoScore.onTrue(
             new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.CENTER)

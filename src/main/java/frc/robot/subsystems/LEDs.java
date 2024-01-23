@@ -26,7 +26,7 @@ public class LEDs extends VirtualSubsystem {
   // Constants
   private static final int length = 60;
   private static final double waveExponent = 0.4;
-  private static final double waveCycleLength = 25;
+  private static final double waveCycleLength = 30;
   private static final double waveFastCycleDuration = 0.25;
   private static final double waveSlowCycleDuration = 3;
   private static final double breathFastDuration = 0.25;
