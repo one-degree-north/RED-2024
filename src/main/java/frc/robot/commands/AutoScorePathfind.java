@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.subsystems.Swerve;
 
-public class AutoScore extends Command {
+public class AutoScorePathfind extends Command {
   /** Creates a new AutoScore. */
 
   private Command m_selectedCommand;
@@ -23,7 +23,7 @@ public class AutoScore extends Command {
 
   private Swerve m_swerve;
 
-  public AutoScore(Supplier<AutoScorePosition> selectedPositionSupplier, Swerve swerve) {
+  public AutoScorePathfind(Supplier<AutoScorePosition> selectedPositionSupplier, Swerve swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_selectedPositionSupplier = selectedPositionSupplier;
     m_swerve = swerve;
@@ -49,7 +49,7 @@ public class AutoScore extends Command {
     }
     m_selectedCommand.execute();
 
-    if (m_selectedCommand.isFinished() || m_lastSelectedPosition != m_selectedPositionSupplier.get()) {
+    if (m_lastSelectedPosition != m_selectedPositionSupplier.get()) {
       end(false);
       m_ended = true;
     }
@@ -70,7 +70,7 @@ public class AutoScore extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_selectedCommand.isFinished();
   }
 
   public static enum AutoScorePosition {

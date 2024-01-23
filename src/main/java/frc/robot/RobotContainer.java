@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
-import frc.robot.commands.AutoScore.AutoScorePosition;
+import frc.robot.commands.AutoScorePathfind.AutoScorePosition;
 import frc.robot.subsystems.*;
 
 /**
@@ -98,7 +98,7 @@ public class RobotContainer {
         /* Driver Buttons */
     
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        goToPos.whileTrue(new AutoScore(() ->{return getAutoScorePosition();}, s_Swerve))
+        goToPos.whileTrue(new AutoScorePathfind(() ->{return getAutoScorePosition();}, s_Swerve))
         ;
 
         setCenterAutoScore.onTrue(
