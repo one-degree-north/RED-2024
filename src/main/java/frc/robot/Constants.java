@@ -85,7 +85,8 @@ public final class Constants {
         public static final double elevatorCruiseVelocity = 0.0;
         public static final double elevatorAcceleration = 0.0;
 
-        public static final double elevatorGearRatio = 0.0;
+        public static final double elevatorAbsoluteSensorToMotorRatio = 0.0;
+        public static final double elevatorEncoderRotationsPerDistance = 0.0;
 
         // Distance from pivot to center of fully retracted end effector
         public static final double mindistanceFromPivot = 0.0;

@@ -56,8 +56,6 @@ public class Elevatarm extends SubsystemBase {
     m_armFollower = new TalonFX(ElevatarmConstants.armFollowerID);
     m_armEncoder = new DutyCycleEncoder(ElevatarmConstants.armEncoderPort);
 
-    m_armFollower.setControl(new Follower(ElevatarmConstants.armLeaderID, true));
-
     m_elevator = new TalonFX(ElevatarmConstants.elevatorID);
     m_elevatorEncoder = new DutyCycleEncoder(ElevatarmConstants.elevatorEncoderPort);
     m_elevatorLimitSwitchMin = new DigitalInput(ElevatarmConstants.elevatorLimitMinPort);
@@ -125,7 +123,7 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatarmConstants.elevatorGearRatio;
+    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatarmConstants.elevatorEncoderRotationsPerDistance;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatarmConstants.elevatorForwardSoftLimit;
@@ -134,22 +132,37 @@ public class Elevatarm extends SubsystemBase {
 
     m_elevator.getConfigurator().apply(elevatorConfig);
 
+    // Set follower
+    m_armFollower.setControl(new Follower(ElevatarmConstants.armLeaderID, true));
+
     resetToAbsolute();
   }
 
   private void resetToAbsolute() {
     // TODO: Double check encoder ratios with design
     if (m_armEncoder.isConnected()) {
-      double absolutePosition = m_armEncoder.getAbsolutePosition() - ElevatarmConstants.armAbsoluteEncoderOffset;
+      double absolutePosition = getArmAbsoluteEncoderAngle() - ElevatarmConstants.armAbsoluteEncoderOffset;
       m_armLeader.setPosition(absolutePosition);
       isArmEncoderReset = true;
     }
 
     if (m_elevatorEncoder.isConnected()) {
-      double absolutePosition = m_elevatorEncoder.getAbsolutePosition() - ElevatarmConstants.elevatorAbsoluteEncoderOffset;
-      m_elevator.setPosition(absolutePosition/ElevatarmConstants.elevatorGearRatio);
+      double absolutePosition =
+        getElevatorAbsoluteEncoderDistance()
+        - ElevatarmConstants.elevatorAbsoluteEncoderOffset;
+      m_elevator.setPosition(absolutePosition);
       isElevatorEncoderReset = true;
     }
+  }
+
+  private double getArmAbsoluteEncoderAngle() {
+    return m_armEncoder.getAbsolutePosition();
+  }
+
+  private double getElevatorAbsoluteEncoderDistance() {
+    return (m_elevatorEncoder.getAbsolutePosition()
+      / ElevatarmConstants.elevatorAbsoluteSensorToMotorRatio) 
+      / ElevatarmConstants.elevatorEncoderRotationsPerDistance;
   }
 
   public Rotation2d getArmRotation2d() {
@@ -168,10 +181,7 @@ public class Elevatarm extends SubsystemBase {
   }
 
   private void setControlElevator(ControlRequest req) {
-    if (isLimitSwitchTripped()) {
-      m_elevator.setControl(new NeutralOut());
-    }
-    else if (isElevatorEncoderReset) {
+    if (!isLimitSwitchTripped() && isElevatorEncoderReset) {
       m_elevator.setControl(req);
     }
   }
@@ -204,6 +214,11 @@ public class Elevatarm extends SubsystemBase {
   public boolean isElevatorEncoderReset() {
     return isElevatorEncoderReset;
   }
+
+  public void recalculateFeedForward() {
+    m_armLeader.getConfigurator().apply(armPIDConfigs);
+    m_elevator.getConfigurator().apply(elevatorPIDConfigs);
+  }
   
 
   @Override
@@ -220,14 +235,13 @@ public class Elevatarm extends SubsystemBase {
 
     // Recalculated FF values based on each others mechanism
 
+    // Torque scales with radius
     armPIDConfigs.kG = 
       ElevatarmConstants.armkG*(ElevatarmConstants.mindistanceFromPivot+getElevatorMeters())
         /(ElevatarmConstants.maxDistanceFromPivot);
-    elevatorPIDConfigs.kG = 
-      ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
-
-    m_armLeader.getConfigurator().apply(armPIDConfigs);
-    m_elevator.getConfigurator().apply(elevatorPIDConfigs);
+    
+      elevatorPIDConfigs.kG = 
+        ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
     
     
     // This method will be called once per scheduler run
