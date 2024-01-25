@@ -200,7 +200,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPhotonPose() {
-        return PoseEstimator.getCurrentPose();
+        return PoseEstimator.getCurrentPose(); 
     }
 
     public void resetPhotonPose(Pose2d pose) {

@@ -224,11 +224,13 @@ public class Elevatarm extends SubsystemBase {
   @Override
   public void periodic() {
     // Keep trying to reset to absolute position
-    count %=5;
-    count += 1;
-    if ((!isArmEncoderReset || !isElevatorEncoderReset) && count <=0) 
+    if ((!isArmEncoderReset || !isElevatorEncoderReset) && count <=0) {
       resetToAbsolute();
-
+    }
+    else {
+      count %=5;
+      count += 1;
+    }
     if (isLimitSwitchTripped()) {
       m_elevator.setControl(new NeutralOut());
     }

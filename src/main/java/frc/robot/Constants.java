@@ -234,11 +234,11 @@ public final class Constants {
         // 3D Translation from AprilTag camera to center of robot
         //TODO: Get offset values
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_1 = new Transform3d(
-            new Translation3d(Units.inchesToMeters(5.085), Units.inchesToMeters(5.57), Units.inchesToMeters(8.85)),
-            new Rotation3d(0.0, -Units.degreesToRadians(60), -Units.degreesToRadians(45)));
+            new Translation3d(Units.inchesToMeters(9), Units.inchesToMeters(8), Units.inchesToMeters(8.75)),
+            new Rotation3d(0.0, -Units.degreesToRadians(30), -Units.degreesToRadians(45)));
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_2 = new Transform3d(
-            new Translation3d(Units.inchesToMeters(-5.085), Units.inchesToMeters(-5.57), Units.inchesToMeters(8.85)),
-            new Rotation3d(0.0, -Units.degreesToRadians(60), Units.degreesToRadians(180+45)));
+            new Translation3d(Units.inchesToMeters(-9), Units.inchesToMeters(-8), Units.inchesToMeters(8.75)),
+            new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(135)));
         
         // Calculated field length for 2023 game (used to circumvent "flipping tags" as well as mirror coordinates for red/blue alliance)
         public static final double FIELD_LENGTH_METERS = 
