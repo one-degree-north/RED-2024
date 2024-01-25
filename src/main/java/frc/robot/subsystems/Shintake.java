@@ -15,7 +15,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Shiitake extends SubsystemBase {
+public class Shintake extends SubsystemBase {
   
   private TalonFX m_flywheel;
   private TalonFX m_flywheel2;
@@ -27,7 +27,7 @@ public class Shiitake extends SubsystemBase {
   private boolean ringIntaked;
   private DigitalInput intakeSensor;
 
-  public Shiitake() {
+  public Shintake() {
     m_flywheel = new TalonFX(0);
     m_flywheel2 = new TalonFX(0);
     flywheelConfigs = new TalonFXConfiguration();
