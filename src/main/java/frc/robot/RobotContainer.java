@@ -1,14 +1,11 @@
 package frc.robot;
 
-import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -77,7 +74,8 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
-                () -> robotCentric.getAsBoolean()
+                () -> robotCentric.getAsBoolean(),
+                () -> zeroGyro.getAsBoolean()
             )
         );
 
@@ -97,8 +95,6 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-    
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
 
         // TODO: try removing method in lambda
         goToPos.whileTrue(new AutoScorePathfind(() ->{return getAutoScorePosition();}, s_Swerve));

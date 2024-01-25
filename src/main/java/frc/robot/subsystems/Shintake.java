@@ -15,6 +15,8 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+// TODO: Fix this subsystem (added from PR)
+
 public class Shintake extends SubsystemBase {
   
   private TalonFX m_flywheel;

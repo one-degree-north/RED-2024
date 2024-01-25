@@ -21,6 +21,13 @@ public final class Constants {
         public static final double stickDeadband = 0.1;
         public static final double rateLimitXY = 15;
         public static final double rateLimitTheta = 15*Math.PI;
+
+        // TODO: Tune PID
+        public static final double headingkP = 0;
+        public static final double headingkI = 0;
+        public static final double headingkD = 0;
+        public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
+        public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
     }
 
     public static final class PathGenerationConstants {
@@ -60,6 +67,7 @@ public final class Constants {
         public static final double armkS = 0.0;
         public static final double armkV = 0.0;
         public static final double armkA = 0.0;
+        // Rotations per second
         public static final double armCruiseVelocity = 0.0;
         public static final double armAcceleration = 0.0;
 
@@ -82,6 +90,7 @@ public final class Constants {
         public static final double elevatorkS = 0.0;
         public static final double elevatorkV = 0.0;
         public static final double elevatorkA = 0.0;
+        // Meters per second
         public static final double elevatorCruiseVelocity = 0.0;
         public static final double elevatorAcceleration = 0.0;
 
@@ -91,6 +100,45 @@ public final class Constants {
         // Distance from pivot to center of fully retracted end effector
         public static final double mindistanceFromPivot = 0.0;
         public static final double maxDistanceFromPivot = 0.0;
+    }
+
+    public static final class ClimbConstants {
+        public static final int leftClimbID = 0;
+        public static final int rightClimbID = 0;
+        
+        public static final int leftEncoderPort = 0;
+        public static final int rightEncoderPort = 0;
+
+        // in meters
+        public static final double leftAbsoluteEncoderOffset = 0;
+        public static final double rightAbsoluteEncoderOffset = 0;
+
+        public static final double absoluteSensorToMotorRatio = 0;
+        public static final double encoderRotationsPerDistance = 0;
+
+        public static final double positionkP = 0.0;
+        public static final double positionkI = 0.0;
+        public static final double positionkD = 0.0;
+        public static final double positionkG = 0.0;
+        public static final double positionkS = 0.0;
+        public static final double positionkV = 0.0;
+        public static final double positionkA = 0.0;
+        // Meters per second
+        public static final double cruiseVelocity = 0.0;
+        public static final double acceleration = 0.0;
+
+        public static final double velocitykP = 0.0;
+        public static final double velocitykI = 0.0;
+        public static final double velocitykD = 0.0;
+        public static final double velocitykG = 0.0;
+        public static final double velocitykS = 0.0;
+        public static final double velocitykV = 0.0;
+        public static final double velocitykA = 0.0;
+
+        public static final double forwardSoftLimit = 0.0;
+        public static final double reverseSoftLimit = 0.0;
+
+
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
@@ -175,7 +223,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 5.5; 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 10.0; 
+        public static final double maxAngularVelocity = 4*Math.PI; 
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -256,9 +304,9 @@ public final class Constants {
       
     public static final class AutoConstants { 
         // TODO: These must be tuned to specific robot
-        public static final double velocityConstraint = 5;
-        public static final double accelerationConstraint = 5;
-        public static final double angularVelocityConstraint = 2 * Math.PI;
-        public static final double angularAccelerationConstraint = 4 * Math.PI;
+        public static final double velocityConstraint = Swerve.maxSpeed;
+        public static final double accelerationConstraint = Swerve.maxSpeed;
+        public static final double angularVelocityConstraint = Swerve.maxAngularVelocity;
+        public static final double angularAccelerationConstraint = Swerve.maxAngularVelocity*1.2;
     }
 }

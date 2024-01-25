@@ -141,17 +141,17 @@ public class Elevatarm extends SubsystemBase {
   private void resetToAbsolute() {
     // TODO: Double check encoder ratios with design
     if (m_armEncoder.isConnected()) {
-      double absolutePosition = getArmAbsoluteEncoderAngle() - ElevatarmConstants.armAbsoluteEncoderOffset;
-      m_armLeader.setPosition(absolutePosition);
-      isArmEncoderReset = true;
+      double absolutePosition = 
+        getArmAbsoluteEncoderAngle() 
+        - ElevatarmConstants.armAbsoluteEncoderOffset;
+      isArmEncoderReset = m_armLeader.setPosition(absolutePosition).isOK();
     }
 
     if (m_elevatorEncoder.isConnected()) {
       double absolutePosition =
         getElevatorAbsoluteEncoderDistance()
         - ElevatarmConstants.elevatorAbsoluteEncoderOffset;
-      m_elevator.setPosition(absolutePosition);
-      isElevatorEncoderReset = true;
+      isElevatorEncoderReset = m_elevator.setPosition(absolutePosition).isOK();
     }
   }
 
@@ -218,6 +218,16 @@ public class Elevatarm extends SubsystemBase {
   public void recalculateFeedForward() {
     m_armLeader.getConfigurator().apply(armPIDConfigs);
     m_elevator.getConfigurator().apply(elevatorPIDConfigs);
+  }
+
+  public void setCoast() {
+    m_armLeader.setNeutralMode(NeutralModeValue.Coast);
+    m_armFollower.setNeutralMode(NeutralModeValue.Coast);
+  }
+
+  public void setBrake() {
+    m_armLeader.setNeutralMode(NeutralModeValue.Brake);
+    m_armFollower.setNeutralMode(NeutralModeValue.Brake);
   }
   
 
