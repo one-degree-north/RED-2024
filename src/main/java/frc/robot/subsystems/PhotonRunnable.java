@@ -24,7 +24,7 @@ public class PhotonRunnable implements Runnable {
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
 
-  public PhotonRunnable(String cameraName, Transform3d APRILTAG_CAMERA_TO_ROBOT) {
+  public PhotonRunnable(String cameraName, Transform3d ROBOT_TO_APRILTAG_CAMERA) {
     this.photonCamera = new PhotonCamera(cameraName); 
     PhotonPoseEstimator photonPoseEstimator = null;
     var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -32,7 +32,7 @@ public class PhotonRunnable implements Runnable {
     layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     if (photonCamera != null) {
       photonPoseEstimator = new PhotonPoseEstimator(
-          layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, APRILTAG_CAMERA_TO_ROBOT.inverse());
+          layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, ROBOT_TO_APRILTAG_CAMERA);
     }
     this.photonPoseEstimator = photonPoseEstimator;
   }

@@ -233,10 +233,10 @@ public final class Constants {
 
         // 3D Translation from AprilTag camera to center of robot
         //TODO: Get offset values
-        public static final Transform3d APRILTAG_CAMERA_1_TO_ROBOT = new Transform3d(
+        public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_1 = new Transform3d(
             new Translation3d(Units.inchesToMeters(5.085), Units.inchesToMeters(5.57), Units.inchesToMeters(8.85)),
             new Rotation3d(0.0, -Units.degreesToRadians(60), -Units.degreesToRadians(45)));
-        public static final Transform3d APRILTAG_CAMERA_2_TO_ROBOT = new Transform3d(
+        public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_2 = new Transform3d(
             new Translation3d(Units.inchesToMeters(-5.085), Units.inchesToMeters(-5.57), Units.inchesToMeters(8.85)),
             new Rotation3d(0.0, -Units.degreesToRadians(60), Units.degreesToRadians(180+45)));
         

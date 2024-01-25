@@ -18,9 +18,12 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,6 +37,10 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
     private PoseEstimatorSubsystem PoseEstimator;
+
+    private StructArrayPublisher<Pose3d> cameraFieldPoses = 
+        NetworkTableInstance.getDefault()
+        .getStructArrayTopic("Camera Field Positions", Pose3d.struct).publish();
 
 
     public Swerve() {
@@ -60,8 +67,8 @@ public class Swerve extends SubsystemBase {
         Supplier<SwerveModulePosition[]> modSupplier = () -> getModulePositions();
 
         PoseEstimator = new PoseEstimatorSubsystem(rotSupplier, modSupplier, 
-            new PhotonRunnable("Arducam11", Constants.VisionConstants.APRILTAG_CAMERA_1_TO_ROBOT), 
-            new PhotonRunnable("Arducam12", Constants.VisionConstants.APRILTAG_CAMERA_2_TO_ROBOT));
+            new PhotonRunnable("Arducam11", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1), 
+            new PhotonRunnable("Arducam12", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2));
 
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -229,6 +236,16 @@ public class Swerve extends SubsystemBase {
         return gyro.getRotation2d();
     }
 
+    public Pose3d getLeftCameraFieldPosition() {
+        Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
+        return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1);
+    }
+
+    public Pose3d getRightCameraFieldPosition() {
+        Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
+        return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2);
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -252,5 +269,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
         SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
         SmartDashboard.putNumber("Distance to Speaker (m)", getPhotonPose().getTranslation().getDistance(PathGenerationConstants.speakerPosition));
+
+        cameraFieldPoses.set(new Pose3d[] {getLeftCameraFieldPosition(), getRightCameraFieldPosition()});
     }
 }
