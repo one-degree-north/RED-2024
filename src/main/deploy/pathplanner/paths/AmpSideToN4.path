@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.103977117133447,
-        "y": 4.231370760484577
+        "x": 1.3757409220909298,
+        "y": 6.417862732716206
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1039771171334496,
-        "y": 3.7313707604845767
+        "x": 4.527557043178323,
+        "y": 5.568651280821081
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Start Amp Side"
     },
     {
       "anchor": {
-        "x": 5.0,
-        "y": 5.0
+        "x": 7.666210709659147,
+        "y": 7.453813696630177
       },
       "prevControl": {
-        "x": 4.0,
-        "y": 6.0
-      },
-      "nextControl": {
-        "x": 6.0,
-        "y": 4.0
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 7.0,
-        "y": 1.0
-      },
-      "prevControl": {
-        "x": 6.75,
-        "y": 2.5
+        "x": 6.472935450278766,
+        "y": 7.487025337923252
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "N4"
     }
   ],
   "rotationTargets": [],

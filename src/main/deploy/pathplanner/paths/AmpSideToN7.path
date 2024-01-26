@@ -8,40 +8,29 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.621853909540699,
-        "y": 6.418376314805065
+        "x": 10.143074660719089,
+        "y": 6.339050848206435
       },
       "isLocked": false,
       "linkedName": "Start Amp Side"
     },
     {
       "anchor": {
-        "x": 2.2620583314425984,
-        "y": 6.992986515710942
+        "x": 7.659156959011256,
+        "y": 2.441414261011393
       },
       "prevControl": {
-        "x": 1.7918546819785863,
-        "y": 7.016817744977856
+        "x": 6.238050749683676,
+        "y": 4.349527579082647
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "N1"
+      "linkedName": "N7"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Deploy and Run Intake",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": []
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.5,
     "maxAcceleration": 5.5,

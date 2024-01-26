@@ -23,7 +23,7 @@ public final class Constants {
         public static final double rateLimitTheta = 15*Math.PI;
 
         // TODO: Tune PID
-        public static final double headingkP = 0.05;
+        public static final double headingkP = 0.02;
         public static final double headingkI = 0;
         public static final double headingkD = 0;
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;

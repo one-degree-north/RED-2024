@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3757409220909298,
-        "y": 6.417862732716206
+        "x": 2.2851333377724625,
+        "y": 5.549614876139475
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.621853909540699,
-        "y": 6.418376314805065
+        "x": 2.164551038484311,
+        "y": 5.996270763953565
       },
       "isLocked": false,
-      "linkedName": "Start Amp Side"
+      "linkedName": "N2"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 6.992986515710942
       },
       "prevControl": {
-        "x": 1.7918546819785863,
-        "y": 7.016817744977856
+        "x": 1.3205088111184424,
+        "y": 7.035497843391293
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,18 +30,7 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Deploy and Run Intake",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": []
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.5,
     "maxAcceleration": 5.5,

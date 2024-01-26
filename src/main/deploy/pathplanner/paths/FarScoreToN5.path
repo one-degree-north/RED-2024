@@ -3,45 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3757409220909298,
-        "y": 6.417862732716206
+        "x": 4.258737418118645,
+        "y": 5.735911093060612
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.621853909540699,
-        "y": 6.418376314805065
+        "x": 4.550727621239676,
+        "y": 7.352966264381603
       },
       "isLocked": false,
-      "linkedName": "Start Amp Side"
+      "linkedName": "Far Score"
     },
     {
       "anchor": {
-        "x": 2.2620583314425984,
-        "y": 6.992986515710942
+        "x": 7.663112515316466,
+        "y": 5.735911093060612
       },
       "prevControl": {
-        "x": 1.7918546819785863,
-        "y": 7.016817744977856
+        "x": 7.334765154628689,
+        "y": 5.711683194706088
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "N1"
+      "linkedName": "N5"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Deploy and Run Intake",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": []
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 5.5,
     "maxAcceleration": 5.5,

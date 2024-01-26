@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 2,
+      "y": 7.0
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp Auto Path 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Amp Auto Path 2"
+            "pathName": "Drive 3 Meter"
           }
         }
       ]
