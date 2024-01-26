@@ -1,0 +1,60 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.1657665762524814,
+        "y": 6.780590864639485
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.4118795637022505,
+        "y": 6.781104446728343
+      },
+      "isLocked": false,
+      "linkedName": "Start Amp Side"
+    },
+    {
+      "anchor": {
+        "x": 2.2620583314425984,
+        "y": 6.992986515710942
+      },
+      "prevControl": {
+        "x": 1.7918546819785863,
+        "y": 7.016817744977856
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "N1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Deploy and Run Intake",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

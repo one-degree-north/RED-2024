@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.24,
+        "y": 3.820777891989812
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.641656743853129,
+        "y": 3.9365607272881213
+      },
+      "isLocked": false,
+      "linkedName": "Start Near Player Side"
+    },
+    {
+      "anchor": {
+        "x": 2.2311705678822236,
+        "y": 4.085327873057367
+      },
+      "prevControl": {
+        "x": 1.9774136975212608,
+        "y": 4.086799956115827
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "N3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

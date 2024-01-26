@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.1657665762524814,
+        "y": 6.780590864639485
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7838169136263042,
+        "y": 6.866071893168091
+      },
+      "isLocked": false,
+      "linkedName": "Start Amp Side"
+    },
+    {
+      "anchor": {
+        "x": 2.2311705678822236,
+        "y": 4.085327873057367
+      },
+      "prevControl": {
+        "x": 1.4942670372898619,
+        "y": 4.0893414219192445
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "N3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.5,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

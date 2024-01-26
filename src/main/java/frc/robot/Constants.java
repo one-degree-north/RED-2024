@@ -23,7 +23,7 @@ public final class Constants {
         public static final double rateLimitTheta = 15*Math.PI;
 
         // TODO: Tune PID
-        public static final double headingkP = 0;
+        public static final double headingkP = 0.05;
         public static final double headingkI = 0;
         public static final double headingkD = 0;
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
@@ -32,9 +32,9 @@ public final class Constants {
 
     public static final class PathGenerationConstants {
         // This is always from the perspective of the driver (left and right flip depending on alliance)
-        public static final Pose2d leftSpeakerScoringPose = new Pose2d(2.83, 7.03, new Rotation2d(0));
-        public static final Pose2d middleSpeakerScoringPose = new Pose2d(2.89, 5.57, new Rotation2d(0));
-        public static final Pose2d rightSpeakerScoringPose = new Pose2d(2.91, 4.15, new Rotation2d(0));
+        public static final Pose2d leftSpeakerScoringPose = new Pose2d(3.78, 7.01, new Rotation2d(0));
+        public static final Pose2d middleSpeakerScoringPose = new Pose2d(3.91, 5.64, new Rotation2d(0));
+        public static final Pose2d rightSpeakerScoringPose = new Pose2d(2.1, 4.23, new Rotation2d(0));
         public static final Pose2d ampScoringPose = new Pose2d();
 
 

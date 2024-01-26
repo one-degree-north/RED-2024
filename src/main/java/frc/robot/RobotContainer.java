@@ -55,6 +55,7 @@ public class RobotContainer {
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+    // TODO: implement LED indicators for auto starting pose
     private final Supplier<Pose2d> autoStartingPoseSupplier = 
         () -> {
             if (autoChooser.getSelected() != null)

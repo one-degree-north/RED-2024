@@ -70,10 +70,12 @@ public class AutoScorePathfind extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // Make this return false if it should "infinitely pathfind"
     return m_selectedCommand.isFinished();
   }
 
   public static enum AutoScorePosition {
+    // TODO: add amp scoring pose, add actual scoring poses
     LEFT, CENTER, RIGHT;
     private Pose2d getPose() {
       var alliance = DriverStation.getAlliance();
