@@ -10,12 +10,12 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -45,10 +45,10 @@ public class Elevatarm extends SubsystemBase {
   private int count = 0;
 
   //TODO: create setpoints for arm motion magic
-  private MotionMagicVoltage armMotionMagic = new MotionMagicVoltage(0);
+  private MotionMagicVoltage armMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut armDutyCycle = new DutyCycleOut(0);
   
-  private MotionMagicVoltage elevatorMotionMagic = new MotionMagicVoltage(0);
+  private MotionMagicVoltage elevatorMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut elevatorDutyCycle = new DutyCycleOut(0);
   
   public Elevatarm() {
@@ -181,13 +181,18 @@ public class Elevatarm extends SubsystemBase {
   }
 
   private void setControlElevator(ControlRequest req) {
-    if (!isLimitSwitchTripped() && isElevatorEncoderReset) {
+    if (isElevatorEncoderReset) {
       m_elevator.setControl(req);
     }
   }
 
   public void setArmPosition(double position) {
-    setControlArm(armMotionMagic.withPosition(position));
+    setControlArm(armMotionMagic.withPosition(
+      MathUtil.clamp(
+        position, 
+        ElevatarmConstants.armReverseSoftLimit,
+        ElevatarmConstants.armForwardSoftLimit))
+    );
   }
 
   public void setArmPercent(double percent) {
@@ -195,16 +200,22 @@ public class Elevatarm extends SubsystemBase {
   }
 
   public void setElevatorPosition(double position) {
-    setControlElevator(elevatorMotionMagic.withPosition(position));
+    setControlElevator(elevatorMotionMagic.withPosition(
+        MathUtil.clamp(
+        position, 
+        ElevatarmConstants.elevatorReverseSoftLimit,
+        ElevatarmConstants.elevatorForwardSoftLimit)
+    )
+      .withLimitForwardMotion(m_elevatorLimitSwitchMax.get())
+      .withLimitReverseMotion(m_elevatorLimitSwitchMin.get())
+    );
   }
 
   public void setElevatorPercent(double percent) {
-    setControlElevator(elevatorDutyCycle.withOutput(percent));
-  }
-
-  public boolean isLimitSwitchTripped() {
-    return (m_elevatorLimitSwitchMin.get() && m_elevator.getVelocity().getValue() < 0) || 
-    (m_elevatorLimitSwitchMax.get() && m_elevator.getVelocity().getValue() > 0);
+    setControlElevator(elevatorDutyCycle.withOutput(percent)
+      .withLimitForwardMotion(m_elevatorLimitSwitchMax.get())
+      .withLimitReverseMotion(m_elevatorLimitSwitchMin.get())
+    );
   }
 
   public boolean isArmEncoderReset() {
@@ -216,6 +227,12 @@ public class Elevatarm extends SubsystemBase {
   }
 
   public void recalculateFeedForward() {
+    // This assumes that arm feedforward is tuned with elevator at maximum extension
+    armPIDConfigs.kG = 
+      ElevatarmConstants.armkG*(ElevatarmConstants.mindistanceFromPivot+getElevatorMeters())
+        /(ElevatarmConstants.maxDistanceFromPivot);
+    elevatorPIDConfigs.kG = 
+      ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
     m_armLeader.getConfigurator().apply(armPIDConfigs);
     m_elevator.getConfigurator().apply(elevatorPIDConfigs);
   }
@@ -241,21 +258,7 @@ public class Elevatarm extends SubsystemBase {
       count %=5;
       count += 1;
     }
-    if (isLimitSwitchTripped()) {
-      m_elevator.setControl(new NeutralOut());
-    }
 
-    // Recalculated FF values based on each others mechanism
-
-    // Torque scales with radius
-    armPIDConfigs.kG = 
-      ElevatarmConstants.armkG*(ElevatarmConstants.mindistanceFromPivot+getElevatorMeters())
-        /(ElevatarmConstants.maxDistanceFromPivot);
-    
-      elevatorPIDConfigs.kG = 
-        ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
-    
-    
-    // This method will be called once per scheduler run
+    recalculateFeedForward();
   }
 }

@@ -24,6 +24,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,38 +33,38 @@ import frc.robot.Constants.ClimbConstants;
 
 public class Climb extends SubsystemBase {
   /** Creates a new Climb. */
-  private TalonFX m_climb;
-  private TalonFX m_climb2;
+  private TalonFX m_climbLeft;
+  private TalonFX m_climbRight;
 
   private TalonFXConfiguration climbConfigs;
 
   private MotionMagicVoltage mmReq;
   private VelocityVoltage velReq;
 
-  private DutyCycleEncoder climbEncoder;
-  private DutyCycleEncoder climb2Encoder;
+  private DutyCycleEncoder climbLeftEncoder;
+  private DutyCycleEncoder climbRightEncoder;
 
-  private Boolean encodersAreReset = false;
-  private double climbOffset;
-  private double climb2Offset;
-  private double count;
+  private boolean isEncodersReset = false;
+  private double climbLeftOffset;
+  private double climbRightOffset;
+  private double count = 0;
   
   public Climb() {
-    m_climb = new TalonFX(ClimbConstants.leftClimbID);
-    m_climb2 = new TalonFX(ClimbConstants.rightClimbID);
+    m_climbLeft = new TalonFX(ClimbConstants.leftClimbID);
+    m_climbRight = new TalonFX(ClimbConstants.rightClimbID);
 
     climbConfigs = new TalonFXConfiguration();
 
-    mmReq = new MotionMagicVoltage(0);
-    velReq = new VelocityVoltage(0);
+    mmReq = new MotionMagicVoltage(0).withSlot(0);
+    velReq = new VelocityVoltage(0).withSlot(1);
 
-    climbEncoder = new DutyCycleEncoder(ClimbConstants.leftEncoderPort);
-    climb2Encoder = new DutyCycleEncoder(ClimbConstants.rightEncoderPort);
+    climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftEncoderPort);
+    climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightEncoderPort);
 
-    climbOffset = ClimbConstants.leftAbsoluteEncoderOffset;
-    climb2Offset = ClimbConstants.rightAbsoluteEncoderOffset;
+    climbLeftOffset = ClimbConstants.leftAbsoluteEncoderOffset;
+    climbRightOffset = ClimbConstants.rightAbsoluteEncoderOffset;
 
-
+    configMotors();
   }
 
   public void configMotors() {
@@ -111,78 +113,85 @@ public class Climb extends SubsystemBase {
     climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.encoderRotationsPerDistance;
 
     //Add Configs
-    m_climb.getConfigurator().apply(climbConfigs);
-    m_climb2.getConfigurator().apply(climbConfigs);
+    m_climbLeft.getConfigurator().apply(climbConfigs);
+    m_climbRight.getConfigurator().apply(climbConfigs);
 
     // Make climb2 opposite of climb
-    m_climb2.setInverted(climbConfigs.MotorOutput.Inverted == InvertedValue.CounterClockwise_Positive);
+    m_climbRight.setInverted(climbConfigs.MotorOutput.Inverted == InvertedValue.CounterClockwise_Positive);
 
     resetMotorsToAbsolute();
   }
 
   //Methods
   public void resetMotorsToAbsolute(){
-    double offsetClimbPos = getLeftAbsoluteEncoderDistance() - climbOffset;
-    double offsetClimb2Pos = getRightAbsoluteEncoderDistance() - climb2Offset;
-    if (climbEncoder.isConnected() && climb2Encoder.isConnected()) { 
+    double offsetClimbPos = getLeftAbsoluteEncoderDistance() - climbLeftOffset;
+    double offsetClimb2Pos = getRightAbsoluteEncoderDistance() - climbRightOffset;
+    if (climbLeftEncoder.isConnected() && climbRightEncoder.isConnected()) { 
       // only successful if no error
-      boolean c1 = m_climb.setPosition(offsetClimbPos).isOK();
-      boolean c2 = m_climb2.setPosition(offsetClimb2Pos).isOK();
-      encodersAreReset = c1 && c2;
+      boolean c1 = m_climbLeft.setPosition(offsetClimbPos).isOK();
+      boolean c2 = m_climbRight.setPosition(offsetClimb2Pos).isOK();
+      isEncodersReset = c1 && c2;
     }
     
   }
 
   public void setControl(TalonFX motor, ControlRequest req) {
-    if (encodersAreReset) {
+    if (isEncodersReset) {
       motor.setControl(req);
     }
   }
 
   public void setVelocityLeft(double velocity) {
-    velReq.Velocity = velocity;
-    setControl(m_climb, velReq.withSlot(1));
+    setControl(m_climbLeft, 
+    velReq.withVelocity(velocity));
   }
 
   public void setVelocityRight(double velocity) {
-    velReq.Velocity = velocity;
-    setControl(m_climb2, velReq.withSlot(1));
+    setControl(m_climbRight, 
+    velReq.withVelocity(velocity));
   }
 
   public double getVelocityLeft() {
-    return m_climb.getVelocity().getValue();
+    return m_climbLeft.getVelocity().getValue();
   }
 
   public double getVelocityRight() {
-    return m_climb2.getVelocity().getValue();
+    return m_climbRight.getVelocity().getValue();
   }
 
   public void setPositionLeft(double position) {
-    mmReq.Position = position;
-    setControl(m_climb, mmReq.withSlot(0));
+    setControl(m_climbLeft, 
+    mmReq.withPosition(
+      MathUtil.clamp(position, 
+      ClimbConstants.reverseSoftLimit, 
+      ClimbConstants.forwardSoftLimit)));
   }
 
   public void setPositionRight(double position) {
-    mmReq.Position = position;
-    setControl(m_climb2, mmReq.withSlot(0));
+    setControl(m_climbRight, 
+    mmReq.withPosition(
+      MathUtil.clamp(position, 
+      ClimbConstants.reverseSoftLimit, 
+      ClimbConstants.forwardSoftLimit)
+    ));
   }
 
-  public double getClimbLeftPos(){
-    return m_climb.getPosition().getValue();
+  public double getPositionLeft(){
+    return m_climbLeft.getPosition().getValue();
   }
 
-  public double getClimbRightPos(){
-    return m_climb2.getPosition().getValue();
+  public double getPositionRight(){
+    return m_climbRight.getPosition().getValue();
   }
 
   public double getLeftAbsoluteEncoderDistance() {
-    return climbEncoder.getAbsolutePosition()
+    return climbLeftEncoder.getAbsolutePosition()
     /ClimbConstants.absoluteSensorToMotorRatio
     /ClimbConstants.encoderRotationsPerDistance;
   }
 
   public double getRightAbsoluteEncoderDistance() {
-    return climb2Encoder.getAbsolutePosition()
+    return climbRightEncoder.getAbsolutePosition()
     /ClimbConstants.absoluteSensorToMotorRatio
     /ClimbConstants.encoderRotationsPerDistance;
   }
@@ -190,9 +199,9 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     // too lazy to fix aaden weird code (it works so whatever)
-    if (!encodersAreReset && count <= 0) {
+    if (!isEncodersReset && count <= 0) {
       resetMotorsToAbsolute();
-    } else if (!encodersAreReset) {
+    } else if (!isEncodersReset) {
       count += 1;
       count %= 5;
     }

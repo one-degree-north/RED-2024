@@ -17,6 +17,8 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    // INVERTS ARE IN SUBSYSTEMS THEMSELVES - NOT HERE
+    
     public static final class TeleopConstants {
         public static final double stickDeadband = 0.1;
         public static final double rateLimitXY = 15;
@@ -139,6 +141,23 @@ public final class Constants {
         public static final double reverseSoftLimit = 0.0;
 
 
+    }
+
+    public static final class ShintakeConstants {
+        public static final int leftShooterID = 0;
+        public static final int rightShooterID = 0;
+
+        public static final int intakeID = 0;
+        public static final int irSensorPort = 0;
+
+        public static final double shooterkP = 0;
+        public static final double shooterkI = 0;
+        public static final double shooterkD = 0;
+        public static final double shooterkS = 0;
+        public static final double shooterkV = 0;
+        public static final double shooterkA = 0;
+
+        public static final double flywheelGearing = 0;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
