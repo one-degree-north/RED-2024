@@ -19,6 +19,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatarmConstants;
 
@@ -44,7 +45,6 @@ public class Elevatarm extends SubsystemBase {
   private boolean isElevatorEncoderReset = false;
   private int count = 0;
 
-  //TODO: create setpoints for arm motion magic
   private MotionMagicVoltage armMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut armDutyCycle = new DutyCycleOut(0);
   
@@ -260,5 +260,11 @@ public class Elevatarm extends SubsystemBase {
     }
 
     recalculateFeedForward();
+
+    SmartDashboard.putNumber("Arm Pos (rot)", getArmRotation2d().getRotations());
+    SmartDashboard.putNumber("Arm Through Bore Pos (rot)", getArmAbsoluteEncoderAngle());
+    
+    SmartDashboard.putNumber("Elevator Pos (m)", getElevatorMeters());
+    SmartDashboard.putNumber("Elevator Through Bore Pos (m)", getElevatorAbsoluteEncoderDistance());
   }
 }

@@ -26,8 +26,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
@@ -35,6 +39,11 @@ public class Climb extends SubsystemBase {
   /** Creates a new Climb. */
   private TalonFX m_climbLeft;
   private TalonFX m_climbRight;
+
+  private DoubleSolenoid m_leftPneumaticBreak;
+  private DoubleSolenoid m_rightPneumaticBreak;
+
+  private Compressor m_compressor;
 
   private TalonFXConfiguration climbConfigs;
 
@@ -53,6 +62,11 @@ public class Climb extends SubsystemBase {
     m_climbLeft = new TalonFX(ClimbConstants.leftClimbID);
     m_climbRight = new TalonFX(ClimbConstants.rightClimbID);
 
+    m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.leftPneumaticBreakPort1, ClimbConstants.leftPneumaticBreakPort2);
+    m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);
+
+    m_compressor = new Compressor(PneumaticsModuleType.REVPH);
+
     climbConfigs = new TalonFXConfiguration();
 
     mmReq = new MotionMagicVoltage(0).withSlot(0);
@@ -65,6 +79,15 @@ public class Climb extends SubsystemBase {
     climbRightOffset = ClimbConstants.rightAbsoluteEncoderOffset;
 
     configMotors();
+    enableCompressor();
+  }
+
+  public void enableCompressor() {
+    m_compressor.enableAnalog(70, 120);
+  }
+
+  public void disableCompressor() {
+    m_compressor.disable();
   }
 
   public void configMotors() {
@@ -196,6 +219,16 @@ public class Climb extends SubsystemBase {
     /ClimbConstants.encoderRotationsPerDistance;
   }
 
+  public void enablePneumaticBreak() {
+    m_leftPneumaticBreak.set(Value.kForward);
+    m_rightPneumaticBreak.set(Value.kForward);
+  }
+
+  public void disablePneumaticBreak() {
+    m_leftPneumaticBreak.set(Value.kReverse);
+    m_rightPneumaticBreak.set(Value.kReverse);
+  }
+
   @Override
   public void periodic() {
     // too lazy to fix aaden weird code (it works so whatever)
@@ -205,6 +238,14 @@ public class Climb extends SubsystemBase {
       count += 1;
       count %= 5;
     }
+
+    SmartDashboard.putNumber("Left Climb Pos (m)", getPositionLeft());
+    SmartDashboard.putNumber("Right Climb Pos (m)", getPositionRight());
+
+    SmartDashboard.putNumber("Left Through Bore Pos (m)", getLeftAbsoluteEncoderDistance());
+    SmartDashboard.putNumber("Right Through Bore Pos (m)", getRightAbsoluteEncoderDistance());
+
+    SmartDashboard.putNumber("Pressure (PSI)", m_compressor.getPressure());
   }
   
 }

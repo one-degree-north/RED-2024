@@ -18,7 +18,7 @@ import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
     // INVERTS ARE IN SUBSYSTEMS THEMSELVES - NOT HERE
-    
+
     public static final class TeleopConstants {
         public static final double stickDeadband = 0.1;
         public static final double rateLimitXY = 15;
@@ -110,6 +110,12 @@ public final class Constants {
         
         public static final int leftEncoderPort = 0;
         public static final int rightEncoderPort = 0;
+
+        public static final int leftPneumaticBreakPort1 = 0;
+        public static final int leftPneumaticBreakPort2 = 0;
+
+        public static final int rightPneumaticBreakPort1 = 0;
+        public static final int rightPneumaticBreakPort2 = 0;
 
         // in meters
         public static final double leftAbsoluteEncoderOffset = 0;
