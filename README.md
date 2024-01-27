@@ -1,7 +1,7 @@
 
 # Red Bot Crescendo Code - One Degree North
 
-This is the repo containing all code for Team 4817's Red Bot for the 2024 FRC season.
+This is the repo containing all code for Team 4817's Red Bot (Southern Cross Regional) for the 2024 FRC season.
 
 
 ## Contact
