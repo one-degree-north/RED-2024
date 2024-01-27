@@ -15,6 +15,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
@@ -26,10 +27,12 @@ public class PhotonRunnable implements Runnable {
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
   private final Field2d visionPose;
+  private final String cameraName;
   private Pose2d visionPoseToUpdate = null;
 
   public PhotonRunnable(String cameraName, Transform3d ROBOT_TO_APRILTAG_CAMERA) {
     this.photonCamera = new PhotonCamera(cameraName); 
+    this.cameraName = cameraName;
     PhotonPoseEstimator photonPoseEstimator = null;
     var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     // PV estimates will always be blue, they'll get flipped by robot thread
@@ -67,6 +70,7 @@ public class PhotonRunnable implements Runnable {
     
     // Set Field2d vision pose
     visionPose.setRobotPose(visionPoseToUpdate);
+    SmartDashboard.putData("Estimated Position " + cameraName, visionPose);
   }
 
   public boolean isConnected() {
