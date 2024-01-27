@@ -78,12 +78,25 @@ public class TeleopSwerve extends Command {
             correctionEnabled = false;
         }
 
+        // Convert joystick values to speeds
+        translationVal = translationVal*Constants.Swerve.maxSpeed;
+        strafeVal = strafeVal*Constants.Swerve.maxSpeed;
+        rotationVal = rotationVal*Constants.Swerve.maxAngularVelocity;
+
+
         /* Drive */
+        translationVal = slewRateLimiterX.calculate(translationVal);
+        strafeVal = slewRateLimiterY.calculate(strafeVal);
+
+        // Still calculate rotation limited value even if it is not used
+        double rotationLimitedVal = slewRateLimiterR.calculate(rotationVal);
+        rotationVal = correctionEnabled ? rotationVal : rotationLimitedVal;
+
         s_Swerve.drive(
             new Translation2d(
-                slewRateLimiterX.calculate(translationVal*Constants.Swerve.maxSpeed), 
-                slewRateLimiterY.calculate(strafeVal*Constants.Swerve.maxSpeed)), 
-            slewRateLimiterR.calculate(rotationVal*Constants.Swerve.maxAngularVelocity), 
+                translationVal, 
+                strafeVal), 
+            rotationVal, 
             !robotCentricSup.getAsBoolean(), 
             true
         );

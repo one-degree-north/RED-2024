@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -80,6 +81,8 @@ public class Shintake extends SubsystemBase {
     m_intake.restoreFactoryDefaults();
     m_intake.setSmartCurrentLimit(20);
     m_intake.setInverted(false);
+    m_intake.setIdleMode(IdleMode.kBrake);
+    m_intake.enableVoltageCompensation(12);
   }
 
   //Methods
