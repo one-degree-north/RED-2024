@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.VecBuilder;
@@ -51,7 +53,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   
   private PhotonRunnable[] cameras;
   private Notifier[] cameraNotifiers;
-  
 
   // private final PhotonRunnable photonEstimator = new PhotonRunnable("Arducam_OV9281_USB_Camera");
   
@@ -103,7 +104,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
       }
     }
-  
 
     // Reset tagSeenSinceLastDisable when a robot is disabled
     if (tagSeenSinceLastDisable && DriverStation.isEnabled())

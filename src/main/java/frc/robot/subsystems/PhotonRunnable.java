@@ -12,10 +12,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
@@ -26,13 +23,9 @@ public class PhotonRunnable implements Runnable {
   private final PhotonPoseEstimator photonPoseEstimator;
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
-  private final Field2d visionPose;
-  private final String cameraName;
-  private Pose2d visionPoseToUpdate = null;
 
   public PhotonRunnable(String cameraName, Transform3d ROBOT_TO_APRILTAG_CAMERA) {
     this.photonCamera = new PhotonCamera(cameraName); 
-    this.cameraName = cameraName;
     PhotonPoseEstimator photonPoseEstimator = null;
     var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     // PV estimates will always be blue, they'll get flipped by robot thread
@@ -42,7 +35,6 @@ public class PhotonRunnable implements Runnable {
           layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, ROBOT_TO_APRILTAG_CAMERA);
     }
     this.photonPoseEstimator = photonPoseEstimator;
-    this.visionPose = new Field2d();
   }
 
   @Override
@@ -50,7 +42,6 @@ public class PhotonRunnable implements Runnable {
     // Get AprilTag data
     if (photonPoseEstimator != null && photonCamera != null) {
       var photonResults = photonCamera.getLatestResult();
-      visionPoseToUpdate = null;
 
       // Consider targets underneath ambiguity threshold OR if there are multiple tags
       if (photonResults.hasTargets() 
@@ -62,15 +53,10 @@ public class PhotonRunnable implements Runnable {
           if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FIELD_LENGTH_METERS
               && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FIELD_WIDTH_METERS) {
             atomicEstimatedRobotPose.set(estimatedRobotPose);
-            visionPoseToUpdate = estimatedPose.toPose2d();
           }
         });
       }
-    }
-    
-    // Set Field2d vision pose
-    visionPose.setRobotPose(visionPoseToUpdate);
-    SmartDashboard.putData("Estimated Position " + cameraName, visionPose);
+    }  
   }
 
   public boolean isConnected() {

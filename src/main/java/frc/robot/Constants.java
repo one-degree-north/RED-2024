@@ -50,6 +50,11 @@ public final class Constants {
 
     }
 
+    public static final class MechanismSetpointConstants {
+        public static final double elevatorLowToGround = 0;
+        public static final double elevatorHighAboveGround = 0;
+    }
+
     public static final class ElevatarmConstants {
         // Arm IDs
         public static final int armLeaderID = 0;
