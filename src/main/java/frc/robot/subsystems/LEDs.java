@@ -100,28 +100,29 @@ public class LEDs extends VirtualSubsystem {
     if (DriverStation.isDisabled()) {
       
       /* Vision and AutoAlign states use the same LEDs, hence they share logic */
-      if (visionState == SubsystemState.NOTREADY){
-        if (m_swerve.getTagSeenSinceLastDisable()){
-          breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
-          visionState = SubsystemState.READY;
-        }
-        else if (m_swerve.allCamerasEnabled()){
-          breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
-          visionState = SubsystemState.NOTREADY;
-        }
-        else {
-          solid(Section.UNDERGLOW, Color.kWhite);
-          visionState = SubsystemState.NOTREADY;
-        }
+      if (m_swerve.getTagSeenSinceLastDisable()){
+        breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
+        visionState = SubsystemState.READY;
       }
-      else if (visionState == SubsystemState.READY && autoAlignState == SubsystemState.NOTREADY) {
+      else if (m_swerve.allCamerasEnabled()){
+        breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
+        visionState = SubsystemState.NOTREADY;
+      }
+      else {
+        solid(Section.UNDERGLOW, Color.kWhite);
+        visionState = SubsystemState.NOTREADY;
+      }
+      
+      if (visionState == SubsystemState.READY) 
         autoAlign();
-      }
 
       /* Logic underneath here checks if all subsystems are ready */
       boolean allSubsystemsReady = true;
       for (SubsystemState s: subsystems) {
-        if (s == SubsystemState.NOTREADY) allSubsystemsReady = false;
+        if (s == SubsystemState.NOTREADY) {
+          allSubsystemsReady = false;
+          break;
+        }
       }
 
       if (allSubsystemsReady) {
@@ -165,9 +166,13 @@ public class LEDs extends VirtualSubsystem {
       } else if (relativePose.getX() > allowableError) {
         solid(Section.FRONTDRIVE, Color.kRed);
         solid(Section.BACKDRIVE, Color.kBlack);
+        xPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       } else if (relativePose.getX() < -allowableError) {
         solid(Section.FRONTDRIVE, Color.kBlack);
         solid(Section.BACKDRIVE, Color.kRed);
+        xPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       }
 
       if (Math.abs(relativePose.getY()) <= allowableError) {
@@ -177,9 +182,13 @@ public class LEDs extends VirtualSubsystem {
       } else if (relativePose.getY() > allowableError) {
         solid(Section.LEFTDRIVE, Color.kRed);
         solid(Section.RIGHTDRIVE, Color.kBlack);
+        yPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       } else if (relativePose.getY() < -allowableError) {
         solid(Section.LEFTDRIVE, Color.kBlack);
         solid(Section.RIGHTDRIVE, Color.kRed);
+        yPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       }
       if (xPoseAligned && yPoseAligned) {
         if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
@@ -190,8 +199,10 @@ public class LEDs extends VirtualSubsystem {
           autoAlignState = SubsystemState.READY;
         } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
           wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
+          autoAlignState = SubsystemState.NOTREADY;
         } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
           wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
+          autoAlignState = SubsystemState.NOTREADY;
         }
       }
     }
