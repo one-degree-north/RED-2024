@@ -41,6 +41,7 @@ public class LEDs extends VirtualSubsystem {
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
   private SubsystemState autoAlignState = SubsystemState.NOTREADY;
+  private SubsystemState[] subsystems = {visionState, autoAlignState};
   
   /** Creates a new LEDs. */
   public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose) {
@@ -97,7 +98,8 @@ public class LEDs extends VirtualSubsystem {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      // Vision state control
+      
+      /* Vision and AutoAlign states use the same LEDs, hence they share logic */
       if (m_swerve.getTagSeenSinceLastDisable()){
         breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
         visionState = SubsystemState.READY;
@@ -110,11 +112,27 @@ public class LEDs extends VirtualSubsystem {
         solid(Section.UNDERGLOW, Color.kWhite);
         visionState = SubsystemState.NOTREADY;
       }
+      
+      if (visionState == SubsystemState.READY) 
+        autoAlign();
 
+      /* Logic underneath here checks if all subsystems are ready */
+      boolean allSubsystemsReady = true;
+      for (SubsystemState s: subsystems) {
+        if (s == SubsystemState.NOTREADY) {
+          allSubsystemsReady = false;
+          break;
+        }
+      }
+
+      if (allSubsystemsReady) {
+        wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
+      }
 
     }
   
     else if (DriverStation.isEnabled()) {
+      /* Main logic for drivetrain colors when enabled */
       if (DriverStation.isTeleop()) {
         solid(Section.UNDERGLOW, teleopColor);
       } else if (DriverStation.isAutonomous()) {
@@ -136,7 +154,7 @@ public class LEDs extends VirtualSubsystem {
     double allowableError = 0.05;
     if (autoPose.get() != null) {
       Pose2d targetPose = autoPose.get();
-      Pose2d currentPose = m_swerve.getPhotonPose();
+      Pose2d currentPose = m_swerve.getPose();
       boolean xPoseAligned = false;
       boolean yPoseAligned = false;
 
@@ -148,9 +166,13 @@ public class LEDs extends VirtualSubsystem {
       } else if (relativePose.getX() > allowableError) {
         solid(Section.FRONTDRIVE, Color.kRed);
         solid(Section.BACKDRIVE, Color.kBlack);
+        xPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       } else if (relativePose.getX() < -allowableError) {
         solid(Section.FRONTDRIVE, Color.kBlack);
         solid(Section.BACKDRIVE, Color.kRed);
+        xPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       }
 
       if (Math.abs(relativePose.getY()) <= allowableError) {
@@ -160,9 +182,13 @@ public class LEDs extends VirtualSubsystem {
       } else if (relativePose.getY() > allowableError) {
         solid(Section.LEFTDRIVE, Color.kRed);
         solid(Section.RIGHTDRIVE, Color.kBlack);
+        yPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       } else if (relativePose.getY() < -allowableError) {
         solid(Section.LEFTDRIVE, Color.kBlack);
         solid(Section.RIGHTDRIVE, Color.kRed);
+        yPoseAligned = false;
+        autoAlignState = SubsystemState.NOTREADY;
       }
       if (xPoseAligned && yPoseAligned) {
         if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
@@ -173,8 +199,10 @@ public class LEDs extends VirtualSubsystem {
           autoAlignState = SubsystemState.READY;
         } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
           wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
+          autoAlignState = SubsystemState.NOTREADY;
         } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
           wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
+          autoAlignState = SubsystemState.NOTREADY;
         }
       }
     }
@@ -260,7 +288,7 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return length;
         case UNDERGLOW:
-          return 50;
+          return 40;
         case LEFTDRIVE:
           return 10;
         case BACKDRIVE:

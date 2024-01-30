@@ -9,7 +9,6 @@ import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.Optional;
@@ -36,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
-    private SwerveDriveOdometry swerveOdometry;
     private SwerveModule[] mSwerveMods;
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
@@ -50,11 +48,13 @@ public class Swerve extends SubsystemBase {
 
     public Swerve() {
 
+        /* Create NavX2 on MXP port */
         gyro = new AHRS(SerialPort.Port.kMXP);
 
-        // Zero gyro after reset (shouldn't technically be needed)
+        /* Zero gyro */
         zeroGyro();
 
+        /* Create each swerve module */
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
             new SwerveModule(1, Constants.Swerve.Mod1.constants),
@@ -68,19 +68,29 @@ public class Swerve extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
+        /* Create gyro rotation and module position suppliers for PoseEstimatorSubsystem */
         Supplier<Rotation2d> rotSupplier = () -> getYaw();
         Supplier<SwerveModulePosition[]> modSupplier = () -> getModulePositions();
 
+        /* Create PoseEstimatorSubsytem with two cameras */
         PoseEstimator = new PoseEstimatorSubsystem(rotSupplier, modSupplier, 
             new PhotonRunnable("Arducam11", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1), 
             new PhotonRunnable("Arducam12", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2));
 
+        /* Initialize ChassisSpeeds */
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
+        /* Configure AutoBuilder and rotation override for PathPlanner paths */
         configureAutoBuilder();
         PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
     }
 
+    /* Drive the swerve.
+     * @param translation Translation2d containing x and y velocity in m/s
+     * @param rotation rotational velocity in rad/s
+     * @param fieldRelative enable/disable field relative driving
+     * @param isOpenLoop enable/disable open loop driving
+     */
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         this.chassisSpeeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
             translation.getX(), 
@@ -101,7 +111,10 @@ public class Swerve extends SubsystemBase {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
     }
-    
+
+    /* Drive the swerve.
+     * @param output ChassisSpeeds object used to obtain module states
+     */
     public void drive(ChassisSpeeds output) {
         this.chassisSpeeds = output;
 
@@ -114,8 +127,9 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /* Configure holonomic drivetrain in PathPlanner auto builder. */
     public void configureAutoBuilder() {
-        AutoBuilder.configureHolonomic(this::getPhotonPose, this::resetPhotonPose, 
+        AutoBuilder.configureHolonomic(this::getPose, this::resetPose, 
             this::getCurrentChassisSpeeds, this::drive, 
             new HolonomicPathFollowerConfig(
             Constants.Swerve.maxSpeed,
@@ -137,6 +151,9 @@ public class Swerve extends SubsystemBase {
         );
     }
 
+    /* Method used to obtain rotation target override for PPHolonomicDriveController.
+     * @return optional Rotation2d object representing rotation override. Empty if none.
+     */
     public Optional<Rotation2d> getRotationTargetOverride() {
         if (isSpeakerAutoAim) {
             return Optional.of(getShotData().goalHeading());
@@ -145,16 +162,20 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    /* Enable auto aim speaker rotation override for PathPlanner paths. */
     public void enableSpeakerAutoAim() {
         isSpeakerAutoAim = true;
     }
 
+    /* Disable auto aim speaker rotation override for PathPlanner paths. */
     public void disableSpeakerAutoAim() {
         isSpeakerAutoAim = false;
     }
 
 
-    /* Used by SwerveControllerCommand in Auto */
+    /* Method used by SwerveControllerCommand in dirtbikerx template code. 
+     * @param desiredStates SwerveModuleState array to set each module to
+    */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
@@ -164,40 +185,36 @@ public class Swerve extends SubsystemBase {
 
     }
 
+    /* @return whether or not a valid AprilTag has been seen since last robot disable. */
     public boolean getTagSeenSinceLastDisable() {
         return PoseEstimator.getTagSeenSinceLastDisable();
     }
 
+    /* @return whether or not all Photonvision cameras are conneted to NT */
     public boolean allCamerasEnabled() {
         return PoseEstimator.allCamerasEnabled();
     }
 
+    /* @return translational speed m/s (scalar) */
     public double getTranslationalSpeed() {
         return Math.hypot(getCurrentChassisSpeeds().vxMetersPerSecond, 
         getCurrentChassisSpeeds().vyMetersPerSecond);
     }
 
+    /* @return rotational speed rad/s (scalar) */
     public double getRotationalSpeed() {
         return Math.abs(getCurrentChassisSpeeds().omegaRadiansPerSecond);
     }
 
-    public Rotation2d getHeading(Pose2d initial, Pose2d end) {
-        double distanceX = end.getX()-initial.getX();
-        double distanceY = end.getY()-initial.getY();
-        return Rotation2d.fromRadians(
-            Math.atan2(distanceY, distanceX));
-    }
-
-
-    // only testing on this generateonthefly method
-    public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance, boolean willFlipPose) {
-        var alliance = DriverStation.getAlliance();
-        Pose2d targetPose;
-        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-            targetPose = (!willFlipPose ? pose : flipPose(pose));
-        } else {
-            targetPose = pose;
-        }
+    /* Generate a pathfinding command using PP AutoBuilder. 
+     * Pose is automatically flipped according to alliance.
+     * @param pose pose to pathfind
+     * @param goalEndVelocity velocity in m/s at the end of the path
+     * @param rotationDelayDistance how many seconds to wait before rotating
+     * @return pathfinding command
+     */
+    public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance) {
+        Pose2d targetPose = flipPose(pose);
 
         PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
@@ -205,43 +222,52 @@ public class Swerve extends SubsystemBase {
         return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
     }
 
+    /* Flip pose according to alliance detected on Driverstation.
+     * @param poseToFlip pose that may or may not be flipped
+     * @return flipped pose if on red alliance, origianl pose if on blue alliance
+     */
     public Pose2d flipPose(Pose2d poseToFlip) {
-        return new Pose2d(new Translation2d(VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), poseToFlip.getY()), poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            return new Pose2d(new Translation2d(
+                VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), 
+                poseToFlip.getY()), 
+                poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
+        }
+        return poseToFlip;
     }
 
-    public Rotation2d flipRotation(Rotation2d rotationToFlip) {
-        return rotationToFlip.rotateBy(Rotation2d.fromRotations(0.5));
-    }
-
-    public Pose2d getOdometryPose() {
-        return swerveOdometry.getPoseMeters();
-    }
-    
-    public void resetOdometry(Pose2d pose) {
-        swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
-    }
-
-    public Pose2d getPhotonPose() {
+    /* Gets robot pose (influenced by vision data). 
+     * @return estimated pose
+    */
+    public Pose2d getPose() {
         return PoseEstimator.getCurrentPose(); 
     }
 
-    public void resetPhotonPose(Pose2d pose) {
+    /* Resets robot pose.
+     * @param pose to set robot to
+     */
+    public void resetPose(Pose2d pose) {
         PoseEstimator.setCurrentPose(pose);
     }
 
+    /* Obtains ShotData for speaker.
+     * @return auto aim shot data based on alliance-based speaker pose and current field relative pose/velocity
+     */
     public ShotData getShotData() {
         return ShotCalculator.calculate(
           getAllianceSpeakerPos(),
-          getPhotonPose().getTranslation(),
+          getPose().getTranslation(),
           // Obtain field relative chassis speeds
           new Translation2d(
-            getCurrentChassisSpeeds().vxMetersPerSecond * getPhotonPose().getRotation().getCos()
-            - getCurrentChassisSpeeds().vyMetersPerSecond * getPhotonPose().getRotation().getSin(),
-            getCurrentChassisSpeeds().vyMetersPerSecond * getPhotonPose().getRotation().getCos()
-            + getCurrentChassisSpeeds().vxMetersPerSecond * getPhotonPose().getRotation().getSin()
+            getCurrentChassisSpeeds().vxMetersPerSecond * getPose().getRotation().getCos()
+            - getCurrentChassisSpeeds().vyMetersPerSecond * getPose().getRotation().getSin(),
+            getCurrentChassisSpeeds().vyMetersPerSecond * getPose().getRotation().getCos()
+            + getCurrentChassisSpeeds().vxMetersPerSecond * getPose().getRotation().getSin()
         ));
     }
 
+    /* @return SwerveModuleState array for each module */
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -250,6 +276,7 @@ public class Swerve extends SubsystemBase {
         return states;
     }
 
+    /* @return SwerveModulePosition array for each module */
     public SwerveModulePosition[] getModulePositions(){
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
         for(SwerveModule mod : mSwerveMods){
@@ -258,39 +285,40 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
+    /* @return current ChassisSpeeds */
     public ChassisSpeeds getCurrentChassisSpeeds() {
         return this.chassisSpeeds;
     }
 
-    //TODO: make sure everything with gyro works as intended
+    /* Zeros gyro. */
     public void zeroGyro(){
         gyro.zeroYaw();
     }
 
+    /* @return continuous Rotation2d object representing gyro yaw */
     public Rotation2d getYaw() {
         return gyro.getRotation2d();
     }
 
+    /* @return field relative left camera Pose3d */
     public Pose3d getLeftCameraFieldPosition() {
         Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
         return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1);
     }
 
+    /* @return field relative right camera Pose3d */
     public Pose3d getRightCameraFieldPosition() {
         Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
         return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2);
     }
 
+    /* @return alliance-based speaker position (Translation2d) */
     public Translation2d getAllianceSpeakerPos() {
-        var alliance = DriverStation.getAlliance();
-
-        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-            return flipPose(new Pose2d(PathGenerationConstants.speakerPosition, new Rotation2d()))
+        return flipPose(new Pose2d(PathGenerationConstants.speakerPosition, new Rotation2d()))
             .getTranslation();
-        }
-        return PathGenerationConstants.speakerPosition;
     }
 
+    /* Resets modules to absolute encoder forwards position. */
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -300,8 +328,8 @@ public class Swerve extends SubsystemBase {
     @Override
     public void periodic(){
 
-        SmartDashboard.putString("Pose", "(" + getPhotonPose().getX()
-        + ", " + getPhotonPose().getY() + "), " + getPhotonPose().getRotation().getDegrees());
+        SmartDashboard.putString("Pose", "(" + getPose().getX()
+        + ", " + getPose().getY() + "), " + getPose().getRotation().getDegrees());
 
         SmartDashboard.putNumber("Gyro Rotation", getYaw().getDegrees());
 
@@ -313,7 +341,7 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
         SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
-        SmartDashboard.putNumber("Distance to Speaker (m)", getPhotonPose().getTranslation().getDistance(
+        SmartDashboard.putNumber("Distance to Speaker (m)", getPose().getTranslation().getDistance(
             getAllianceSpeakerPos()));
 
         cameraFieldPoses.set(new Pose3d[] {getLeftCameraFieldPosition(), getRightCameraFieldPosition()});
