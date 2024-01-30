@@ -41,6 +41,7 @@ public class LEDs extends VirtualSubsystem {
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
   private SubsystemState autoAlignState = SubsystemState.NOTREADY;
+  private SubsystemState[] subsystems = {visionState, autoAlignState};
   
   /** Creates a new LEDs. */
   public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose) {
@@ -97,24 +98,40 @@ public class LEDs extends VirtualSubsystem {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      // Vision state control
-      if (m_swerve.getTagSeenSinceLastDisable()){
-        breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
-        visionState = SubsystemState.READY;
+      
+      /* Vision and AutoAlign states use the same LEDs, hence they share logic */
+      if (visionState == SubsystemState.NOTREADY){
+        if (m_swerve.getTagSeenSinceLastDisable()){
+          breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
+          visionState = SubsystemState.READY;
+        }
+        else if (m_swerve.allCamerasEnabled()){
+          breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
+          visionState = SubsystemState.NOTREADY;
+        }
+        else {
+          solid(Section.UNDERGLOW, Color.kWhite);
+          visionState = SubsystemState.NOTREADY;
+        }
       }
-      else if (m_swerve.allCamerasEnabled()){
-        breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
-        visionState = SubsystemState.NOTREADY;
-      }
-      else {
-        solid(Section.UNDERGLOW, Color.kWhite);
-        visionState = SubsystemState.NOTREADY;
+      else if (visionState == SubsystemState.READY && autoAlignState == SubsystemState.NOTREADY) {
+        autoAlign();
       }
 
+      /* Logic underneath here checks if all subsystems are ready */
+      boolean allSubsystemsReady = true;
+      for (SubsystemState s: subsystems) {
+        if (s == SubsystemState.NOTREADY) allSubsystemsReady = false;
+      }
+
+      if (allSubsystemsReady) {
+        wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
+      }
 
     }
   
     else if (DriverStation.isEnabled()) {
+      /* Main logic for drivetrain colors when enabled */
       if (DriverStation.isTeleop()) {
         solid(Section.UNDERGLOW, teleopColor);
       } else if (DriverStation.isAutonomous()) {
@@ -260,7 +277,7 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return length;
         case UNDERGLOW:
-          return 50;
+          return 40;
         case LEFTDRIVE:
           return 10;
         case BACKDRIVE:
