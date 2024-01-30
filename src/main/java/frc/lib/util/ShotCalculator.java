@@ -18,7 +18,8 @@ public class ShotCalculator {
   public record ShotData(
       double effectiveRobotToSpeakerDist,
       double radialFeedforward, // ff value due to radial velocity of robot to speaker
-      Rotation2d goalHeading) {} // heading of robot to match tangential velocity
+      Rotation2d goalHeading,
+      double clampedArmAngle) {} // heading of robot to match tangential velocity
 
   /** In theory we will aim at different locations inside speaker */
   public static ShotData calculate(
@@ -45,18 +46,19 @@ public class ShotCalculator {
     // rotate back into field frame then add take opposite since shooter is on back
     Rotation2d goalHeading =
         new Rotation2d(shotSpeed, tangentialComponent)
-            .rotateBy(speaker.minus(robot).getAngle());
+            .rotateBy(speaker.minus(robot).getAngle()).rotateBy(Rotation2d.fromRadians(Math.PI));
     double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
 
     // This will be replaced with a formula to return arm angle in radians based on distance in meters
     double armAngle = effectiveDist;
 
     // Potentially have this as output
+    // In degrees
     double clampedArmAngle = MathUtil.clamp(armAngle, 
         Units.rotationsToRadians(Constants.ElevatarmConstants.armReverseSoftLimit), 
         Units.rotationsToRadians(Constants.ElevatarmConstants.armForwardSoftLimit));
 
     // Use radial component of velocity for ff value
-    return new ShotData(effectiveDist, radialComponent, goalHeading);
+    return new ShotData(effectiveDist, radialComponent, goalHeading, clampedArmAngle);
   }
 }

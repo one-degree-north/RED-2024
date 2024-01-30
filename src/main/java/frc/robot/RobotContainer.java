@@ -40,6 +40,8 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton goToPos = new JoystickButton(driver, XboxController.Button.kX.value);
+    private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+
     
     private final POVButton setCenterAutoScore = new POVButton(driver, 0);
     private final POVButton setLeftAutoScore = new POVButton(driver, 270);
@@ -112,7 +114,10 @@ public class RobotContainer {
         );
 
 
-
+        autoAim.whileTrue(new AutoAimTeleopSwerve(s_Swerve, 
+                () -> -driver.getRawAxis(translationAxis), 
+                () -> -driver.getRawAxis(strafeAxis), 
+                () -> zeroGyro.getAsBoolean()));
     }
 
     /**

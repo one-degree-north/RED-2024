@@ -25,11 +25,13 @@ public final class Constants {
         public static final double rateLimitTheta = 15*Math.PI;
 
         // TODO: Tune PID
-        public static final double headingkP = 0.02;
+        public static final double headingkP = 0.2;
         public static final double headingkI = 0;
         public static final double headingkD = 0;
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
+
+        public static final double autoAimHeadingkP = 3;
     }
 
     public static final class PathGenerationConstants {
@@ -41,7 +43,7 @@ public final class Constants {
 
 
         public static final Translation2d speakerPosition = 
-            new Translation2d(Units.inchesToMeters(-1.5), Units.inchesToMeters(218.42));
+            new Translation2d(Units.inchesToMeters(0), Units.inchesToMeters(218.42));
 
         // This is always from the perspective of the driver (left and right flip depending on alliance)
         public static final Pose2d leftSourceIntakingPose = new Pose2d();
