@@ -235,9 +235,11 @@ public class Swerve extends SubsystemBase {
           getPhotonPose().getTranslation(),
           // Obtain field relative chassis speeds
           new Translation2d(
-            getCurrentChassisSpeeds().vxMetersPerSecond,
-            getCurrentChassisSpeeds().vyMetersPerSecond
-          ).rotateBy(getPhotonPose().getRotation().unaryMinus()));
+            getCurrentChassisSpeeds().vxMetersPerSecond * getPhotonPose().getRotation().getCos()
+            - getCurrentChassisSpeeds().vyMetersPerSecond * getPhotonPose().getRotation().getSin(),
+            getCurrentChassisSpeeds().vyMetersPerSecond * getPhotonPose().getRotation().getCos()
+            + getCurrentChassisSpeeds().vxMetersPerSecond * getPhotonPose().getRotation().getSin()
+        ));
     }
 
     public SwerveModuleState[] getModuleStates(){

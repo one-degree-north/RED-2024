@@ -53,6 +53,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   
   private PhotonRunnable[] cameras;
   private Notifier[] cameraNotifiers;
+  private Field2d[] cameraField2ds;
 
   // private final PhotonRunnable photonEstimator = new PhotonRunnable("Arducam_OV9281_USB_Camera");
   
@@ -69,6 +70,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     this.cameraNotifiers = new Notifier[cameras.length];
     for (int i = 0; i < cameras.length; i++) {
       this.cameraNotifiers[i] = new Notifier(cameras[i]);
+    }
+
+    // Initialize the array of Field2ds
+    this.cameraField2ds = new Field2d[cameras.length];
+    for (int i = 0; i < cameras.length; i++) {
+      this.cameraField2ds[i] = new Field2d();
+      SmartDashboard.putData("Camera " + i, cameraField2ds[i]);
     }
 
     poseEstimator =  new SwerveDrivePoseEstimator(
@@ -92,8 +100,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     poseEstimator.update(rotationSupplier.get(), modulePositionSupplier.get());
 
     // TODO: Make this create multiple Field2ds for each camera
-    for (PhotonRunnable photonEstimator : cameras) {
-      var visionPose = photonEstimator.grabLatestEstimatedPose();
+    for (int i=0; i < cameras.length; i++) {
+      var visionPose = cameras[i].grabLatestEstimatedPose();
       if (visionPose != null) {
         // New pose from vision
         if (!DriverStation.isEnabled()) tagSeenSinceLastDisable = true;
@@ -102,6 +110,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         
         poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds);
 
+        // Set the pose on the dashboard
+        cameraField2ds[i].setRobotPose(pose2d);
+      } else {
+        // Jank workaround
+        cameraField2ds[i].setRobotPose(new Pose2d(1000, 1000, new Rotation2d()));
       }
     }
 
