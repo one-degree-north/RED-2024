@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.lib.util.ShotCalculator;
 import frc.lib.util.ShotCalculator.ShotData;
 import frc.robot.Constants;
 import frc.robot.Constants.TeleopConstants;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
-public class AutoAimTeleopSwerve extends Command {    
+public class AutoAimSpeakerTeleop extends Command {    
     private Swerve s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
@@ -30,7 +29,7 @@ public class AutoAimTeleopSwerve extends Command {
 
     private ProfiledPIDController headingController;
 
-    public AutoAimTeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
+    public AutoAimSpeakerTeleop(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -63,22 +62,16 @@ public class AutoAimTeleopSwerve extends Command {
         translationVal = translationVal*Constants.Swerve.maxSpeed;
         strafeVal = strafeVal*Constants.Swerve.maxSpeed;
 
-        ShotData targetShot = ShotCalculator.calculate(
-          Constants.PathGenerationConstants.speakerPosition,
-          s_Swerve.getPhotonPose().getTranslation(),
-          new Translation2d(
-            s_Swerve.getCurrentChassisSpeeds().vxMetersPerSecond,
-            s_Swerve.getCurrentChassisSpeeds().vyMetersPerSecond
-          ).rotateBy(s_Swerve.getPhotonPose().getRotation().unaryMinus()));
+        ShotData targetShot = s_Swerve.getShotData();
         
-
-
         /* Drive */
         translationVal = slewRateLimiterX.calculate(translationVal);
         strafeVal = slewRateLimiterY.calculate(strafeVal);
         double rotationVal = headingController.calculate(
+        // Use odometry-obtained rotation as measurement 
           MathUtil.angleModulus(s_Swerve.getPhotonPose().getRotation().getRadians()), 
-          MathUtil.angleModulus(MathUtil.angleModulus(targetShot.goalHeading().getRadians())));
+          MathUtil.angleModulus(targetShot.goalHeading().getRadians())
+        );
 
         s_Swerve.drive(
             new Translation2d(

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
@@ -99,7 +100,9 @@ public class RobotContainer {
         /* Driver Buttons */
 
         // TODO: try removing method in lambda
-        goToPos.whileTrue(new AutoScorePathfind(() ->{return getAutoScorePosition();}, s_Swerve));
+        goToPos.whileTrue(new ParallelRaceGroup(new AutoScorePathfind(this::getAutoScorePosition, s_Swerve)
+            , new AutoAimSpeakerPathplanner(s_Swerve)
+        ));
 
         setCenterAutoScore.onTrue(
             new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.CENTER)
@@ -114,7 +117,7 @@ public class RobotContainer {
         );
 
 
-        autoAim.whileTrue(new AutoAimTeleopSwerve(s_Swerve, 
+        autoAim.whileTrue(new AutoAimSpeakerTeleop(s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> zeroGyro.getAsBoolean()));

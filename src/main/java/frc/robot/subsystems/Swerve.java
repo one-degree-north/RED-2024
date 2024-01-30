@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.lib.util.ShotCalculator;
+import frc.lib.util.ShotCalculator.ShotData;
 import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -10,9 +12,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -37,6 +41,7 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
     private PoseEstimatorSubsystem PoseEstimator;
+    private boolean isSpeakerAutoAim = false;
 
     private StructArrayPublisher<Pose3d> cameraFieldPoses = 
         NetworkTableInstance.getDefault()
@@ -73,6 +78,7 @@ public class Swerve extends SubsystemBase {
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
         configureAutoBuilder();
+        PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -129,6 +135,22 @@ public class Swerve extends SubsystemBase {
                     },
                     this // Reference to this subsystem to set requirements
         );
+    }
+
+    public Optional<Rotation2d> getRotationTargetOverride() {
+        if (isSpeakerAutoAim) {
+            return Optional.of(getShotData().goalHeading());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public void enableSpeakerAutoAim() {
+        isSpeakerAutoAim = true;
+    }
+
+    public void disableSpeakerAutoAim() {
+        isSpeakerAutoAim = false;
     }
 
 
@@ -205,6 +227,17 @@ public class Swerve extends SubsystemBase {
 
     public void resetPhotonPose(Pose2d pose) {
         PoseEstimator.setCurrentPose(pose);
+    }
+
+    public ShotData getShotData() {
+        return ShotCalculator.calculate(
+          Constants.PathGenerationConstants.speakerPosition,
+          getPhotonPose().getTranslation(),
+          // Obtain field relative chassis speeds
+          new Translation2d(
+            getCurrentChassisSpeeds().vxMetersPerSecond,
+            getCurrentChassisSpeeds().vyMetersPerSecond
+          ).rotateBy(getPhotonPose().getRotation().unaryMinus()));
     }
 
     public SwerveModuleState[] getModuleStates(){
