@@ -79,7 +79,7 @@ public class AutoAimSpeakerTeleop extends Command {
                 strafeVal), 
             rotationVal, 
             true, 
-            true
+            false
         );
 
         SmartDashboard.putNumber("Auto Aim Error", headingController.getPositionError());

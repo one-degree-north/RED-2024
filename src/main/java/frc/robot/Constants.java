@@ -31,7 +31,7 @@ public final class Constants {
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
 
-        public static final double autoAimHeadingkP = 3;
+        public static final double autoAimHeadingkP = 1.5;
     }
 
     public static final class PathGenerationConstants {
@@ -255,7 +255,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 5.5; 
         /** Radians per Second */
-        public static final double maxAngularVelocity = 4*Math.PI; 
+        public static final double maxAngularVelocity = 6*Math.PI; 
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
