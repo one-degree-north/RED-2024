@@ -136,7 +136,7 @@ public class LEDs extends VirtualSubsystem {
     double allowableError = 0.05;
     if (autoPose.get() != null) {
       Pose2d targetPose = autoPose.get();
-      Pose2d currentPose = m_swerve.getPhotonPose();
+      Pose2d currentPose = m_swerve.getPose();
       boolean xPoseAligned = false;
       boolean yPoseAligned = false;
 

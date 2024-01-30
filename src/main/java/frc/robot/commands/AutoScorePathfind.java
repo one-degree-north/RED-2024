@@ -36,7 +36,7 @@ public class AutoScorePathfind extends Command {
   public void initialize() {
     m_ended = false;
     // m_lastSelectedPosition = m_selectedPositionSupplier.get();
-    m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0, true);
+    m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0);
     m_selectedCommand.initialize();
   }
 

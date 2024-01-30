@@ -69,7 +69,7 @@ public class AutoAimSpeakerTeleop extends Command {
         strafeVal = slewRateLimiterY.calculate(strafeVal);
         double rotationVal = headingController.calculate(
         // Use odometry-obtained rotation as measurement 
-          MathUtil.angleModulus(s_Swerve.getPhotonPose().getRotation().getRadians()), 
+          MathUtil.angleModulus(s_Swerve.getPose().getRotation().getRadians()), 
           MathUtil.angleModulus(targetShot.goalHeading().getRadians())
         );
 
