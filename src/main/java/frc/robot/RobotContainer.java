@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
@@ -51,9 +50,7 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
-    private final LEDs s_LEDs = new LEDs(9, s_Swerve);
-    
+    private final Swerve s_Swerve = new Swerve();    
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
@@ -65,6 +62,8 @@ public class RobotContainer {
                     getStaringPoseFromAutoFile(autoChooser.getSelected().getName());
             return null;
         };
+
+    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -100,9 +99,9 @@ public class RobotContainer {
         /* Driver Buttons */
 
         // TODO: try removing method in lambda
-        goToPos.whileTrue(new ParallelRaceGroup(new AutoScorePathfind(this::getAutoScorePosition, s_Swerve)
-            , new AutoAimSpeakerPathplanner(s_Swerve)
-        ));
+        goToPos.whileTrue(
+            new AutoScorePathfind(this::getAutoScorePosition, s_Swerve)
+        );
 
         setCenterAutoScore.onTrue(
             new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.CENTER)

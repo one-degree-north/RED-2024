@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,15 +35,19 @@ public class LEDs extends VirtualSubsystem {
   private static final double waveSlowCycleDuration = 3;
   private static final double breathFastDuration = 0.25;
   private static final double breathSlowDuration = 1;
+  
+  private Supplier<Pose2d> autoPose;
 
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
+  private SubsystemState autoAlignState = SubsystemState.NOTREADY;
   
   /** Creates a new LEDs. */
-  public LEDs(int port, Swerve swerve) {
+  public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose) {
     m_led = new AddressableLED(port);
     m_ledBuffer = new AddressableLEDBuffer(length);
     m_swerve = swerve;
+    this.autoPose = autoPose;
     
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
@@ -124,6 +132,56 @@ public class LEDs extends VirtualSubsystem {
     m_led.setData(m_ledBuffer);
   }
 
+  private void autoAlign() {
+    double allowableError = 0.05;
+    if (autoPose.get() != null) {
+      Pose2d targetPose = autoPose.get();
+      Pose2d currentPose = m_swerve.getPhotonPose();
+      boolean xPoseAligned = false;
+      boolean yPoseAligned = false;
+
+      Pose2d relativePose = targetPose.relativeTo(currentPose);
+      if (Math.abs(relativePose.getX()) <= allowableError) {
+        solid(Section.FRONTDRIVE, Color.kBlack);
+        solid(Section.BACKDRIVE, Color.kBlack);
+        xPoseAligned = true;
+      } else if (relativePose.getX() > allowableError) {
+        solid(Section.FRONTDRIVE, Color.kRed);
+        solid(Section.BACKDRIVE, Color.kBlack);
+      } else if (relativePose.getX() < -allowableError) {
+        solid(Section.FRONTDRIVE, Color.kBlack);
+        solid(Section.BACKDRIVE, Color.kRed);
+      }
+
+      if (Math.abs(relativePose.getY()) <= allowableError) {
+        solid(Section.LEFTDRIVE, Color.kBlack);
+        solid(Section.RIGHTDRIVE, Color.kBlack);
+        yPoseAligned = true;
+      } else if (relativePose.getY() > allowableError) {
+        solid(Section.LEFTDRIVE, Color.kRed);
+        solid(Section.RIGHTDRIVE, Color.kBlack);
+      } else if (relativePose.getY() < -allowableError) {
+        solid(Section.LEFTDRIVE, Color.kBlack);
+        solid(Section.RIGHTDRIVE, Color.kRed);
+      }
+      if (xPoseAligned && yPoseAligned) {
+        if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
+          solid(Section.LEFTDRIVE, Color.kBlack);
+          solid(Section.RIGHTDRIVE, Color.kBlack);
+          solid(Section.FRONTDRIVE, Color.kBlack);
+          solid(Section.BACKDRIVE, Color.kBlack);
+          autoAlignState = SubsystemState.READY;
+        } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
+          wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
+        } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
+          wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
+        }
+      }
+    }
+
+
+  }
+
   private void solid(Section section, Color color) {
     if (color != null) {
       for (int i = section.start(); i < section.end(); i++) {
@@ -158,27 +216,6 @@ public class LEDs extends VirtualSubsystem {
     }
   }
 
-  // private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
-  //   double x = (1 - ((Timer.getFPGATimestamp() % duration) / duration)) * 2.0 * Math.PI;
-  //   double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
-  //   for (int i = 0; i < section.end(); i++) {
-  //     x += xDiffPerLed;
-  //     if (i >= section.start()) {
-  //       double ratio = (Math.pow(Math.sin(x), waveExponent) + 1.0) / 2.0;
-  //       if (Double.isNaN(ratio)) {
-  //         ratio = (-Math.pow(Math.sin(x + Math.PI), waveExponent) + 1.0) / 2.0;
-  //       }
-  //       if (Double.isNaN(ratio)) {
-  //         ratio = 0.5;
-  //       }
-  //       double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
-  //       double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
-  //       double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-  //       m_ledBuffer.setLED(i, new Color(red, green, blue));
-  //     }
-  //   }
-  // }
-
   private void breath(Section section, Color c1, Color c2, double duration) {
     breath(section, c1, c2, duration, Timer.getFPGATimestamp());
   }
@@ -197,7 +234,7 @@ public class LEDs extends VirtualSubsystem {
   }
 
   private static enum Section {
-    FULL, UNDERGLOW;
+    FULL, UNDERGLOW, LEFTDRIVE, RIGHTDRIVE, FRONTDRIVE, BACKDRIVE;
 
     private int start() {
       switch (this) {
@@ -205,6 +242,14 @@ public class LEDs extends VirtualSubsystem {
           return 0;
         case UNDERGLOW:
           return 0;
+        case LEFTDRIVE:
+          return 0;
+        case BACKDRIVE:
+          return 10;
+        case RIGHTDRIVE:
+          return 20;
+        case FRONTDRIVE:
+          return 30;
         default:
           return 0;
       }
@@ -216,6 +261,14 @@ public class LEDs extends VirtualSubsystem {
           return length;
         case UNDERGLOW:
           return 50;
+        case LEFTDRIVE:
+          return 10;
+        case BACKDRIVE:
+          return 20;
+        case RIGHTDRIVE:
+          return 30;
+        case FRONTDRIVE:
+          return 40;
         default:
           return length;
       }

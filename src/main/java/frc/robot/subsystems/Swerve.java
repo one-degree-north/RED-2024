@@ -231,7 +231,7 @@ public class Swerve extends SubsystemBase {
 
     public ShotData getShotData() {
         return ShotCalculator.calculate(
-          Constants.PathGenerationConstants.speakerPosition,
+          getAllianceSpeakerPos(),
           getPhotonPose().getTranslation(),
           // Obtain field relative chassis speeds
           new Translation2d(
@@ -281,6 +281,16 @@ public class Swerve extends SubsystemBase {
         return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2);
     }
 
+    public Translation2d getAllianceSpeakerPos() {
+        var alliance = DriverStation.getAlliance();
+
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            return flipPose(new Pose2d(PathGenerationConstants.speakerPosition, new Rotation2d()))
+            .getTranslation();
+        }
+        return PathGenerationConstants.speakerPosition;
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -303,7 +313,8 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
         SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
-        SmartDashboard.putNumber("Distance to Speaker (m)", getPhotonPose().getTranslation().getDistance(PathGenerationConstants.speakerPosition));
+        SmartDashboard.putNumber("Distance to Speaker (m)", getPhotonPose().getTranslation().getDistance(
+            getAllianceSpeakerPos()));
 
         cameraFieldPoses.set(new Pose3d[] {getLeftCameraFieldPosition(), getRightCameraFieldPosition()});
     }
