@@ -3,7 +3,6 @@ package frc.lib.util;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 
 /**
@@ -50,13 +49,14 @@ public class ShotCalculator {
     double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
 
     // This will be replaced with a formula to return arm angle in radians based on distance in meters
+    /* IN ROTATIONS */
     double armAngle = effectiveDist;
 
     // Potentially have this as output
-    // In degrees
+    /* IN ROTATIONS */
     double clampedArmAngle = MathUtil.clamp(armAngle, 
-        Units.rotationsToRadians(Constants.ElevatarmConstants.armReverseSoftLimit), 
-        Units.rotationsToRadians(Constants.ElevatarmConstants.armForwardSoftLimit));
+        Constants.ElevatarmConstants.armReverseSoftLimit, 
+        Constants.ElevatarmConstants.armForwardSoftLimit);
 
     // Use radial component of velocity for ff value
     return new ShotData(effectiveDist, radialComponent, goalHeading, clampedArmAngle);
