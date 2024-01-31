@@ -53,8 +53,30 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
-        public static final double elevatorLowToGround = 0;
-        public static final double elevatorHighAboveGround = 0;
+        // Elevator in meters, arm in rotations
+        public static final double elevatorStowed = 0;
+        public static final double armStowed = 0;
+
+        public static final double elevatorGroundIntake = 0;
+        public static final double armGroundIntake = 0;
+
+        public static final double elevatorSource = 0;
+        public static final double armSource = 0;
+
+        public static final double elevatorAmp = 0;
+        public static final double armAmp = 0;
+
+        public static final double elevatorPreTrap = 0;
+        public static final double armPreTrap = 0;
+        public static final double elevatorTrap = 0;
+        public static final double armTrap = 0;
+
+        public static final double elevatorSpeaker = elevatorGroundIntake;
+
+        // Climb in meters or meters per second
+        public static final double climbHighPosition = 0;
+        public static final double climbLowPosition = 0;
+        public static final double climbStandardPosition = 0;
     }
 
     public static final class ElevatarmConstants {
@@ -107,8 +129,18 @@ public final class Constants {
         public static final double elevatorEncoderRotationsPerDistance = 0.0;
 
         // Distance from pivot to center of fully retracted end effector
-        public static final double mindistanceFromPivot = 0.0;
-        public static final double maxDistanceFromPivot = 0.0;
+        public static final double minRetractionEE = 0.0;
+        public static final double maxExtensionEE = elevatorForwardSoftLimit + minRetractionEE;
+        
+        // In meters
+        public static final Translation2d pivotRelativeToOrigin = 
+            new Translation2d(0, 0);
+
+        // The minimum retraction of the elevator when it is less than the intereference angle cutoff (in meters)
+        public static final double elevatorLowToGroundMinRetraction = 0;
+        // Lowest possible angle that the arm can be at without the end effector (fully retracted) interfering with the drivetrain (in rotations)
+        public static final double elevatorMinRetractionInterferenceAngleCutoff = 0;
+
     }
 
     public static final class ClimbConstants {
@@ -153,7 +185,8 @@ public final class Constants {
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = 0.0;
 
-
+        // Meters per second
+        public static final double climbStandardVelocity = 0.1;
     }
 
     public static final class ShintakeConstants {
@@ -171,6 +204,28 @@ public final class Constants {
         public static final double shooterkA = 0;
 
         public static final double flywheelGearing = 0;
+
+        // Approximate time shooter takes to hit max velocity
+        public static final double shooterRampTimeSeconds = 1;
+
+        //Time taken for note to be shot after beam break is triggered
+        public static final double shooterDelaySeconds = 0.5;
+
+        // Time taken for note to be outtaked after beam break sensor is triggered for amp and trap scoring
+        public static final double ampAndTrapDelaySeconds = 1;
+
+        // Time taken for intaking to stop after beam break sensor is triggered for source intaking
+        public static final double sourceIntakeDelaySeconds = 0.5;
+
+        // For Intake
+        public static final double outtakePercentSpeed = 0.1;
+        // For shooter
+        public static final double outtakeRPM = 300;
+
+        // Regular shooter/intake preset velocities
+        public static final double shooterLeftRPM = 6000;
+        public static final double shooterRightRPM = 4000;
+        public static final double intakePercentSpeed = 0.4;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)

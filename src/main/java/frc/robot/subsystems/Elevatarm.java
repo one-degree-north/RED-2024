@@ -17,8 +17,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatarmConstants;
@@ -50,6 +54,8 @@ public class Elevatarm extends SubsystemBase {
   
   private MotionMagicVoltage elevatorMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut elevatorDutyCycle = new DutyCycleOut(0);
+
+  private MechanismLigament2d m_elevatarmMech;
   
   public Elevatarm() {
     m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID);
@@ -62,6 +68,18 @@ public class Elevatarm extends SubsystemBase {
     m_elevatorLimitSwitchMax = new DigitalInput(ElevatarmConstants.elevatorLimitMaxPort);
 
     configMotors();
+
+    Mechanism2d canvas = new Mechanism2d(3, 3);
+    MechanismRoot2d root = canvas.getRoot("Pivot", 
+      ElevatarmConstants.pivotRelativeToOrigin.getX(), 
+      ElevatarmConstants.pivotRelativeToOrigin.getY());
+    
+    m_elevatarmMech = root.append(
+      new MechanismLigament2d("Elevatarm", 
+        m_elevator.getPosition().getValue() + ElevatarmConstants.minRetractionEE, 
+        Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
+      ));
+    SmartDashboard.putData("Elevatarm", canvas);
   }
 
   private void configMotors() {
@@ -229,8 +247,8 @@ public class Elevatarm extends SubsystemBase {
   public void recalculateFeedForward() {
     // This assumes that arm feedforward is tuned with elevator at maximum extension
     armPIDConfigs.kG = 
-      ElevatarmConstants.armkG*(ElevatarmConstants.mindistanceFromPivot+getElevatorMeters())
-        /(ElevatarmConstants.maxDistanceFromPivot);
+      ElevatarmConstants.armkG*(ElevatarmConstants.minRetractionEE+getElevatorMeters())
+        /(ElevatarmConstants.maxExtensionEE);
     elevatorPIDConfigs.kG = 
       ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
     m_armLeader.getConfigurator().apply(armPIDConfigs);
@@ -258,6 +276,15 @@ public class Elevatarm extends SubsystemBase {
       count %=5;
       count += 1;
     }
+
+    m_elevatarmMech.setLength(
+      m_elevator.getPosition().getValue() 
+      + ElevatarmConstants.minRetractionEE
+    );
+    
+    m_elevatarmMech.setAngle(
+      Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
+    );
 
     recalculateFeedForward();
 
