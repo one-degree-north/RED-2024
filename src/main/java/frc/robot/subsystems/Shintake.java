@@ -54,7 +54,7 @@ public class Shintake extends SubsystemBase {
 
     flywheelConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    flywheelConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    flywheelConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     //PID Slot 0 (Velocity PID)
     flywheelConfigs.Slot0.kP = ShintakeConstants.shooterkP;

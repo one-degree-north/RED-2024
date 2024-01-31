@@ -32,8 +32,6 @@ public class RobotContainer {
     /* Controllers */
     private final Joystick driver = new Joystick(0);
 
-    private AutoScorePosition currentAutoScorePosition = AutoScorePosition.CENTER;
-
     /* Driver Buttons */
     private final JoystickButton reverse = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton shoot = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
@@ -41,39 +39,22 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve(); 
  
 
     /* Auto Chooser */
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note");
 
     // TODO: implement LED indicators for auto starting pose
-    public Supplier<Pose2d> autoStartingPoseSupplier = 
-        () -> {
-            if (autoChooser.getSelected() != Commands.none() 
-            && autoChooser.getSelected() != null)
-                return PathPlannerAuto.
-                    getStaringPoseFromAutoFile(autoChooser.getSelected().getName());
-            else return s_Swerve.getPose();
-        };
 
-    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier);
 
     private final Shintake s_Shintake = new Shintake();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         /* Adding Autos */
-        SmartDashboard.putData(autoChooser);
 
         // Configure the button bindings
         configureButtonBindings();
     }
-
-    public AutoScorePosition getAutoScorePosition() {
-        return currentAutoScorePosition;
-    }
-
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -93,7 +74,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
 
-        return autoChooser.getSelected();
+        return null;
     }
 
 }

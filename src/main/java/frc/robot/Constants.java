@@ -157,18 +157,18 @@ public final class Constants {
     }
 
     public static final class ShintakeConstants {
-        public static final int leftShooterID = 0;
-        public static final int rightShooterID = 0;
+        public static final int leftShooterID = 20;
+        public static final int rightShooterID = 21;
 
-        public static final int intakeID = 60;
-        public static final int irSensorPort = 60;
+        public static final int intakeID = 0;
+        public static final int irSensorPort = 0;
 
-        public static final double shooterkP = 0;
+        public static final double shooterkP = 0.00019474;
         public static final double shooterkI = 0;
         public static final double shooterkD = 0;
-        public static final double shooterkS = 0;
-        public static final double shooterkV = 0;
-        public static final double shooterkA = 0;
+        public static final double shooterkS = 0.21014;
+        public static final double shooterkV = 0.11517;
+        public static final double shooterkA = 0.011391;
 
         public static final double flywheelGearing = 1;
     }
