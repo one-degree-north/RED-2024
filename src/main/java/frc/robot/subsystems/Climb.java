@@ -199,6 +199,11 @@ public class Climb extends SubsystemBase {
     ));
   }
 
+  public void stopVelocity() {
+    setVelocityLeft(0);
+    setVelocityRight(0);
+  }
+
   public double getPositionLeft(){
     return m_climbLeft.getPosition().getValue();
   }

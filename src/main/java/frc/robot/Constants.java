@@ -58,6 +58,13 @@ public final class Constants {
         // Elevator setpoint when stowed (ideally retracted) in meters
         public static final double elevatorStowed = 0;
 
+        // High climb setpoint in meters
+        public static final double climbHighPosition = 0;
+        // Low climb setpoint in meters
+        public static final double climbLowPosition = 0;
+        // Standard climb setpoint in meters
+        public static final double climbStandardPosition = 0;
+
     }
 
     public static final class ElevatarmConstants {
