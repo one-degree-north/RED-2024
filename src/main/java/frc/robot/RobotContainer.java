@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -50,17 +53,20 @@ public class RobotContainer {
 
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();    
+    private final Swerve s_Swerve = new Swerve(); 
+ 
 
     /* Auto Chooser */
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note");
+
     // TODO: implement LED indicators for auto starting pose
-    private final Supplier<Pose2d> autoStartingPoseSupplier = 
+    public Supplier<Pose2d> autoStartingPoseSupplier = 
         () -> {
-            if (autoChooser.getSelected() != null)
+            if (autoChooser.getSelected() != Commands.none() 
+            && autoChooser.getSelected() != null)
                 return PathPlannerAuto.
                     getStaringPoseFromAutoFile(autoChooser.getSelected().getName());
-            return null;
+            else return s_Swerve.getPose();
         };
 
     private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier);

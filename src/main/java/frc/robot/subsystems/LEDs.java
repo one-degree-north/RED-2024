@@ -150,60 +150,56 @@ public class LEDs extends VirtualSubsystem {
     m_led.setData(m_ledBuffer);
   }
 
-  private void autoAlign() {
+  private synchronized void autoAlign() {
     double allowableError = 0.05;
-    if (autoPose.get() != null) {
-      Pose2d targetPose = autoPose.get();
-      Pose2d currentPose = m_swerve.getPose();
-      boolean xPoseAligned = false;
-      boolean yPoseAligned = false;
-
-      Pose2d relativePose = targetPose.relativeTo(currentPose);
-      if (Math.abs(relativePose.getX()) <= allowableError) {
-        solid(Section.FRONTDRIVE, Color.kBlack);
-        solid(Section.BACKDRIVE, Color.kBlack);
-        xPoseAligned = true;
-      } else if (relativePose.getX() > allowableError) {
-        solid(Section.FRONTDRIVE, Color.kRed);
-        solid(Section.BACKDRIVE, Color.kBlack);
-        xPoseAligned = false;
-        autoAlignState = SubsystemState.NOTREADY;
-      } else if (relativePose.getX() < -allowableError) {
-        solid(Section.FRONTDRIVE, Color.kBlack);
-        solid(Section.BACKDRIVE, Color.kRed);
-        xPoseAligned = false;
-        autoAlignState = SubsystemState.NOTREADY;
-      }
-
-      if (Math.abs(relativePose.getY()) <= allowableError) {
+    Pose2d targetPose = autoPose.get();
+    Pose2d currentPose = m_swerve.getPose();
+    boolean xPoseAligned = false;
+    boolean yPoseAligned = false;
+    Pose2d relativePose = targetPose.relativeTo(currentPose);
+    if (Math.abs(relativePose.getX()) <= allowableError) {
+      solid(Section.FRONTDRIVE, Color.kBlack);
+      solid(Section.BACKDRIVE, Color.kBlack);
+      xPoseAligned = true;
+    } else if (relativePose.getX() > allowableError) {
+      solid(Section.FRONTDRIVE, Color.kRed);
+      solid(Section.BACKDRIVE, Color.kBlack);
+      xPoseAligned = false;
+      autoAlignState = SubsystemState.NOTREADY;
+    } else if (relativePose.getX() < -allowableError) {
+      solid(Section.FRONTDRIVE, Color.kBlack);
+      solid(Section.BACKDRIVE, Color.kRed);
+      xPoseAligned = false;
+      autoAlignState = SubsystemState.NOTREADY;
+    }
+    if (Math.abs(relativePose.getY()) <= allowableError) {
+      solid(Section.LEFTDRIVE, Color.kBlack);
+      solid(Section.RIGHTDRIVE, Color.kBlack);
+      yPoseAligned = true;
+    } else if (relativePose.getY() > allowableError) {
+      solid(Section.LEFTDRIVE, Color.kRed);
+      solid(Section.RIGHTDRIVE, Color.kBlack);
+      yPoseAligned = false;
+      autoAlignState = SubsystemState.NOTREADY;
+    } else if (relativePose.getY() < -allowableError) {
+      solid(Section.LEFTDRIVE, Color.kBlack);
+      solid(Section.RIGHTDRIVE, Color.kRed);
+      yPoseAligned = false;
+      autoAlignState = SubsystemState.NOTREADY;
+    }
+    if (xPoseAligned && yPoseAligned) {
+      if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
         solid(Section.LEFTDRIVE, Color.kBlack);
         solid(Section.RIGHTDRIVE, Color.kBlack);
-        yPoseAligned = true;
-      } else if (relativePose.getY() > allowableError) {
-        solid(Section.LEFTDRIVE, Color.kRed);
-        solid(Section.RIGHTDRIVE, Color.kBlack);
-        yPoseAligned = false;
+        solid(Section.FRONTDRIVE, Color.kBlack);
+        solid(Section.BACKDRIVE, Color.kBlack);
+        autoAlignState = SubsystemState.READY;
+      } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
+        wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
         autoAlignState = SubsystemState.NOTREADY;
-      } else if (relativePose.getY() < -allowableError) {
-        solid(Section.LEFTDRIVE, Color.kBlack);
-        solid(Section.RIGHTDRIVE, Color.kRed);
-        yPoseAligned = false;
+      } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
+        wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
         autoAlignState = SubsystemState.NOTREADY;
-      }
-      if (xPoseAligned && yPoseAligned) {
-        if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
-          solid(Section.LEFTDRIVE, Color.kBlack);
-          solid(Section.RIGHTDRIVE, Color.kBlack);
-          solid(Section.FRONTDRIVE, Color.kBlack);
-          solid(Section.BACKDRIVE, Color.kBlack);
-          autoAlignState = SubsystemState.READY;
-        } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
-          wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
-          autoAlignState = SubsystemState.NOTREADY;
-        } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
-          wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
-          autoAlignState = SubsystemState.NOTREADY;
-        }
       }
     }
 
