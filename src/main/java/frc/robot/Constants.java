@@ -184,6 +184,28 @@ public final class Constants {
         public static final double shooterkA = 0;
 
         public static final double flywheelGearing = 0;
+
+        // Approximate time shooter takes to hit max velocity
+        public static final double shooterRampTimeSeconds = 1;
+
+        //Time taken for note to be shot after beam break is triggered
+        public static final double shooterDelaySeconds = 0.5;
+
+        // Time taken for note to be outtaked after beam break sensor is triggered for amp and trap scoring
+        public static final double ampAndTrapDelaySeconds = 1;
+
+        // Time taken for intaking to stop after beam break sensor is triggered for source intaking
+        public static final double sourceIntakeDelaySeconds = 0.5;
+
+        // For Intake
+        public static final double outtakePercentSpeed = 0.1;
+        // For shooter
+        public static final double outtakeRPM = 300;
+
+        // Regular shooter/intake preset velocities
+        public static final double shooterLeftRPM = 6000;
+        public static final double shooterRightRPM = 4000;
+        public static final double intakePercentSpeed = 0.4;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
