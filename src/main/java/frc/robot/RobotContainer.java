@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -70,6 +68,7 @@ public class RobotContainer {
         };
 
     private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier);
+    
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
