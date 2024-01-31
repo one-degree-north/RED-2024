@@ -160,8 +160,8 @@ public final class Constants {
         public static final int leftShooterID = 0;
         public static final int rightShooterID = 0;
 
-        public static final int intakeID = 0;
-        public static final int irSensorPort = 0;
+        public static final int intakeID = 60;
+        public static final int irSensorPort = 60;
 
         public static final double shooterkP = 0;
         public static final double shooterkI = 0;
@@ -170,7 +170,7 @@ public final class Constants {
         public static final double shooterkV = 0;
         public static final double shooterkA = 0;
 
-        public static final double flywheelGearing = 0;
+        public static final double flywheelGearing = 1;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
