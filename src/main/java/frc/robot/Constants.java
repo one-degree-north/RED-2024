@@ -53,8 +53,11 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
-        public static final double elevatorLowToGround = 0;
-        public static final double elevatorHighAboveGround = 0;
+        // Elevator setpoint when ground intaking in meters
+        public static final double elevatorGroundIntake = 0;
+        // Elevator setpoint when stowed (ideally retracted) in meters
+        public static final double elevatorStowed = 0;
+
     }
 
     public static final class ElevatarmConstants {
@@ -107,8 +110,18 @@ public final class Constants {
         public static final double elevatorEncoderRotationsPerDistance = 0.0;
 
         // Distance from pivot to center of fully retracted end effector
-        public static final double mindistanceFromPivot = 0.0;
-        public static final double maxDistanceFromPivot = 0.0;
+        public static final double minRetractionEE = 0.0;
+        public static final double maxExtensionEE = elevatorForwardSoftLimit + minRetractionEE;
+        
+        // In meters
+        public static final Translation2d pivotRelativeToOrigin = 
+            new Translation2d(0, 0);
+
+        // The minimum retraction of the elevator when it is less than the intereference angle cutoff (in meters)
+        public static final double elevatorLowToGroundMinRetraction = 0;
+        // Lowest possible angle that the arm can be at without the end effector (fully retracted) interfering with the drivetrain (in rotations)
+        public static final double elevatorMinRetractionInterferenceAngleCutoff = 0;
+
     }
 
     public static final class ClimbConstants {
