@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -55,15 +56,16 @@ public class RobotContainer {
  
 
     /* Auto Chooser */
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note");
+    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
 
     // TODO: implement LED indicators for auto starting pose
     public Supplier<Pose2d> autoStartingPoseSupplier = 
         () -> {
-            if (autoChooser.getSelected() != Commands.none() 
-            && autoChooser.getSelected() != null)
-                return PathPlannerAuto.
-                    getStaringPoseFromAutoFile(autoChooser.getSelected().getName());
+            if ((DriverStation.isFMSAttached() || DriverStation.isDSAttached()) 
+            && (autoChooser.getSelected() != Commands.none()) 
+            && (autoChooser.getSelected() != null))
+                return s_Swerve.flipPose(PathPlannerAuto.
+                    getStaringPoseFromAutoFile(autoChooser.getSelected().getName()));
             else return s_Swerve.getPose();
         };
 
