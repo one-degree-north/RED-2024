@@ -53,18 +53,30 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
-        // Elevator setpoint when ground intaking in meters
-        public static final double elevatorGroundIntake = 0;
-        // Elevator setpoint when stowed (ideally retracted) in meters
+        // Elevator in meters, arm in rotations
         public static final double elevatorStowed = 0;
+        public static final double armStowed = 0;
 
-        // High climb setpoint in meters
+        public static final double elevatorGroundIntake = 0;
+        public static final double armGroundIntake = 0;
+
+        public static final double elevatorSource = 0;
+        public static final double armSource = 0;
+
+        public static final double elevatorAmp = 0;
+        public static final double armAmp = 0;
+
+        public static final double elevatorPreTrap = 0;
+        public static final double armPreTrap = 0;
+        public static final double elevatorTrap = 0;
+        public static final double armTrap = 0;
+
+        public static final double elevatorSpeaker = elevatorGroundIntake;
+
+        // Climb in meters or meters per second
         public static final double climbHighPosition = 0;
-        // Low climb setpoint in meters
         public static final double climbLowPosition = 0;
-        // Standard climb setpoint in meters
         public static final double climbStandardPosition = 0;
-
     }
 
     public static final class ElevatarmConstants {
@@ -173,7 +185,8 @@ public final class Constants {
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = 0.0;
 
-
+        // Meters per second
+        public static final double climbStandardVelocity = 0.1;
     }
 
     public static final class ShintakeConstants {
