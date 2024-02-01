@@ -69,7 +69,7 @@ public class Elevatarm extends SubsystemBase {
 
     configMotors();
 
-    Mechanism2d canvas = new Mechanism2d(3, 3);
+    Mechanism2d canvas = new Mechanism2d(4, 4);
     MechanismRoot2d root = canvas.getRoot("Pivot", 
       ElevatarmConstants.pivotRelativeToOrigin.getX(), 
       ElevatarmConstants.pivotRelativeToOrigin.getY());
