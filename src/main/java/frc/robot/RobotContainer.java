@@ -14,11 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
-import frc.robot.commands.AutoScorePathfind.AutoScorePosition;
 import frc.robot.subsystems.*;
 
 /**
@@ -36,18 +33,9 @@ public class RobotContainer {
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-    private AutoScorePosition currentAutoScorePosition = AutoScorePosition.CENTER;
-
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton goToPos = new JoystickButton(driver, XboxController.Button.kX.value);
     private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-
-    
-    private final POVButton setCenterAutoScore = new POVButton(driver, 0);
-    private final POVButton setLeftAutoScore = new POVButton(driver, 270);
-    private final POVButton setRightAutoScore = new POVButton(driver, 90);
 
 
 
@@ -83,7 +71,7 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> -driver.getRawAxis(rotationAxis), 
-                () -> robotCentric.getAsBoolean(),
+                () -> false,
                 () -> zeroGyro.getAsBoolean()
             )
         );
@@ -91,11 +79,6 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
     }
-
-    public AutoScorePosition getAutoScorePosition() {
-        return currentAutoScorePosition;
-    }
-
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
@@ -104,23 +87,6 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-
-        // TODO: try removing method in lambda
-        goToPos.whileTrue(
-            new AutoScorePathfind(this::getAutoScorePosition, s_Swerve)
-        );
-
-        setCenterAutoScore.onTrue(
-            new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.CENTER)
-        );
-
-        setLeftAutoScore.onTrue(
-            new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.LEFT)
-            );
-
-        setRightAutoScore.onTrue(
-            new InstantCommand(() -> currentAutoScorePosition = AutoScorePosition.RIGHT)
-        );
 
 
         autoAim.whileTrue(new AutoAimSpeakerTeleop(s_Swerve, 
