@@ -88,13 +88,15 @@ public class Shintake extends SubsystemBase {
   //Methods
 
   public void stopAll() {
-    setShooterVelocityRPS(0, 0);
     setIntakePercentSpeed(0);
+    setShooterVelocityRPS(0, 0);
   }
 
   public void setShooterVelocityRPS(double velocityLeft, double velocityRight) {
+    if (m_flywheelLeft.isAlive() && m_flywheelRight.isAlive()){
       m_flywheelLeft.setControl(velReq.withVelocity(velocityLeft));
       m_flywheelRight.setControl(velReq.withVelocity(velocityRight));
+    }
   }
 
   public void setShooterVelocityRPM(double velocityLeft, double velocityRight) {

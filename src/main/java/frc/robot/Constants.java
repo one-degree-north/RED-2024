@@ -186,10 +186,10 @@ public final class Constants {
     }
 
     public static final class ShintakeConstants {
-        public static final int leftShooterID = 0;
-        public static final int rightShooterID = 0;
+        public static final int leftShooterID = 60;
+        public static final int rightShooterID = 60;
 
-        public static final int intakeID = 0;
+        public static final int intakeID = 1;
         public static final int irSensorPort = 0;
 
         public static final double shooterkP = 0;

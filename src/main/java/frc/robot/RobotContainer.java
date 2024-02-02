@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
+import frc.robot.commands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -36,11 +37,13 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+    private final JoystickButton intake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
 
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve(); 
+    private final Shintake s_Shintake = new Shintake();
  
 
     /* Auto Chooser */
@@ -76,6 +79,7 @@ public class RobotContainer {
             )
         );
 
+
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -93,6 +97,8 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> zeroGyro.getAsBoolean()));
+
+        intake.whileTrue(new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake));
     }
 
     /**
