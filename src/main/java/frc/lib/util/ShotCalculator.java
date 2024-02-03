@@ -6,12 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
 
 /**
- * Util class to calculate robot rotation and shooter feedforward values for shooting while moving.
- * <br>
- * Based off of 254 Rapid React code from class <a
- * href="https://github.com/Team254/FRC-2022-Public/blob/main/src/main/java/com/team254/frc2022/shooting/ShootingUtil.java">ShootingUtil.java</a>
- * <br>
- * Units in meters, radians, and m/s
+ * Code is from Mechanical Advantage's util classes
  */
 public class ShotCalculator {
   public record ShotData(
@@ -42,10 +37,11 @@ public class ShotCalculator {
     double shotSpeed = rawDistToGoal / shotTime + radialComponent;
     if (shotSpeed <= 0.0) shotSpeed = 0.0;
     // Aim opposite of tangentialComponent (negative lead when tangentialComponent is positive)
-    // rotate back into field frame then add take opposite since shooter is on back
+    // Rotation is accounted for when inverting pose
     Rotation2d goalHeading =
-        new Rotation2d(shotSpeed, tangentialComponent)
-            .rotateBy(speaker.minus(robot).getAngle()).rotateBy(Rotation2d.fromRadians(Math.PI));
+        GeomUtil.inverse(GeomUtil.toPose2d(robot)).transformBy(GeomUtil.toTransform2d(speaker)).getTranslation().getAngle();
+    // Aim opposite of tangentialComponent (negative lead when tangentialComponent is positive)
+    goalHeading = goalHeading.plus(new Rotation2d(shotSpeed, tangentialComponent));
     double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
 
     // This will be replaced with a formula to return arm angle in radians based on distance in meters
