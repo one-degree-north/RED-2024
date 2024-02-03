@@ -159,7 +159,9 @@ public class Climb extends SubsystemBase {
   }
 
   public void setControl(TalonFX motor, ControlRequest req) {
-    if (isEncodersReset) {
+    if (m_climbLeft.isAlive()
+    && m_climbRight.isAlive()
+    && isEncodersReset) {
       motor.setControl(req);
     }
   }

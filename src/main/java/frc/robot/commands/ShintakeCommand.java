@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -47,7 +46,8 @@ public class ShintakeCommand extends Command {
       case GROUND_INTAKE:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
-          .alongWith(new WaitUntilCommand(() -> s_Shintake.isNoteIntaked()))
+          // .alongWith(new WaitUntilCommand(() -> s_Shintake.isNoteIntaked()))
+            .alongWith(new WaitUntilCommand(() -> false))
         ;
         break;
       case SOURCE_INTAKE:
@@ -78,8 +78,6 @@ public class ShintakeCommand extends Command {
         break;
     }
 
-    m_commandToRun.finallyDo(() -> s_Shintake.stopAll());
-
     m_commandToRun.initialize();
   }
 
@@ -92,7 +90,7 @@ public class ShintakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_commandToRun.end(interrupted);
+    s_Shintake.stopAll();
   }
 
   // Returns true when the command should end.

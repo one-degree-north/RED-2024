@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -88,8 +89,19 @@ public class Shintake extends SubsystemBase {
   //Methods
 
   public void stopAll() {
-    setIntakePercentSpeed(0);
-    setShooterVelocityRPS(0, 0);
+    stopIntake();
+    stopShooter();
+  }
+
+  public void stopIntake() {
+    m_intake.stopMotor();
+  }
+
+  public void stopShooter() {
+    if (m_flywheelLeft.isAlive() && m_flywheelRight.isAlive()) {
+      m_flywheelLeft.setControl(new NeutralOut());
+      m_flywheelRight.setControl(new NeutralOut());
+    }
   }
 
   public void setShooterVelocityRPS(double velocityLeft, double velocityRight) {

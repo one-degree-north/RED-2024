@@ -186,8 +186,8 @@ public final class Constants {
     }
 
     public static final class ShintakeConstants {
-        public static final int leftShooterID = 60;
-        public static final int rightShooterID = 60;
+        public static final int leftShooterID = 0;
+        public static final int rightShooterID = 0;
 
         public static final int intakeID = 1;
         public static final int irSensorPort = 0;
@@ -221,7 +221,7 @@ public final class Constants {
         // Regular shooter/intake preset velocities
         public static final double shooterLeftRPM = 6000;
         public static final double shooterRightRPM = 4000;
-        public static final double intakePercentSpeed = 0.4;
+        public static final double intakePercentSpeed = 0.7;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically acceleration)
