@@ -9,10 +9,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -27,7 +26,7 @@ public class AutoAimSpeakerTeleop extends Command {
     private SlewRateLimiter slewRateLimiterX;
     private SlewRateLimiter slewRateLimiterY;
 
-    private ProfiledPIDController headingController;
+    private PIDController headingController;
 
     public AutoAimSpeakerTeleop(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
         this.s_Swerve = s_Swerve;
@@ -40,8 +39,7 @@ public class AutoAimSpeakerTeleop extends Command {
         this.slewRateLimiterX = new SlewRateLimiter(TeleopConstants.rateLimitXY);
         this.slewRateLimiterY = new SlewRateLimiter(TeleopConstants.rateLimitXY);
 
-        this.headingController = new ProfiledPIDController(TeleopConstants.autoAimHeadingkP, 0, 0, 
-            new TrapezoidProfile.Constraints(TeleopConstants.headingMaxVelRadPerSec, TeleopConstants.headingMaxAccelRadPerSec));
+        this.headingController = new PIDController(TeleopConstants.autoAimHeadingkP, TeleopConstants.autoAimHeadingkI, TeleopConstants.autoAimHeadingkD);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 

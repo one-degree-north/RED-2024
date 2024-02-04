@@ -32,6 +32,8 @@ public final class Constants {
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
 
         public static final double autoAimHeadingkP = 1.5;
+        public static final double autoAimHeadingkI = 0;
+        public static final double autoAimHeadingkD = 0;
     }
 
     public static final class PathGenerationConstants {
@@ -45,6 +47,11 @@ public final class Constants {
         public static final Pose2d leftSourceIntakingPose = new Pose2d();
         public static final Pose2d middleSourceIntakingPose = new Pose2d();
         public static final Pose2d rightSourceIntakingPose = new Pose2d();
+
+
+        public static final Pose2d rightSpeakerScoringPose = new Pose2d();
+        public static final Pose2d middleSpeakerScoringPose = new Pose2d();
+        public static final Pose2d leftSpeakerScoringPose = new Pose2d();
 
     }
 
