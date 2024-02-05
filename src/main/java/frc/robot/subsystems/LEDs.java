@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -152,18 +153,21 @@ public class LEDs extends VirtualSubsystem {
     boolean xPoseAligned = false;
     boolean yPoseAligned = false;
     Pose2d relativePose = targetPose.relativeTo(currentPose);
+
+    double breathDuration = relativePose.getTranslation().getDistance(new Translation2d());
+
     if (Math.abs(relativePose.getX()) <= allowableError) {
       solid(Section.FRONTDRIVE, Color.kBlack);
       solid(Section.BACKDRIVE, Color.kBlack);
       xPoseAligned = true;
     } else if (relativePose.getX() > allowableError) {
-      solid(Section.FRONTDRIVE, Color.kRed);
+      breath(Section.FRONTDRIVE, Color.kAqua, Color.kBlack, breathDuration);
       solid(Section.BACKDRIVE, Color.kBlack);
       xPoseAligned = false;
       autoAlignState = SubsystemState.NOTREADY;
     } else if (relativePose.getX() < -allowableError) {
       solid(Section.FRONTDRIVE, Color.kBlack);
-      solid(Section.BACKDRIVE, Color.kRed);
+      breath(Section.BACKDRIVE, Color.kAqua, Color.kBlack, breathDuration);
       xPoseAligned = false;
       autoAlignState = SubsystemState.NOTREADY;
     }
@@ -172,13 +176,13 @@ public class LEDs extends VirtualSubsystem {
       solid(Section.RIGHTDRIVE, Color.kBlack);
       yPoseAligned = true;
     } else if (relativePose.getY() > allowableError) {
-      solid(Section.LEFTDRIVE, Color.kRed);
+      breath(Section.LEFTDRIVE, Color.kAqua, Color.kBlack, breathDuration);
       solid(Section.RIGHTDRIVE, Color.kBlack);
       yPoseAligned = false;
       autoAlignState = SubsystemState.NOTREADY;
     } else if (relativePose.getY() < -allowableError) {
       solid(Section.LEFTDRIVE, Color.kBlack);
-      solid(Section.RIGHTDRIVE, Color.kRed);
+      breath(Section.RIGHTDRIVE, Color.kAqua, Color.kBlack, breathDuration);
       yPoseAligned = false;
       autoAlignState = SubsystemState.NOTREADY;
     }
@@ -190,10 +194,10 @@ public class LEDs extends VirtualSubsystem {
         solid(Section.BACKDRIVE, Color.kGreen);
         autoAlignState = SubsystemState.READY;
       } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
-        wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
+        wave(Section.UNDERGLOW, Color.kAqua, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
         autoAlignState = SubsystemState.NOTREADY;
       } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) < -allowableError) {
-        wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
+        wave(Section.UNDERGLOW, Color.kAqua, Color.kBlack, waveCycleLength, waveSlowCycleDuration, false);
         autoAlignState = SubsystemState.NOTREADY;
       }
     }

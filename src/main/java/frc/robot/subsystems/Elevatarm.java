@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -31,22 +30,20 @@ public class Elevatarm extends SubsystemBase {
 
   private TalonFX m_armLeader;
   private TalonFX m_armFollower;
-  private DutyCycleEncoder m_armEncoder;
-
   private TalonFX m_elevator;
+
+  private DutyCycleEncoder m_armEncoder;
   private DutyCycleEncoder m_elevatorEncoder;
+  
   private DigitalInput m_elevatorLimitSwitchMin;
   private DigitalInput m_elevatorLimitSwitchMax;
 
   private TalonFXConfiguration armConfig = new TalonFXConfiguration();
-  private Slot0Configs armPIDConfigs = new Slot0Configs();
 
   private TalonFXConfiguration elevatorConfig = new TalonFXConfiguration();
-  private Slot0Configs elevatorPIDConfigs = new Slot0Configs();
 
   private boolean isArmEncoderReset = false;
   private boolean isElevatorEncoderReset = false;
-  private int count = 0;
 
   private MotionMagicVoltage armMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut armDutyCycle = new DutyCycleOut(0);
@@ -54,7 +51,7 @@ public class Elevatarm extends SubsystemBase {
   private MotionMagicVoltage elevatorMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut elevatorDutyCycle = new DutyCycleOut(0);
 
-  private MechanismLigament2d m_elevatarmMech;
+  private MechanismLigament2d elevatarmMech2d;
   
   public Elevatarm() {
     m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID);
@@ -73,26 +70,25 @@ public class Elevatarm extends SubsystemBase {
       ElevatarmConstants.positionOfPivotRelativeToOrigin.getX(), 
       ElevatarmConstants.positionOfPivotRelativeToOrigin.getY());
     
-    m_elevatarmMech = root.append(
+    elevatarmMech2d = root.append(
       new MechanismLigament2d("Elevatarm", 
         m_elevator.getPosition().getValue() + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot, 
         Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
       ));
+
     SmartDashboard.putData("Elevatarm", canvas);
   }
 
   private void configMotors() {
     // Arm config
 
-    armPIDConfigs.kP = ElevatarmConstants.armkP;
-    armPIDConfigs.kI = ElevatarmConstants.armkI;
-    armPIDConfigs.kD = ElevatarmConstants.armkD;
-    armPIDConfigs.kG = 0; // kG is set directly in control request
-    armPIDConfigs.kS = ElevatarmConstants.armkS;
-    armPIDConfigs.kV = ElevatarmConstants.armkV;
-    armPIDConfigs.kA = ElevatarmConstants.armkA;
-
-    armConfig.Slot0 = armPIDConfigs;
+    armConfig.Slot0.kP = ElevatarmConstants.armkP;
+    armConfig.Slot0.kI = ElevatarmConstants.armkI;
+    armConfig.Slot0.kD = ElevatarmConstants.armkD;
+    armConfig.Slot0.kG = 0; // kG is set directly in control request
+    armConfig.Slot0.kS = ElevatarmConstants.armkS;
+    armConfig.Slot0.kV = ElevatarmConstants.armkV;
+    armConfig.Slot0.kA = ElevatarmConstants.armkA;
 
     armConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatarmConstants.armCruiseVelocity;
     armConfig.MotionMagic.MotionMagicAcceleration = ElevatarmConstants.armAcceleration;
@@ -114,18 +110,18 @@ public class Elevatarm extends SubsystemBase {
 
 
     m_armLeader.getConfigurator().apply(armConfig);
+    // Set follower
+    m_armFollower.setControl(new Follower(ElevatarmConstants.armLeaderID, true));
 
     // Elevator config
 
-    elevatorPIDConfigs.kP = ElevatarmConstants.elevatorkP;
-    elevatorPIDConfigs.kI = ElevatarmConstants.elevatorkI;
-    elevatorPIDConfigs.kD = ElevatarmConstants.elevatorkD;
-    elevatorPIDConfigs.kG = 0; // kG is set directly in control request
-    elevatorPIDConfigs.kS = ElevatarmConstants.elevatorkS;
-    elevatorPIDConfigs.kV = ElevatarmConstants.elevatorkV;
-    elevatorPIDConfigs.kA = ElevatarmConstants.elevatorkA;
-
-    elevatorConfig.Slot0 = elevatorPIDConfigs;
+    elevatorConfig.Slot0.kP = ElevatarmConstants.elevatorkP;
+    elevatorConfig.Slot0.kI = ElevatarmConstants.elevatorkI;
+    elevatorConfig.Slot0.kD = ElevatarmConstants.elevatorkD;
+    elevatorConfig.Slot0.kG = 0; // kG is set directly in control request
+    elevatorConfig.Slot0.kS = ElevatarmConstants.elevatorkS;
+    elevatorConfig.Slot0.kV = ElevatarmConstants.elevatorkV;
+    elevatorConfig.Slot0.kA = ElevatarmConstants.elevatorkA;
 
     elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatarmConstants.elevatorCruiseVelocity;
     elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatarmConstants.elevatorAcceleration;
@@ -139,7 +135,7 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     elevatorConfig.Feedback.SensorToMechanismRatio = 
-      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensor 
+      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensorRatio 
       * ElevatarmConstants.elevatorMechanismRotationsToMeters;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -148,9 +144,6 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatarmConstants.elevatorReverseSoftLimit;
 
     m_elevator.getConfigurator().apply(elevatorConfig);
-
-    // Set follower
-    m_armFollower.setControl(new Follower(ElevatarmConstants.armLeaderID, true));
 
     resetToAbsolute();
   }
@@ -290,21 +283,13 @@ public class Elevatarm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Keep trying to reset to absolute position
-    if ((!isArmEncoderReset || !isElevatorEncoderReset) && count <=0) {
-      resetToAbsolute();
-    }
-    else {
-      count %=5;
-      count += 1;
-    }
 
-    m_elevatarmMech.setLength(
+    elevatarmMech2d.setLength(
       m_elevator.getPosition().getValue() 
       + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot
     );
     
-    m_elevatarmMech.setAngle(
+    elevatarmMech2d.setAngle(
       Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
     );
 

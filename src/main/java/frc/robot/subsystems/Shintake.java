@@ -25,7 +25,7 @@ public class Shintake extends SubsystemBase {
 
   private TalonFXConfiguration flywheelConfigs;
 
-  private VelocityVoltage velReq;
+  private VelocityVoltage shooterVelocity;
 
   private CANSparkMax m_intake;
 
@@ -39,7 +39,7 @@ public class Shintake extends SubsystemBase {
 
     m_intake = new CANSparkMax(ShintakeConstants.intakeID, MotorType.kBrushless);
 
-    velReq = new VelocityVoltage(0).withSlot(0);
+    shooterVelocity = new VelocityVoltage(0).withSlot(0);
 
     intakeSensor = new DigitalInput(ShintakeConstants.irSensorPort);
 
@@ -106,8 +106,8 @@ public class Shintake extends SubsystemBase {
 
   public void setShooterVelocityRPS(double velocityLeft, double velocityRight) {
     if (m_flywheelLeft.isAlive() && m_flywheelRight.isAlive()){
-      m_flywheelLeft.setControl(velReq.withVelocity(velocityLeft));
-      m_flywheelRight.setControl(velReq.withVelocity(velocityRight));
+      m_flywheelLeft.setControl(shooterVelocity.withVelocity(velocityLeft));
+      m_flywheelRight.setControl(shooterVelocity.withVelocity(velocityRight));
     }
   }
 

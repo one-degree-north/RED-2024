@@ -43,7 +43,7 @@ public class ClimbVelocityCommand extends Command {
           .alongWith(new InstantCommand(() -> s_Climb.setVelocityRight(m_velocity)))
           .alongWith(new WaitUntilCommand(() -> false));
     }
-    m_commandToRun.finallyDo(() -> s_Climb.stopVelocity());
+    m_commandToRun.finallyDo(() -> s_Climb.zeroVelocity());
 
     m_commandToRun.initialize();
   }

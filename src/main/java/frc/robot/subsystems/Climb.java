@@ -43,20 +43,17 @@ public class Climb extends SubsystemBase {
   private DoubleSolenoid m_leftPneumaticBreak;
   private DoubleSolenoid m_rightPneumaticBreak;
 
+  private DutyCycleEncoder m_climbLeftEncoder;
+  private DutyCycleEncoder m_climbRightEncoder;
+
   private Compressor m_compressor;
 
-  private TalonFXConfiguration climbConfigs;
+  private TalonFXConfiguration climbConfigs = new TalonFXConfiguration();
 
-  private MotionMagicVoltage mmReq;
-  private VelocityVoltage velReq;
+  private MotionMagicVoltage climbMotionMagic = new MotionMagicVoltage(0).withSlot(0);;
+  private VelocityVoltage climbVelocity = new VelocityVoltage(0).withSlot(1);;
 
-  private DutyCycleEncoder climbLeftEncoder;
-  private DutyCycleEncoder climbRightEncoder;
-
-  private boolean isEncodersReset = false;
-  private double climbLeftOffset;
-  private double climbRightOffset;
-  private double count = 0;
+  private boolean isClimbEncodersReset = false;
   
   public Climb() {
     m_climbLeft = new TalonFX(ClimbConstants.leftClimbID);
@@ -65,18 +62,10 @@ public class Climb extends SubsystemBase {
     m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.leftPneumaticBreakPort1, ClimbConstants.leftPneumaticBreakPort2);
     m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);
 
+    m_climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
+    m_climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
+
     m_compressor = new Compressor(PneumaticsModuleType.REVPH);
-
-    climbConfigs = new TalonFXConfiguration();
-
-    mmReq = new MotionMagicVoltage(0).withSlot(0);
-    velReq = new VelocityVoltage(0).withSlot(1);
-
-    climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
-    climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
-
-    climbLeftOffset = ClimbConstants.leftClimbAbsoluteEncoderOffset;
-    climbRightOffset = ClimbConstants.rightClimbAbsoluteEncoderOffset;
 
     configMotors();
     enableCompressor();
@@ -133,7 +122,7 @@ public class Climb extends SubsystemBase {
     climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.climbReverseSoftLimit;
 
     //Feedback Configs
-    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedSensorToAbsoluteSensorRatio * ClimbConstants.climbMechanismRotationsToMeters;
 
     //Add Configs
     m_climbLeft.getConfigurator().apply(climbConfigs);
@@ -147,33 +136,37 @@ public class Climb extends SubsystemBase {
 
   //Methods
   public void resetMotorsToAbsolute(){
-    double offsetClimbPos = getLeftAbsoluteEncoderDistance() - climbLeftOffset;
-    double offsetClimb2Pos = getRightAbsoluteEncoderDistance() - climbRightOffset;
-    if (climbLeftEncoder.isConnected() && climbRightEncoder.isConnected()) { 
+    double offsetClimbPos = getLeftAbsoluteEncoderDistance() - ClimbConstants.leftClimbAbsoluteEncoderOffset;
+    double offsetClimb2Pos = getRightAbsoluteEncoderDistance() - ClimbConstants.rightClimbAbsoluteEncoderOffset;
+    if (m_climbLeftEncoder.isConnected() && m_climbRightEncoder.isConnected()) { 
       // only successful if no error
       boolean c1 = m_climbLeft.setPosition(offsetClimbPos).isOK();
       boolean c2 = m_climbRight.setPosition(offsetClimb2Pos).isOK();
-      isEncodersReset = c1 && c2;
+      isClimbEncodersReset = c1 && c2;
     }
     
   }
 
-  public void setControl(TalonFX motor, ControlRequest req) {
+  public void setControlLeft(ControlRequest req) {
     if (m_climbLeft.isAlive()
-    && m_climbRight.isAlive()
-    && isEncodersReset) {
-      motor.setControl(req);
+    && isClimbEncodersReset) {
+      m_climbLeft.setControl(req);
+    }
+  }
+
+  public void setControlRight(ControlRequest req) {
+    if (m_climbRight.isAlive()
+    && isClimbEncodersReset) {
+      m_climbRight.setControl(req);
     }
   }
 
   public void setVelocityLeft(double velocity) {
-    setControl(m_climbLeft, 
-    velReq.withVelocity(velocity));
+    setControlLeft(climbVelocity.withVelocity(velocity));
   }
 
   public void setVelocityRight(double velocity) {
-    setControl(m_climbRight, 
-    velReq.withVelocity(velocity));
+    setControlRight(climbVelocity.withVelocity(velocity));
   }
 
   public double getVelocityLeft() {
@@ -185,23 +178,21 @@ public class Climb extends SubsystemBase {
   }
 
   public void setPositionLeft(double position) {
-    setControl(m_climbLeft, 
-    mmReq.withPosition(
+    setControlLeft(climbMotionMagic.withPosition(
       MathUtil.clamp(position, 
       ClimbConstants.climbReverseSoftLimit, 
       ClimbConstants.climbForwardSoftLimit)));
   }
 
   public void setPositionRight(double position) {
-    setControl(m_climbRight, 
-    mmReq.withPosition(
+    setControlRight(climbMotionMagic.withPosition(
       MathUtil.clamp(position, 
       ClimbConstants.climbReverseSoftLimit, 
       ClimbConstants.climbForwardSoftLimit)
     ));
   }
 
-  public void stopVelocity() {
+  public void zeroVelocity() {
     setVelocityLeft(0);
     setVelocityRight(0);
   }
@@ -215,15 +206,13 @@ public class Climb extends SubsystemBase {
   }
 
   public double getLeftAbsoluteEncoderDistance() {
-    return climbLeftEncoder.getAbsolutePosition()
-    /ClimbConstants.climbAbsoluteSensorToMotorRatio
-    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    return m_climbLeftEncoder.getAbsolutePosition()
+    /ClimbConstants.climbMechanismRotationsToMeters;
   }
 
   public double getRightAbsoluteEncoderDistance() {
-    return climbRightEncoder.getAbsolutePosition()
-    /ClimbConstants.climbAbsoluteSensorToMotorRatio
-    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    return m_climbRightEncoder.getAbsolutePosition()
+    /ClimbConstants.climbMechanismRotationsToMeters;
   }
 
   public void enablePneumaticBreak() {
@@ -238,13 +227,6 @@ public class Climb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // too lazy to fix aaden weird code (it works so whatever)
-    if (!isEncodersReset && count <= 0) {
-      resetMotorsToAbsolute();
-    } else if (!isEncodersReset) {
-      count += 1;
-      count %= 5;
-    }
 
     SmartDashboard.putNumber("Left Climb Pos (m)", getPositionLeft());
     SmartDashboard.putNumber("Right Climb Pos (m)", getPositionRight());
