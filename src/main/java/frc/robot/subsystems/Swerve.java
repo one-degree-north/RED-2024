@@ -314,7 +314,7 @@ public class Swerve extends SubsystemBase {
 
     /* @return alliance-based speaker position (Translation2d) */
     public Translation2d getAllianceSpeakerPos() {
-        return flipPose(new Pose2d(PathGenerationConstants.speakerPosition, new Rotation2d()))
+        return flipPose(new Pose2d(PathGenerationConstants.speakerTranslation, new Rotation2d()))
             .getTranslation();
     }
 

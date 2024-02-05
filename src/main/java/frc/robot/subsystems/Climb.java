@@ -72,11 +72,11 @@ public class Climb extends SubsystemBase {
     mmReq = new MotionMagicVoltage(0).withSlot(0);
     velReq = new VelocityVoltage(0).withSlot(1);
 
-    climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftEncoderPort);
-    climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightEncoderPort);
+    climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
+    climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
 
-    climbLeftOffset = ClimbConstants.leftAbsoluteEncoderOffset;
-    climbRightOffset = ClimbConstants.rightAbsoluteEncoderOffset;
+    climbLeftOffset = ClimbConstants.leftClimbAbsoluteEncoderOffset;
+    climbRightOffset = ClimbConstants.rightClimbAbsoluteEncoderOffset;
 
     configMotors();
     enableCompressor();
@@ -101,39 +101,39 @@ public class Climb extends SubsystemBase {
     climbConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     //PID Slot 0 (Motion Magic Position)
-    climbConfigs.Slot0.kP = ClimbConstants.positionkP;
-    climbConfigs.Slot0.kI = ClimbConstants.positionkI;
-    climbConfigs.Slot0.kD = ClimbConstants.positionkD;
+    climbConfigs.Slot0.kP = ClimbConstants.climbPositionkP;
+    climbConfigs.Slot0.kI = ClimbConstants.climbPositionkI;
+    climbConfigs.Slot0.kD = ClimbConstants.climbPositionkD;
 
-    climbConfigs.Slot0.kG = ClimbConstants.positionkG;
-    climbConfigs.Slot0.kS = ClimbConstants.positionkS;
-    climbConfigs.Slot0.kV = ClimbConstants.positionkV;
-    climbConfigs.Slot0.kA = ClimbConstants.positionkA;
+    climbConfigs.Slot0.kG = ClimbConstants.climbPositionkG;
+    climbConfigs.Slot0.kS = ClimbConstants.climbPositionkS;
+    climbConfigs.Slot0.kV = ClimbConstants.climbPositionkV;
+    climbConfigs.Slot0.kA = ClimbConstants.climbPositionkA;
 
     climbConfigs.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
-    climbConfigs.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.cruiseVelocity;
-    climbConfigs.MotionMagic.MotionMagicAcceleration = ClimbConstants.acceleration;
+    climbConfigs.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.climbCruiseVelocity;
+    climbConfigs.MotionMagic.MotionMagicAcceleration = ClimbConstants.climbAcceleration;
 
     //PID Slot 1 (Velocity)
-    climbConfigs.Slot1.kP = ClimbConstants.velocitykP;
-    climbConfigs.Slot1.kI = ClimbConstants.velocitykI;
-    climbConfigs.Slot1.kD = ClimbConstants.velocitykD;
+    climbConfigs.Slot1.kP = ClimbConstants.climbVelocitykP;
+    climbConfigs.Slot1.kI = ClimbConstants.climbVelocitykI;
+    climbConfigs.Slot1.kD = ClimbConstants.climbVelocitykD;
 
-    climbConfigs.Slot1.kG = ClimbConstants.velocitykG;
-    climbConfigs.Slot1.kS = ClimbConstants.velocitykS;
-    climbConfigs.Slot1.kV = ClimbConstants.velocitykV;
-    climbConfigs.Slot1.kA = ClimbConstants.velocitykA;
+    climbConfigs.Slot1.kG = ClimbConstants.climbVelocitykG;
+    climbConfigs.Slot1.kS = ClimbConstants.climbVelocitykS;
+    climbConfigs.Slot1.kV = ClimbConstants.climbVelocitykV;
+    climbConfigs.Slot1.kA = ClimbConstants.climbVelocitykA;
     climbConfigs.Slot1.GravityType = GravityTypeValue.Elevator_Static;
 
     //Software Limit Switches
     climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimbConstants.forwardSoftLimit;
+    climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimbConstants.climbForwardSoftLimit;
     climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.reverseSoftLimit;
+    climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.climbReverseSoftLimit;
 
     //Feedback Configs
-    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.encoderRotationsPerDistance;
+    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
 
     //Add Configs
     m_climbLeft.getConfigurator().apply(climbConfigs);
@@ -188,16 +188,16 @@ public class Climb extends SubsystemBase {
     setControl(m_climbLeft, 
     mmReq.withPosition(
       MathUtil.clamp(position, 
-      ClimbConstants.reverseSoftLimit, 
-      ClimbConstants.forwardSoftLimit)));
+      ClimbConstants.climbReverseSoftLimit, 
+      ClimbConstants.climbForwardSoftLimit)));
   }
 
   public void setPositionRight(double position) {
     setControl(m_climbRight, 
     mmReq.withPosition(
       MathUtil.clamp(position, 
-      ClimbConstants.reverseSoftLimit, 
-      ClimbConstants.forwardSoftLimit)
+      ClimbConstants.climbReverseSoftLimit, 
+      ClimbConstants.climbForwardSoftLimit)
     ));
   }
 
@@ -216,14 +216,14 @@ public class Climb extends SubsystemBase {
 
   public double getLeftAbsoluteEncoderDistance() {
     return climbLeftEncoder.getAbsolutePosition()
-    /ClimbConstants.absoluteSensorToMotorRatio
-    /ClimbConstants.encoderRotationsPerDistance;
+    /ClimbConstants.climbAbsoluteSensorToMotorRatio
+    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
   }
 
   public double getRightAbsoluteEncoderDistance() {
     return climbRightEncoder.getAbsolutePosition()
-    /ClimbConstants.absoluteSensorToMotorRatio
-    /ClimbConstants.encoderRotationsPerDistance;
+    /ClimbConstants.climbAbsoluteSensorToMotorRatio
+    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
   }
 
   public void enablePneumaticBreak() {

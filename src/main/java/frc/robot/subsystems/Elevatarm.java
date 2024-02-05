@@ -70,12 +70,12 @@ public class Elevatarm extends SubsystemBase {
 
     Mechanism2d canvas = new Mechanism2d(4, 4);
     MechanismRoot2d root = canvas.getRoot("Pivot", 
-      ElevatarmConstants.pivotRelativeToOrigin.getX(), 
-      ElevatarmConstants.pivotRelativeToOrigin.getY());
+      ElevatarmConstants.positionOfPivotRelativeToOrigin.getX(), 
+      ElevatarmConstants.positionOfPivotRelativeToOrigin.getY());
     
     m_elevatarmMech = root.append(
       new MechanismLigament2d("Elevatarm", 
-        m_elevator.getPosition().getValue() + ElevatarmConstants.minRetractionEE, 
+        m_elevator.getPosition().getValue() + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot, 
         Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
       ));
     SmartDashboard.putData("Elevatarm", canvas);
@@ -138,7 +138,7 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatarmConstants.elevatorEncoderRotationsPerDistance;
+    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatarmConstants.elevatorIntegratedSensorRotationsPerDistance;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatarmConstants.elevatorForwardSoftLimit;
@@ -158,26 +158,33 @@ public class Elevatarm extends SubsystemBase {
     if (m_armEncoder.isConnected()) {
       double absolutePosition = 
         getArmAbsoluteEncoderAngle() 
-        - ElevatarmConstants.armAbsoluteEncoderOffset;
+        - ElevatarmConstants.armAbsoluteEncoderAngleOffset;
+      /* The arm is configured so that on-board units is mechanism rotations */
       isArmEncoderReset = m_armLeader.setPosition(absolutePosition).isOK();
     }
 
     if (m_elevatorEncoder.isConnected()) {
       double absolutePosition =
         getElevatorAbsoluteEncoderDistance()
-        - ElevatarmConstants.elevatorAbsoluteEncoderOffset;
+        - ElevatarmConstants.elevatorAbsoluteEncoderDistanceOffset;
+      /* For the elevator, it is configured such that on-board units is mechanism meters.
+       * This is safe to use as "reasonable" meter values lie within 
+       * getPosition and getVelocity method return ranges
+       */
       isElevatorEncoderReset = m_elevator.setPosition(absolutePosition).isOK();
     }
   }
 
+  /* Rotations */
   private double getArmAbsoluteEncoderAngle() {
     return m_armEncoder.getAbsolutePosition();
   }
 
+  /* Meters */
   private double getElevatorAbsoluteEncoderDistance() {
     return (m_elevatorEncoder.getAbsolutePosition()
-      / ElevatarmConstants.elevatorAbsoluteSensorToMotorRatio) 
-      / ElevatarmConstants.elevatorEncoderRotationsPerDistance;
+      / ElevatarmConstants.elevatorAbsoluteSensorToIntegratedSensorRatio) 
+      / ElevatarmConstants.elevatorIntegratedSensorRotationsPerDistance;
   }
 
   public Rotation2d getArmRotation2d() {
@@ -204,6 +211,7 @@ public class Elevatarm extends SubsystemBase {
     }
   }
 
+  /* In rotations */
   public void setArmPosition(double position) {
     setControlArm(armMotionMagic.withPosition(
       MathUtil.clamp(
@@ -249,8 +257,8 @@ public class Elevatarm extends SubsystemBase {
     double updatedArmkG = 
       ElevatarmConstants.armkG 
       * (Math.cos(getArmRotation2d().getRadians())) // Scale with arm angle
-      * (ElevatarmConstants.minRetractionEE + getElevatorMeters())
-        /(ElevatarmConstants.maxExtensionEE); // Scale with elevator extension
+      * (ElevatarmConstants.minDistanceOfShintakeRelativeToPivot + getElevatorMeters())
+        /(ElevatarmConstants.maxDistanceOfShintakeRelativeToPivot); // Scale with elevator extension
       // Max kG is when arm is horizontal and elevator is fully extended
 
     double updatedElevatorkG = 
@@ -292,7 +300,7 @@ public class Elevatarm extends SubsystemBase {
 
     m_elevatarmMech.setLength(
       m_elevator.getPosition().getValue() 
-      + ElevatarmConstants.minRetractionEE
+      + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot
     );
     
     m_elevatarmMech.setAngle(
