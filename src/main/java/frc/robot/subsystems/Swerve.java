@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.lib.util.AllianceFlipUtil;
 import frc.lib.util.ShotCalculator;
 import frc.lib.util.ShotCalculator.ShotData;
 import frc.robot.Constants;
@@ -214,27 +215,12 @@ public class Swerve extends SubsystemBase {
      * @return pathfinding command
      */
     public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance) {
-        Pose2d targetPose = flipPose(pose);
+        Pose2d targetPose = AllianceFlipUtil.flipPose(pose);
 
         PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
         
         return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
-    }
-
-    /* Flip pose according to alliance detected on Driverstation.
-     * @param poseToFlip pose that may or may not be flipped
-     * @return flipped pose if on red alliance, origianl pose if on blue alliance
-     */
-    public Pose2d flipPose(Pose2d poseToFlip) {
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-            return new Pose2d(new Translation2d(
-                VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), 
-                poseToFlip.getY()), 
-                poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
-        }
-        return poseToFlip;
     }
 
     /* Gets robot pose (influenced by vision data). 
@@ -314,7 +300,7 @@ public class Swerve extends SubsystemBase {
 
     /* @return alliance-based speaker position (Translation2d) */
     public Translation2d getAllianceSpeakerPos() {
-        return flipPose(new Pose2d(PathGenerationConstants.speakerTranslation, new Rotation2d()))
+        return AllianceFlipUtil.flipPose(new Pose2d(PathGenerationConstants.speakerTranslation, new Rotation2d()))
             .getTranslation();
     }
 

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.lib.util.AllianceFlipUtil;
 import frc.robot.commands.*;
 import frc.robot.commands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
@@ -49,13 +50,13 @@ public class RobotContainer {
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
 
-    // TODO: implement LED indicators for auto starting pose
+    // KNOWN LIMITATION: Will return error if "None" command is selected
     public Supplier<Pose2d> autoStartingPoseSupplier = 
         () -> {
             if ((DriverStation.isFMSAttached() || DriverStation.isDSAttached()) 
             && (autoChooser.getSelected() != Commands.none()) 
             && (autoChooser.getSelected() != null))
-                return s_Swerve.flipPose(PathPlannerAuto.
+                return AllianceFlipUtil.flipPose(PathPlannerAuto.
                     getStaringPoseFromAutoFile(autoChooser.getSelected().getName()));
             else return s_Swerve.getPose();
         };
