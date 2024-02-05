@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.666210709659147,
-        "y": 7.453813696630177
+        "x": 7.663112515316466,
+        "y": 5.735911093060612
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.5617633452425475,
-        "y": 7.36322862720957
+        "x": 6.085035765123614,
+        "y": 6.353920603674541
       },
       "isLocked": false,
-      "linkedName": "N4"
+      "linkedName": "N5"
     },
     {
       "anchor": {
-        "x": 6.006700347457407,
-        "y": 6.413460401754427
+        "x": 1.8639969585392813,
+        "y": 7.64574284656844
       },
       "prevControl": {
-        "x": 6.524440263651939,
-        "y": 7.246278517730647
+        "x": 4.151216434413482,
+        "y": 8.003893510011412
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Far Score"
+      "linkedName": "Amp Score"
     }
   ],
   "rotationTargets": [],
@@ -39,8 +39,8 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": false
+    "rotation": -90.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,

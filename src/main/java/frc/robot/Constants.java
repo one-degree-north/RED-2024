@@ -31,9 +31,9 @@ public final class Constants {
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
 
-        public static final double autoAimHeadingkP = 1.5;
+        public static final double autoAimHeadingkP = 3.0;
         public static final double autoAimHeadingkI = 0;
-        public static final double autoAimHeadingkD = 0;
+        public static final double autoAimHeadingkD = 0.1;
     }
 
     public static final class PathGenerationConstants {

@@ -41,7 +41,6 @@ public class LEDs extends VirtualSubsystem {
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
   private SubsystemState autoAlignState = SubsystemState.NOTREADY;
-  private SubsystemState[] subsystems = {visionState, autoAlignState};
   
   /** Creates a new LEDs. */
   public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose) {
@@ -98,37 +97,17 @@ public class LEDs extends VirtualSubsystem {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      
-      /* Vision and AutoAlign states use the same LEDs, hence they share logic */
-      if (m_swerve.getTagSeenSinceLastDisable()){
-        breath(Section.UNDERGLOW, Color.kGreen, Color.kBlack, breathSlowDuration);
-        visionState = SubsystemState.READY;
-      }
-      else if (m_swerve.allCamerasEnabled()){
-        breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
-        visionState = SubsystemState.NOTREADY;
-      }
-      else {
-        solid(Section.UNDERGLOW, Color.kWhite);
-        visionState = SubsystemState.NOTREADY;
-      }
-      
+      // First check to see if AprilTag has been detected
+      checkForAprilTags();
+      // Only check for auto align if apriltag is detected
       if (visionState == SubsystemState.READY) 
         autoAlign();
-
-      /* Logic underneath here checks if all subsystems are ready */
-      boolean allSubsystemsReady = true;
-      for (SubsystemState s: subsystems) {
-        if (s == SubsystemState.NOTREADY) {
-          allSubsystemsReady = false;
-          break;
-        }
-      }
-
-      if (allSubsystemsReady) {
+        
+      /* Fast green wave if all subsystems are ready */
+      if (visionState == SubsystemState.READY 
+        && autoAlignState == SubsystemState.READY) {
         wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
-
     }
   
     else if (DriverStation.isEnabled()) {
@@ -148,6 +127,20 @@ public class LEDs extends VirtualSubsystem {
     }
 
     m_led.setData(m_ledBuffer);
+  }
+  
+  private synchronized void checkForAprilTags() {
+    if (m_swerve.getTagSeenSinceLastDisable()){
+      visionState = SubsystemState.READY;
+    }
+    else if (m_swerve.allCamerasEnabled()){
+      breath(Section.UNDERGLOW, Color.kWhite, Color.kBlack, breathSlowDuration);
+      visionState = SubsystemState.NOTREADY;
+    }
+    else {
+      solid(Section.UNDERGLOW, Color.kWhite);
+      visionState = SubsystemState.NOTREADY;
+    }
   }
 
   private synchronized void autoAlign() {
@@ -189,10 +182,10 @@ public class LEDs extends VirtualSubsystem {
     }
     if (xPoseAligned && yPoseAligned) {
       if (Math.abs(MathUtil.angleModulus(relativePose.getRotation().getRadians())) <= allowableError) {
-        solid(Section.LEFTDRIVE, Color.kBlack);
-        solid(Section.RIGHTDRIVE, Color.kBlack);
-        solid(Section.FRONTDRIVE, Color.kBlack);
-        solid(Section.BACKDRIVE, Color.kBlack);
+        solid(Section.LEFTDRIVE, Color.kGreen);
+        solid(Section.RIGHTDRIVE, Color.kGreen);
+        solid(Section.FRONTDRIVE, Color.kGreen);
+        solid(Section.BACKDRIVE, Color.kGreen);
         autoAlignState = SubsystemState.READY;
       } else if (MathUtil.angleModulus(relativePose.getRotation().getRadians()) > allowableError) {
         wave(Section.UNDERGLOW, Color.kRed, Color.kBlack, waveCycleLength, waveSlowCycleDuration, true);
