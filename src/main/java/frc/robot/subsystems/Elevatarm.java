@@ -138,7 +138,9 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    elevatorConfig.Feedback.SensorToMechanismRatio = ElevatarmConstants.elevatorIntegratedSensorRotationsPerDistance;
+    elevatorConfig.Feedback.SensorToMechanismRatio = 
+      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensor 
+      * ElevatarmConstants.elevatorMechanismRotationsToMeters;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatarmConstants.elevatorForwardSoftLimit;
@@ -182,9 +184,8 @@ public class Elevatarm extends SubsystemBase {
 
   /* Meters */
   private double getElevatorAbsoluteEncoderDistance() {
-    return (m_elevatorEncoder.getAbsolutePosition()
-      / ElevatarmConstants.elevatorAbsoluteSensorToIntegratedSensorRatio) 
-      / ElevatarmConstants.elevatorIntegratedSensorRotationsPerDistance;
+    return m_elevatorEncoder.getAbsolutePosition()
+      / ElevatarmConstants.elevatorMechanismRotationsToMeters;
   }
 
   public Rotation2d getArmRotation2d() {

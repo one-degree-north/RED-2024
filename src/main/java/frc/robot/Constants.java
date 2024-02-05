@@ -70,7 +70,7 @@ public final class Constants {
 
         public static final double elevatorPreTrapPosition = 0;
         public static final double armPreTrapPosition = 0;
-        
+
         public static final double elevatorTrapPosition = 0;
         public static final double armTrapPosition = 0;
 
@@ -105,7 +105,7 @@ public final class Constants {
         public static final double armCruiseVelocity = 0.0;
         public static final double armAcceleration = 0.0;
 
-        public static final double armGearRatio = 0.0;
+        public static final double armGearRatio = 120.0 / 1.0; // Max increase to 250:1
 
         public static final int elevatorID = 0;
         public static final int elevatorEncoderPort = 0;
@@ -128,15 +128,18 @@ public final class Constants {
         public static final double elevatorCruiseVelocity = 0.0;
         public static final double elevatorAcceleration = 0.0;
 
-        public static final double elevatorAbsoluteSensorToIntegratedSensorRatio = 0.0;
-        public static final double elevatorIntegratedSensorRotationsPerDistance = 0.0;
+        public static final double elevatorSprocketDiameter = Units.inchesToMeters(1.432);
+
+        public static final double elevatorIntegratedSensorToAbsoluteSensor = 5.0 / 1.0; // 5:1
+        public static final double elevatorMechanismRotationsToMeters = elevatorSprocketDiameter * Math.PI;
 
         // Distance from pivot to center of fully retracted end effector
-        public static final double minDistanceOfShintakeRelativeToPivot = 0.0;
-        public static final double maxDistanceOfShintakeRelativeToPivot = elevatorForwardSoftLimit + minDistanceOfShintakeRelativeToPivot;
+        public static final double minDistanceOfShintakeRelativeToPivot = Units.inchesToMeters(23.5);
+        public static final double maxDistanceOfShintakeRelativeToPivot = elevatorForwardSoftLimit + minDistanceOfShintakeRelativeToPivot; 
+            // Maximum should be 34.5
 
         // In meters
-        public static final Translation2d positionOfPivotRelativeToOrigin = new Translation2d(0, 0);
+        public static final Translation2d positionOfPivotRelativeToOrigin = new Translation2d(-13.5, 7.6);
 
         // The minimum retraction of the elevator when it is less than the intereference
         // angle cutoff (in meters and relative to minimum possible retraction of elevator)
@@ -207,7 +210,7 @@ public final class Constants {
         public static final double shooterkV = 0;
         public static final double shooterkA = 0;
 
-        public static final double flywheelGearing = 0;
+        public static final double flywheelGearing = 1.0/1.0; // 1:1
 
         // Approximate time shooter takes to hit max velocity
         public static final double shooterRampTimeSeconds = 1;
