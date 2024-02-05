@@ -40,7 +40,7 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
     private PoseEstimatorSubsystem PoseEstimator;
-    private boolean isSpeakerAutoAim = false;
+    private RotationOverride currentOverride = RotationOverride.NONE;
 
     private StructArrayPublisher<Pose3d> cameraFieldPoses = 
         NetworkTableInstance.getDefault()
@@ -155,22 +155,19 @@ public class Swerve extends SubsystemBase {
     /* Method used to obtain rotation target override for PPHolonomicDriveController.
      * @return optional Rotation2d object representing rotation override. Empty if none.
      */
-    public Optional<Rotation2d> getRotationTargetOverride() {
-        if (isSpeakerAutoAim) {
-            return Optional.of(getShotData().goalHeading());
-        } else {
-            return Optional.empty();
+    private Optional<Rotation2d> getRotationTargetOverride() {
+        switch (currentOverride) {
+            case NONE:
+                return Optional.empty();
+            case SPEAKER_AUTO_AIM:
+                return Optional.of(getShotData().goalHeading());
+            default:
+                return Optional.empty();
         }
     }
 
-    /* Enable auto aim speaker rotation override for PathPlanner paths. */
-    public void enableSpeakerAutoAim() {
-        isSpeakerAutoAim = true;
-    }
-
-    /* Disable auto aim speaker rotation override for PathPlanner paths. */
-    public void disableSpeakerAutoAim() {
-        isSpeakerAutoAim = false;
+    public void setRotationTargetOverride(RotationOverride setting) {
+        currentOverride = setting;
     }
 
 
@@ -331,5 +328,9 @@ public class Swerve extends SubsystemBase {
             getAllianceSpeakerPos()));
 
         cameraFieldPoses.set(new Pose3d[] {getLeftCameraFieldPosition(), getRightCameraFieldPosition()});
+    }
+
+    public enum RotationOverride {
+        NONE, SPEAKER_AUTO_AIM;
     }
 }
