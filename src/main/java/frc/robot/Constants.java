@@ -130,7 +130,7 @@ public final class Constants {
 
         public static final double elevatorSprocketDiameter = Units.inchesToMeters(1.432);
 
-        public static final double elevatorIntegratedSensorToAbsoluteSensor = 5.0 / 1.0; // 5:1
+        public static final double elevatorIntegratedSensorToAbsoluteSensorRatio = 5.0 / 1.0; // 5:1
         public static final double elevatorMechanismRotationsToMeters = elevatorSprocketDiameter * Math.PI;
 
         // Distance from pivot to center of fully retracted end effector
@@ -167,8 +167,8 @@ public final class Constants {
         public static final double leftClimbAbsoluteEncoderOffset = 0;
         public static final double rightClimbAbsoluteEncoderOffset = 0;
 
-        public static final double climbAbsoluteSensorToMotorRatio = 0;
-        public static final double climbIntegratedEncoderRotationsPerDistance = 0;
+        public static final double climbIntegratedSensorToAbsoluteSensorRatio = 0;
+        public static final double climbMechanismRotationsToMeters = 0;
 
         public static final double climbPositionkP = 0.0;
         public static final double climbPositionkI = 0.0;

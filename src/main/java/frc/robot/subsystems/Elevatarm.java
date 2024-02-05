@@ -75,7 +75,7 @@ public class Elevatarm extends SubsystemBase {
         m_elevator.getPosition().getValue() + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot, 
         Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
       ));
-      
+
     SmartDashboard.putData("Elevatarm", canvas);
   }
 
@@ -135,7 +135,7 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     elevatorConfig.Feedback.SensorToMechanismRatio = 
-      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensor 
+      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensorRatio 
       * ElevatarmConstants.elevatorMechanismRotationsToMeters;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;

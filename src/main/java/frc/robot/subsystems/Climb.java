@@ -122,7 +122,7 @@ public class Climb extends SubsystemBase {
     climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.climbReverseSoftLimit;
 
     //Feedback Configs
-    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedSensorToAbsoluteSensorRatio * ClimbConstants.climbMechanismRotationsToMeters;
 
     //Add Configs
     m_climbLeft.getConfigurator().apply(climbConfigs);
@@ -207,14 +207,12 @@ public class Climb extends SubsystemBase {
 
   public double getLeftAbsoluteEncoderDistance() {
     return m_climbLeftEncoder.getAbsolutePosition()
-    /ClimbConstants.climbAbsoluteSensorToMotorRatio
-    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    /ClimbConstants.climbMechanismRotationsToMeters;
   }
 
   public double getRightAbsoluteEncoderDistance() {
     return m_climbRightEncoder.getAbsolutePosition()
-    /ClimbConstants.climbAbsoluteSensorToMotorRatio
-    /ClimbConstants.climbIntegratedEncoderRotationsPerDistance;
+    /ClimbConstants.climbMechanismRotationsToMeters;
   }
 
   public void enablePneumaticBreak() {
