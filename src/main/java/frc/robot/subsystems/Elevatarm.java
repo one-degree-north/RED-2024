@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -88,11 +87,10 @@ public class Elevatarm extends SubsystemBase {
     armPIDConfigs.kP = ElevatarmConstants.armkP;
     armPIDConfigs.kI = ElevatarmConstants.armkI;
     armPIDConfigs.kD = ElevatarmConstants.armkD;
-    armPIDConfigs.kG = ElevatarmConstants.armkG;
+    armPIDConfigs.kG = 0; // kG is set directly in control request
     armPIDConfigs.kS = ElevatarmConstants.armkS;
     armPIDConfigs.kV = ElevatarmConstants.armkV;
     armPIDConfigs.kA = ElevatarmConstants.armkA;
-    armPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
 
     armConfig.Slot0 = armPIDConfigs;
 
@@ -122,11 +120,10 @@ public class Elevatarm extends SubsystemBase {
     elevatorPIDConfigs.kP = ElevatarmConstants.elevatorkP;
     elevatorPIDConfigs.kI = ElevatarmConstants.elevatorkI;
     elevatorPIDConfigs.kD = ElevatarmConstants.elevatorkD;
-    elevatorPIDConfigs.kG = ElevatarmConstants.elevatorkG;
+    elevatorPIDConfigs.kG = 0; // kG is set directly in control request
     elevatorPIDConfigs.kS = ElevatarmConstants.elevatorkS;
     elevatorPIDConfigs.kV = ElevatarmConstants.elevatorkV;
     elevatorPIDConfigs.kA = ElevatarmConstants.elevatorkA;
-    elevatorPIDConfigs.GravityType = GravityTypeValue.Elevator_Static;
 
     elevatorConfig.Slot0 = elevatorPIDConfigs;
 
@@ -249,13 +246,26 @@ public class Elevatarm extends SubsystemBase {
 
   public void recalculateFeedForward() {
     // This assumes that arm feedforward is tuned with elevator at maximum extension
-    armPIDConfigs.kG = 
-      ElevatarmConstants.armkG*(ElevatarmConstants.minRetractionEE+getElevatorMeters())
-        /(ElevatarmConstants.maxExtensionEE);
-    elevatorPIDConfigs.kG = 
-      ElevatarmConstants.elevatorkG*Math.sin(getArmRotation2d().getRadians());
-    m_armLeader.getConfigurator().apply(armPIDConfigs);
-    m_elevator.getConfigurator().apply(elevatorPIDConfigs);
+    double updatedArmkG = 
+      ElevatarmConstants.armkG 
+      * (Math.cos(getArmRotation2d().getRadians())) // Scale with arm angle
+      * (ElevatarmConstants.minRetractionEE + getElevatorMeters())
+        /(ElevatarmConstants.maxExtensionEE); // Scale with elevator extension
+      // Max kG is when arm is horizontal and elevator is fully extended
+
+    double updatedElevatorkG = 
+      ElevatarmConstants.elevatorkG
+      * Math.sin(getArmRotation2d().getRadians()); 
+      // Scale with arm angle 
+      // (sin because initial measurement is taken with upright arm)
+      // Max kG is when arm is upright, min kG is when arm is horizontal
+    
+    armMotionMagic.FeedForward = updatedArmkG;
+    elevatorMotionMagic.FeedForward = updatedElevatorkG;
+
+    SmartDashboard.putNumber("Arm kG", updatedArmkG);
+    SmartDashboard.putNumber("Elevator kG", updatedElevatorkG);
+
   }
 
   public void setCoast() {
