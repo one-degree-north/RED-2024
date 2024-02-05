@@ -72,6 +72,7 @@ public class LEDs extends VirtualSubsystem {
   @Override
   public synchronized void periodic() {
     loadingNotifier.stop();
+    solid(Section.FULL, Color.kBlack);
 
     if (DriverStation.isFMSAttached() || DriverStation.isDSAttached()) {
       alliance = DriverStation.getAlliance().get();
@@ -102,7 +103,7 @@ public class LEDs extends VirtualSubsystem {
       // Only check for auto align if apriltag is detected
       if (visionState == SubsystemState.READY) 
         autoAlign();
-        
+
       /* Fast green wave if all subsystems are ready */
       if (visionState == SubsystemState.READY 
         && autoAlignState == SubsystemState.READY) {
@@ -111,6 +112,7 @@ public class LEDs extends VirtualSubsystem {
     }
   
     else if (DriverStation.isEnabled()) {
+      solid(Section.FULL, Color.kBlack);
       /* Main logic for drivetrain colors when enabled */
       if (DriverStation.isTeleop()) {
         solid(Section.UNDERGLOW, teleopColor);
@@ -144,7 +146,7 @@ public class LEDs extends VirtualSubsystem {
   }
 
   private synchronized void autoAlign() {
-    double allowableError = 0.05;
+    double allowableError = 0.1;
     Pose2d targetPose = autoPose.get();
     Pose2d currentPose = m_swerve.getPose();
     boolean xPoseAligned = false;
