@@ -41,7 +41,7 @@ public class ShotCalculator {
     Rotation2d goalHeading =
         GeomUtil.inverse(GeomUtil.toPose2d(robot)).transformBy(GeomUtil.toTransform2d(speaker)).getTranslation().getAngle();
     // Aim opposite of tangentialComponent (negative lead when tangentialComponent is positive)
-    goalHeading = goalHeading.plus(new Rotation2d(shotSpeed, tangentialComponent));
+    goalHeading = goalHeading.plus(new Rotation2d(shotSpeed, tangentialComponent)).plus(Rotation2d.fromRotations(0.5));
     double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
 
     // This will be replaced with a formula to return arm angle in radians based on distance in meters

@@ -31,9 +31,9 @@ public final class Constants {
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
 
-        public static final double autoAimHeadingkP = 3.0;
+        public static final double autoAimHeadingkP = 3.5;
         public static final double autoAimHeadingkI = 0;
-        public static final double autoAimHeadingkD = 0.1;
+        public static final double autoAimHeadingkD = 0.20;
     }
 
     public static final class PathGenerationConstants {
@@ -128,10 +128,10 @@ public final class Constants {
         public static final double elevatorCruiseVelocity = 0.0;
         public static final double elevatorAcceleration = 0.0;
 
-        public static final double elevatorSprocketDiameter = Units.inchesToMeters(1.432);
+        public static final double elevatorOutputDiameter = Units.inchesToMeters(1.432);
 
         public static final double elevatorIntegratedSensorToAbsoluteSensorRatio = 5.0 / 1.0; // 5:1
-        public static final double elevatorMechanismRotationsToMeters = elevatorSprocketDiameter * Math.PI;
+        public static final double elevatorMechanismRotationsToMeters = elevatorOutputDiameter * Math.PI;
 
         // Distance from pivot to center of fully retracted end effector
         public static final double minDistanceOfShintakeRelativeToPivot = Units.inchesToMeters(23.5);
@@ -167,8 +167,9 @@ public final class Constants {
         public static final double leftClimbAbsoluteEncoderOffset = 0;
         public static final double rightClimbAbsoluteEncoderOffset = 0;
 
-        public static final double climbIntegratedSensorToAbsoluteSensorRatio = 0;
-        public static final double climbMechanismRotationsToMeters = 0;
+        public static final double climbOutputDiameter = Units.inchesToMeters(1.25);
+        public static final double climbIntegratedSensorToAbsoluteSensorRatio = 10.5/1.0;
+        public static final double climbMechanismRotationsToMeters = climbOutputDiameter * Math.PI;
 
         public static final double climbPositionkP = 0.0;
         public static final double climbPositionkI = 0.0;
