@@ -46,8 +46,7 @@ public class ShintakeCommand extends Command {
       case GROUND_INTAKE:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
-          // .alongWith(new WaitUntilCommand(() -> s_Shintake.isNoteIntaked()))
-            .alongWith(new WaitUntilCommand(() -> false))
+          .alongWith(new WaitUntilCommand(() -> s_Shintake.isNoteIntaked()))
         ;
         break;
       case SOURCE_INTAKE:

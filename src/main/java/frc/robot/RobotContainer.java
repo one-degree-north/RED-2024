@@ -14,9 +14,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.commands.*;
+import frc.robot.commands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -101,6 +104,14 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
 
         return autoChooser.getSelected();
+    }
+
+    private Command firstShotAutoCommand() {
+        return new ShintakeCommand(ShintakeMode.SHOOT, Shintake.getInstance());
+    }
+
+    private Command intakeThenShootAutoCommand() {
+        return null;
     }
 
 }

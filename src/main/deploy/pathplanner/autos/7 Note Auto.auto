@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.24,
-      "y": 3.82
+      "x": 1.3648879630658568,
+      "y": 5.484563929414318
     },
     "rotation": 0
   },
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NearPlayerSideToN3"
+            "pathName": "CenterSideToN3"
           }
         },
         {
@@ -93,6 +93,24 @@
           "type": "wait",
           "data": {
             "waitTime": 0.2
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FarScoreToN6"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "N6ToFarScore"
           }
         }
       ]

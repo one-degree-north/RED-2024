@@ -31,7 +31,11 @@ public class Shintake extends SubsystemBase {
 
   private DigitalInput intakeSensor;
 
+  private static Shintake instance;
+
   public Shintake() {
+    instance = this;
+    
     m_flywheelLeft = new TalonFX(ShintakeConstants.leftShooterID);
     m_flywheelRight = new TalonFX(ShintakeConstants.rightShooterID);
 
@@ -44,6 +48,13 @@ public class Shintake extends SubsystemBase {
     intakeSensor = new DigitalInput(ShintakeConstants.irSensorPort);
 
     configMotors();
+  }
+
+  public static Shintake getInstance() {
+    if (instance == null) {
+      instance = new Shintake();
+    }
+    return instance;
   }
 
   public void configMotors() {
