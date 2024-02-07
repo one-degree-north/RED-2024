@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3711200952529907,
+      "y": 5.518359661102295
+    },
+    "rotation": -1.5575115390099846e-19
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterAutos.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterAutos.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterAutos.4"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": true
+}

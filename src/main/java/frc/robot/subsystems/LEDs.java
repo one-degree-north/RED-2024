@@ -146,6 +146,10 @@ public class LEDs extends VirtualSubsystem {
     }
   }
 
+  private void pingLED(Section section) {
+    breath(section, Color.kYellow, Color.kBlack, 0.01);
+  }
+
   private synchronized void autoAlign() {
     double allowableError = 0.1;
     Pose2d targetPose = autoPose.get();
@@ -154,7 +158,8 @@ public class LEDs extends VirtualSubsystem {
     boolean yPoseAligned = false;
     Pose2d relativePose = targetPose.relativeTo(currentPose);
 
-    double breathDuration = relativePose.getTranslation().getDistance(new Translation2d());
+    double breathDuration = relativePose.getTranslation().getNorm();
+    breathDuration = MathUtil.clamp(Math.ceil(breathDuration), 1, 12)/4.0;
 
     if (Math.abs(relativePose.getX()) <= allowableError) {
       solid(Section.FRONTDRIVE, Color.kBlack);
