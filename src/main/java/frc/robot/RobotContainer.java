@@ -3,7 +3,6 @@ package frc.robot;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,11 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.commands.*;
-import frc.robot.commands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -40,14 +37,9 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-    private final JoystickButton intake = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-
-
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve(); 
-    private final Shintake s_Shintake = new Shintake();
- 
+    private final Swerve s_Swerve = new Swerve();
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
@@ -82,8 +74,6 @@ public class RobotContainer {
             )
         );
 
-        NamedCommands.registerCommand("Run Intake Forever",  new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake));
-
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -101,8 +91,6 @@ public class RobotContainer {
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
                 () -> zeroGyro.getAsBoolean()));
-
-        intake.whileTrue(new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake));
     }
 
     /**
@@ -112,8 +100,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
 
-        return new ParallelRaceGroup(autoChooser.getSelected(),
-        new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake));
+        return autoChooser.getSelected();
     }
 
 }
