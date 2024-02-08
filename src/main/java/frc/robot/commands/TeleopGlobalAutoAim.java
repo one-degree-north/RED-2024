@@ -6,7 +6,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.Constants.ShintakeConstants;
 import frc.robot.Constants.TeleopConstants;
-import frc.robot.commands.shintakecommands.ShintakeCommand;
 import frc.robot.subsystems.Elevatarm;
 import frc.robot.subsystems.Shintake;
 import frc.robot.subsystems.Swerve;
@@ -24,7 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
-public class AutoAimSpeakerTeleop extends Command {    
+public class TeleopGlobalAutoAim extends Command {    
     private Swerve s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
@@ -39,7 +38,7 @@ public class AutoAimSpeakerTeleop extends Command {
     private Shintake s_Shintake;
     private Elevatarm s_Elevatarm;
 
-    public AutoAimSpeakerTeleop(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
+    public TeleopGlobalAutoAim(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
         this.s_Swerve = s_Swerve;
         this.s_Elevatarm = s_Elevatarm;
         this.s_Shintake = s_Shintake;
