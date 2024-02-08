@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.commands.*;
-import frc.robot.commands.ShintakeCommand.ShintakeMode;
+import frc.robot.commands.shintakecommands.ShintakeCommand;
+import frc.robot.commands.shintakecommands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -90,10 +91,7 @@ public class RobotContainer {
         /* Driver Buttons */
 
 
-        autoAim.whileTrue(new AutoAimSpeakerTeleop(s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> zeroGyro.getAsBoolean()));
+        
     }
 
     /**
@@ -107,7 +105,7 @@ public class RobotContainer {
     }
 
     private Command firstShotAutoCommand() {
-        return new ShintakeCommand(ShintakeMode.SHOOT, Shintake.getInstance());
+        return new ShintakeCommand(ShintakeMode.SHOOT, Shintake.getInstance(), true);
     }
 
     private Command intakeThenShootAutoCommand() {

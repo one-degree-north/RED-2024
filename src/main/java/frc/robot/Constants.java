@@ -55,6 +55,10 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
+        public static final double armAllowableError = 0.1;
+        public static final double elevatorAllowableError = 0.05;
+        public static final double swerveRotationAllowableError = 0.1;
+
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;
         public static final double armStowedPosition = 0;
@@ -80,6 +84,10 @@ public final class Constants {
         public static final double climbHighPosition = 0;
         public static final double climbLowPosition = 0;
         public static final double climbStandardPosition = 0;
+
+        // What x position should the robot be less than such that it can auto aim+score on speaker?
+        // This gets translated by alliance
+        public static final double xPositionCutoffToAutoScore = 0;
     }
 
     public static final class ElevatarmConstants {

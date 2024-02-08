@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.shintakecommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -16,12 +16,14 @@ public class ShintakeCommand extends Command {
   private ShintakeMode m_mode;
   private Shintake s_Shintake;
   private Command m_commandToRun;
+  private boolean m_stopWhenFinished;
 
-  public ShintakeCommand(ShintakeMode mode, Shintake shintake) {
+  public ShintakeCommand(ShintakeMode mode, Shintake shintake, boolean stopWhenFinished) {
     this.s_Shintake = shintake;
     addRequirements(s_Shintake);
 
     this.m_mode = mode;
+    this.m_stopWhenFinished = stopWhenFinished;
   }
 
   // Called when the command is initially scheduled.
@@ -69,6 +71,14 @@ public class ShintakeCommand extends Command {
           )
         ;
         break;
+      case JUSTFEEDTOSHOOT:
+        m_commandToRun = 
+          new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
+          .alongWith(
+            new WaitUntilCommand(() -> !s_Shintake.isNoteIntaked())
+            .andThen(new WaitCommand(ShintakeConstants.shooterDelaySeconds))
+          )
+        ;
       default:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
@@ -89,7 +99,8 @@ public class ShintakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Shintake.stopAll();
+    if (m_stopWhenFinished)
+      s_Shintake.stopAll();
   }
 
   // Returns true when the command should end.
@@ -99,6 +110,7 @@ public class ShintakeCommand extends Command {
   }
 
   public enum ShintakeMode {
-    FRONT_OUTTAKE, AMP_AND_TRAP, GROUND_INTAKE, SOURCE_INTAKE, SHOOT
+    FRONT_OUTTAKE, AMP_AND_TRAP, GROUND_INTAKE, SOURCE_INTAKE, SHOOT,
+    JUSTFEEDTOSHOOT;
   }
 }

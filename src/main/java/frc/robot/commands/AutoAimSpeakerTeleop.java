@@ -1,8 +1,14 @@
 package frc.robot.commands;
 
+import frc.lib.util.AllianceFlipUtil;
 import frc.lib.util.ShotCalculator.ShotData;
 import frc.robot.Constants;
+import frc.robot.Constants.MechanismSetpointConstants;
+import frc.robot.Constants.ShintakeConstants;
 import frc.robot.Constants.TeleopConstants;
+import frc.robot.commands.shintakecommands.ShintakeCommand;
+import frc.robot.subsystems.Elevatarm;
+import frc.robot.subsystems.Shintake;
 import frc.robot.subsystems.Swerve;
 
 import java.util.function.BooleanSupplier;
@@ -11,6 +17,8 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,9 +36,14 @@ public class AutoAimSpeakerTeleop extends Command {
 
     private PIDController headingController;
 
-    public AutoAimSpeakerTeleop(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
+    private Shintake s_Shintake;
+    private Elevatarm s_Elevatarm;
+
+    public AutoAimSpeakerTeleop(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
         this.s_Swerve = s_Swerve;
-        addRequirements(s_Swerve);
+        this.s_Elevatarm = s_Elevatarm;
+        this.s_Shintake = s_Shintake;
+        addRequirements(s_Swerve, s_Elevatarm, s_Shintake);
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -80,6 +93,52 @@ public class AutoAimSpeakerTeleop extends Command {
             false
         );
 
-        SmartDashboard.putNumber("Auto Aim Error", headingController.getPositionError());
+        // let shooter run the whole time this command is run
+        s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM);
+
+        // if elevator is not at correct length, do this before running anything else with the elevator / arm
+        if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) 
+        > MechanismSetpointConstants.elevatorAllowableError) {
+            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+
+        // if the elevator is in the right position BUT arm is not at setpoint and swerve is not at setpoint
+        // and swerve is not past the x position cutoff, set arm to auto aim angle
+        } else if (
+        Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-s_Swerve.getShotData().clampedArmAngle()) 
+        > MechanismSetpointConstants.armAllowableError
+        ||
+        Math.abs(
+          MathUtil.angleModulus(
+            s_Swerve.getShotData().goalHeading()
+            .minus(s_Swerve.getPose().getRotation())
+            .getRadians()
+          )
+        )
+        > MechanismSetpointConstants.swerveRotationAllowableError
+        ||
+        AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
+        > AllianceFlipUtil.flipPose(new Pose2d(new Translation2d(
+          MechanismSetpointConstants.xPositionCutoffToAutoScore, 0), new Rotation2d(0)))
+          .getX()
+        ) {
+            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+
+        // if all subsystems are at setpoint, feed the note in to the shooter
+        } else {
+            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+            s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
+        }
+
+
+        SmartDashboard.putNumber("Auto Aim Rotation Error", headingController.getPositionError());
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        s_Shintake.stopAll();
+    }
+
+
 }
