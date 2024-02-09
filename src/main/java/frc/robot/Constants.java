@@ -57,6 +57,7 @@ public final class Constants {
     public static final class MechanismSetpointConstants {
         public static final double armAllowableError = 0.1;
         public static final double elevatorAllowableError = 0.05;
+        public static final double climbAllowableError = 0.05;
         public static final double swerveRotationAllowableError = 0.1;
 
         // Elevator in meters, arm in rotations
@@ -139,7 +140,7 @@ public final class Constants {
         public static final double elevatorOutputDiameter = Units.inchesToMeters(1.432);
 
         public static final double elevatorIntegratedSensorToAbsoluteSensorRatio = 5.0 / 1.0; // 5:1
-        public static final double elevatorMechanismRotationsToMeters = elevatorOutputDiameter * Math.PI;
+        public static final double elevatorMechanismRotationsToMetersRatio = 1 / (elevatorOutputDiameter * Math.PI);
 
         // Distance from pivot to center of fully retracted end effector
         public static final double minDistanceOfShintakeRelativeToPivot = Units.inchesToMeters(23.5);
@@ -177,7 +178,7 @@ public final class Constants {
 
         public static final double climbOutputDiameter = Units.inchesToMeters(1.25);
         public static final double climbIntegratedSensorToAbsoluteSensorRatio = 10.5/1.0;
-        public static final double climbMechanismRotationsToMeters = climbOutputDiameter * Math.PI;
+        public static final double climbMechanismRotationsToMetersRatio = 1 / (climbOutputDiameter * Math.PI);
 
         public static final double climbPositionkP = 0.0;
         public static final double climbPositionkI = 0.0;

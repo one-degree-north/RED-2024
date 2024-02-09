@@ -41,7 +41,7 @@ public class RobotContainer {
     private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    public final Swerve s_Swerve = new Swerve();
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");

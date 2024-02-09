@@ -72,7 +72,9 @@ public class Elevatarm extends SubsystemBase {
     
     elevatarmMech2d = root.append(
       new MechanismLigament2d("Elevatarm", 
-        m_elevator.getPosition().getValue() + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot, 
+        m_elevator.getPosition().getValue()
+        /ElevatarmConstants.elevatorMechanismRotationsToMetersRatio 
+        + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot, 
         Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
       ));
 
@@ -123,8 +125,10 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.Slot0.kV = ElevatarmConstants.elevatorkV;
     elevatorConfig.Slot0.kA = ElevatarmConstants.elevatorkA;
 
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatarmConstants.elevatorCruiseVelocity;
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatarmConstants.elevatorAcceleration;
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatarmConstants.elevatorCruiseVelocity
+    * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = ElevatarmConstants.elevatorAcceleration
+    * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
     
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     elevatorConfig.CurrentLimits.SupplyCurrentLimit = 35;
@@ -135,13 +139,14 @@ public class Elevatarm extends SubsystemBase {
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     elevatorConfig.Feedback.SensorToMechanismRatio = 
-      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensorRatio 
-      * ElevatarmConstants.elevatorMechanismRotationsToMeters;
+      ElevatarmConstants.elevatorIntegratedSensorToAbsoluteSensorRatio;
 
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatarmConstants.elevatorForwardSoftLimit;
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatarmConstants.elevatorForwardSoftLimit
+    * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatarmConstants.elevatorReverseSoftLimit;
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatarmConstants.elevatorReverseSoftLimit
+    * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
 
     m_elevator.getConfigurator().apply(elevatorConfig);
 
@@ -166,7 +171,8 @@ public class Elevatarm extends SubsystemBase {
        * This is safe to use as "reasonable" meter values lie within 
        * getPosition and getVelocity method return ranges
        */
-      isElevatorEncoderReset = m_elevator.setPosition(absolutePosition).isOK();
+      isElevatorEncoderReset = m_elevator.setPosition(absolutePosition
+      * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio).isOK();
     }
   }
 
@@ -178,7 +184,7 @@ public class Elevatarm extends SubsystemBase {
   /* Meters */
   private double getElevatorAbsoluteEncoderDistance() {
     return m_elevatorEncoder.getAbsolutePosition()
-      / ElevatarmConstants.elevatorMechanismRotationsToMeters;
+      / ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
   }
 
   public Rotation2d getArmRotation2d() {
@@ -187,7 +193,8 @@ public class Elevatarm extends SubsystemBase {
 
   public double getElevatorMeters() {
     // TODO: Figure out conversion
-    return m_elevator.getPosition().getValue();
+    return m_elevator.getPosition().getValue()
+    / ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
   }
 
   private void setControlArm(ControlRequest req) {
@@ -222,9 +229,9 @@ public class Elevatarm extends SubsystemBase {
   public void setElevatorPosition(double position) {
     setControlElevator(elevatorMotionMagic.withPosition(
         MathUtil.clamp(
-        position, 
-        ElevatarmConstants.elevatorReverseSoftLimit,
-        ElevatarmConstants.elevatorForwardSoftLimit)
+        position*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio, 
+        ElevatarmConstants.elevatorReverseSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio,
+        ElevatarmConstants.elevatorForwardSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio)
     )
       .withLimitForwardMotion(m_elevatorLimitSwitchMax.get())
       .withLimitReverseMotion(m_elevatorLimitSwitchMin.get())
@@ -285,7 +292,7 @@ public class Elevatarm extends SubsystemBase {
   public void periodic() {
 
     elevatarmMech2d.setLength(
-      m_elevator.getPosition().getValue() 
+      m_elevator.getPosition().getValue()/ElevatarmConstants.elevatorMechanismRotationsToMetersRatio 
       + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot
     );
     

@@ -23,11 +23,11 @@ public class ClimbPositionCommand extends Command {
   }
 
   private boolean isLeftClimbAtSetpoint() {
-    return Math.abs(s_Climb.getPositionLeft()-m_position.leftClimbSetpoint()) < 0.05;
+    return Math.abs(s_Climb.getPositionLeft()-m_position.leftClimbSetpoint()) < MechanismSetpointConstants.climbAllowableError;
   }
 
   private boolean isRightClimbAtSetpoint() {
-    return Math.abs(s_Climb.getPositionRight()-m_position.rightClimbSetpoint()) < 0.05;
+    return Math.abs(s_Climb.getPositionRight()-m_position.rightClimbSetpoint()) < MechanismSetpointConstants.climbAllowableError;
   }
 
   // Called when the command is initially scheduled.
