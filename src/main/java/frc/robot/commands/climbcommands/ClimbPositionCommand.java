@@ -33,8 +33,8 @@ public class ClimbPositionCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_commandToRun = new InstantCommand(() -> s_Climb.setPositionLeft(m_position.leftClimbSetpoint()))
-      .alongWith(new InstantCommand(() -> s_Climb.setPositionRight(m_position.rightClimbSetpoint())))
+    m_commandToRun = new InstantCommand(() -> s_Climb.setSetpointPositionLeft(m_position.leftClimbSetpoint()))
+      .alongWith(new InstantCommand(() -> s_Climb.setSetpointPositionRight(m_position.rightClimbSetpoint())))
       .alongWith(new WaitUntilCommand(() -> isLeftClimbAtSetpoint() && isRightClimbAtSetpoint()))
     ;
 

@@ -22,7 +22,8 @@ public class AllianceFlipUtil {
             return new Pose2d(new Translation2d(
                 VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), 
                 poseToFlip.getY()), 
-                poseToFlip.getRotation().rotateBy(Rotation2d.fromRotations(0.5)));
+                Rotation2d.fromRotations(0.5)
+                .rotateBy(poseToFlip.getRotation().unaryMinus()));
         }
         return poseToFlip;
     }

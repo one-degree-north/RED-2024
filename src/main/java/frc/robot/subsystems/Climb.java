@@ -144,37 +144,49 @@ public class Climb extends SubsystemBase {
     double offsetRightClimbDistance = getRightAbsoluteEncoderDistance() - ClimbConstants.rightClimbAbsoluteEncoderOffset;
     if (m_climbLeftEncoder.isConnected() && m_climbRightEncoder.isConnected()) { 
       // only successful if no error
-      boolean c1 = m_climbLeft.setPosition(offsetLeftClimbDistance
-        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
-      boolean c2 = m_climbRight.setPosition(offsetRightClimbDistance
-        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
+      boolean c1 = setEncoderPositionLeft(offsetLeftClimbDistance);
+      boolean c2 = setEncoderPositionRight(offsetRightClimbDistance);
       isClimbEncodersReset = c1 && c2;
     }
     
   }
 
-  public void setControlLeft(ControlRequest req) {
+  public boolean setControlLeft(ControlRequest req) {
     if (m_climbLeft.isAlive()
     && isClimbEncodersReset) {
-      m_climbLeft.setControl(req);
+      return m_climbLeft.setControl(req).isOK();
     }
+    return false;
   }
 
-  public void setControlRight(ControlRequest req) {
+  public boolean setControlRight(ControlRequest req) {
     if (m_climbRight.isAlive()
     && isClimbEncodersReset) {
-      m_climbRight.setControl(req);
+      return m_climbRight.setControl(req).isOK();
     }
+    return false;
+  }
+
+  // position in meters
+  public boolean setEncoderPositionLeft(double meters) {
+    return m_climbLeft.setPosition(meters
+        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
+  }
+
+  // position in meters
+  public boolean setEncoderPositionRight(double meters) {
+    return m_climbRight.setPosition(meters
+        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
   }
 
   /* In meters per second */
-  public void setVelocityLeft(double velocity) {
-    setControlLeft(climbVelocity.withVelocity(velocity
+  public boolean setVelocityLeft(double velocity) {
+    return setControlLeft(climbVelocity.withVelocity(velocity
     *ClimbConstants.climbMechanismRotationsToMetersRatio));
   }
 
-  public void setVelocityRight(double velocity) {
-    setControlRight(climbVelocity.withVelocity(velocity
+  public boolean setVelocityRight(double velocity) {
+    return setControlRight(climbVelocity.withVelocity(velocity
     *ClimbConstants.climbMechanismRotationsToMetersRatio));
   }
 
@@ -188,8 +200,8 @@ public class Climb extends SubsystemBase {
     /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
-  public void setPositionLeft(double position) {
-    setControlLeft(climbMotionMagic.withPosition(
+  public boolean setSetpointPositionLeft(double position) {
+    return setControlLeft(climbMotionMagic.withPosition(
       MathUtil.clamp(
       position
       *ClimbConstants.climbMechanismRotationsToMetersRatio, 
@@ -202,8 +214,8 @@ public class Climb extends SubsystemBase {
       )));
   }
 
-  public void setPositionRight(double position) {
-    setControlRight(climbMotionMagic.withPosition(
+  public boolean setSetpointPositionRight(double position) {
+    return setControlRight(climbMotionMagic.withPosition(
       MathUtil.clamp(
         position
         *ClimbConstants.climbMechanismRotationsToMetersRatio, 

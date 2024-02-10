@@ -80,9 +80,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-
-    // set yaw to odometry/vision rotation
-    m_robotContainer.s_Swerve.setYawToOdometryPose();
   }
 
   /** This function is called periodically during autonomous. */

@@ -288,7 +288,8 @@ public class Swerve extends SubsystemBase {
     public void setYawToOdometryPose() {
         setGyroAngleAdjustment(
             (
-                getPose().getRotation().getDegrees()
+                AllianceFlipUtil.flipPose(getPose())
+                    .getRotation().getDegrees()
                 -getYaw().getDegrees()
             ) % 360.0
         );
