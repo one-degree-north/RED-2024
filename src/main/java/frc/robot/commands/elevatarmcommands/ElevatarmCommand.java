@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.elevatarmcommands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ElevatarmConstants;
+import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.subsystems.Elevatarm;
 
 public class ElevatarmCommand extends Command {
@@ -32,12 +33,12 @@ public class ElevatarmCommand extends Command {
 
   private boolean isElevatorAtSetpoint(double setpoint) {
     //3 cm
-    return Math.abs(s_Elevatarm.getElevatorMeters()-setpoint) < 0.03;
+    return Math.abs(s_Elevatarm.getElevatorMeters()-setpoint) < MechanismSetpointConstants.elevatorAllowableError;
   }
 
   private boolean isArmAtSetpoint(double setpoint) {
     // 0.01 rotations
-    return Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-setpoint) < 0.01;
+    return Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-setpoint) < MechanismSetpointConstants.armAllowableError;
   }
 
   // Called when the command is initially scheduled.

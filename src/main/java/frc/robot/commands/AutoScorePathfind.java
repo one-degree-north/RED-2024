@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.subsystems.Swerve;
+// Command is currently not working as implemented,
+// will be changed to an intake pathfind and amp pathfind
 
 public class AutoScorePathfind extends Command {
   /** Creates a new AutoScore. */

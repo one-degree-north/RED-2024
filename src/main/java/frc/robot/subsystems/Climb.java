@@ -101,8 +101,10 @@ public class Climb extends SubsystemBase {
 
     climbConfigs.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
-    climbConfigs.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.climbCruiseVelocity;
-    climbConfigs.MotionMagic.MotionMagicAcceleration = ClimbConstants.climbAcceleration;
+    climbConfigs.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.climbCruiseVelocity
+      *ClimbConstants.climbMechanismRotationsToMetersRatio;
+    climbConfigs.MotionMagic.MotionMagicAcceleration = ClimbConstants.climbAcceleration
+      *ClimbConstants.climbMechanismRotationsToMetersRatio;
 
     //PID Slot 1 (Velocity)
     climbConfigs.Slot1.kP = ClimbConstants.climbVelocitykP;
@@ -117,12 +119,14 @@ public class Climb extends SubsystemBase {
 
     //Software Limit Switches
     climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimbConstants.climbForwardSoftLimit;
+    climbConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimbConstants.climbForwardSoftLimit
+      *ClimbConstants.climbMechanismRotationsToMetersRatio;
     climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.climbReverseSoftLimit;
+    climbConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ClimbConstants.climbReverseSoftLimit
+      *ClimbConstants.climbMechanismRotationsToMetersRatio;
 
     //Feedback Configs
-    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedSensorToAbsoluteSensorRatio * ClimbConstants.climbMechanismRotationsToMeters;
+    climbConfigs.Feedback.SensorToMechanismRatio = ClimbConstants.climbIntegratedSensorToAbsoluteSensorRatio;
 
     //Add Configs
     m_climbLeft.getConfigurator().apply(climbConfigs);
@@ -136,12 +140,14 @@ public class Climb extends SubsystemBase {
 
   //Methods
   public void resetMotorsToAbsolute(){
-    double offsetClimbPos = getLeftAbsoluteEncoderDistance() - ClimbConstants.leftClimbAbsoluteEncoderOffset;
-    double offsetClimb2Pos = getRightAbsoluteEncoderDistance() - ClimbConstants.rightClimbAbsoluteEncoderOffset;
+    double offsetLeftClimbDistance = getLeftAbsoluteEncoderDistance() - ClimbConstants.leftClimbAbsoluteEncoderOffset;
+    double offsetRightClimbDistance = getRightAbsoluteEncoderDistance() - ClimbConstants.rightClimbAbsoluteEncoderOffset;
     if (m_climbLeftEncoder.isConnected() && m_climbRightEncoder.isConnected()) { 
       // only successful if no error
-      boolean c1 = m_climbLeft.setPosition(offsetClimbPos).isOK();
-      boolean c2 = m_climbRight.setPosition(offsetClimb2Pos).isOK();
+      boolean c1 = m_climbLeft.setPosition(offsetLeftClimbDistance
+        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
+      boolean c2 = m_climbRight.setPosition(offsetRightClimbDistance
+        *ClimbConstants.climbMechanismRotationsToMetersRatio).isOK();
       isClimbEncodersReset = c1 && c2;
     }
     
@@ -161,34 +167,53 @@ public class Climb extends SubsystemBase {
     }
   }
 
+  /* In meters per second */
   public void setVelocityLeft(double velocity) {
-    setControlLeft(climbVelocity.withVelocity(velocity));
+    setControlLeft(climbVelocity.withVelocity(velocity
+    *ClimbConstants.climbMechanismRotationsToMetersRatio));
   }
 
   public void setVelocityRight(double velocity) {
-    setControlRight(climbVelocity.withVelocity(velocity));
+    setControlRight(climbVelocity.withVelocity(velocity
+    *ClimbConstants.climbMechanismRotationsToMetersRatio));
   }
 
   public double getVelocityLeft() {
-    return m_climbLeft.getVelocity().getValue();
+    return m_climbLeft.getVelocity().getValue()
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public double getVelocityRight() {
-    return m_climbRight.getVelocity().getValue();
+    return m_climbRight.getVelocity().getValue()
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public void setPositionLeft(double position) {
     setControlLeft(climbMotionMagic.withPosition(
-      MathUtil.clamp(position, 
-      ClimbConstants.climbReverseSoftLimit, 
-      ClimbConstants.climbForwardSoftLimit)));
+      MathUtil.clamp(
+      position
+      *ClimbConstants.climbMechanismRotationsToMetersRatio, 
+
+      ClimbConstants.climbReverseSoftLimit
+      *ClimbConstants.climbMechanismRotationsToMetersRatio, 
+
+      ClimbConstants.climbForwardSoftLimit
+      *ClimbConstants.climbMechanismRotationsToMetersRatio
+      )));
   }
 
   public void setPositionRight(double position) {
     setControlRight(climbMotionMagic.withPosition(
-      MathUtil.clamp(position, 
-      ClimbConstants.climbReverseSoftLimit, 
-      ClimbConstants.climbForwardSoftLimit)
+      MathUtil.clamp(
+        position
+        *ClimbConstants.climbMechanismRotationsToMetersRatio, 
+
+        ClimbConstants.climbReverseSoftLimit
+        *ClimbConstants.climbMechanismRotationsToMetersRatio, 
+
+        ClimbConstants.climbForwardSoftLimit
+        *ClimbConstants.climbMechanismRotationsToMetersRatio
+      )
     ));
   }
 
@@ -198,21 +223,23 @@ public class Climb extends SubsystemBase {
   }
 
   public double getPositionLeft(){
-    return m_climbLeft.getPosition().getValue();
+    return m_climbLeft.getPosition().getValue()
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public double getPositionRight(){
-    return m_climbRight.getPosition().getValue();
+    return m_climbRight.getPosition().getValue()
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public double getLeftAbsoluteEncoderDistance() {
     return m_climbLeftEncoder.getAbsolutePosition()
-    /ClimbConstants.climbMechanismRotationsToMeters;
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public double getRightAbsoluteEncoderDistance() {
     return m_climbRightEncoder.getAbsolutePosition()
-    /ClimbConstants.climbMechanismRotationsToMeters;
+    /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
   public void enablePneumaticBreak() {

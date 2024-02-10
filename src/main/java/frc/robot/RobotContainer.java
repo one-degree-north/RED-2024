@@ -14,12 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.commands.*;
-import frc.robot.commands.ShintakeCommand.ShintakeMode;
+import frc.robot.commands.shintakecommands.ShintakeCommand;
+import frc.robot.commands.shintakecommands.ShintakeCommand.ShintakeMode;
 import frc.robot.subsystems.*;
 
 /**
@@ -42,7 +41,7 @@ public class RobotContainer {
     private final JoystickButton autoAim = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    public final Swerve s_Swerve = new Swerve();
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
@@ -90,10 +89,7 @@ public class RobotContainer {
         /* Driver Buttons */
 
 
-        autoAim.whileTrue(new AutoAimSpeakerTeleop(s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> zeroGyro.getAsBoolean()));
+        
     }
 
     /**
@@ -107,7 +103,7 @@ public class RobotContainer {
     }
 
     private Command firstShotAutoCommand() {
-        return new ShintakeCommand(ShintakeMode.SHOOT, Shintake.getInstance());
+        return new ShintakeCommand(ShintakeMode.SHOOT, Shintake.getInstance(), true);
     }
 
     private Command intakeThenShootAutoCommand() {

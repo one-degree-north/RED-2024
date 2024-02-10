@@ -273,9 +273,25 @@ public class Swerve extends SubsystemBase {
         return this.chassisSpeeds;
     }
 
-    /* Zeros gyro. */
+    /* Zeros gyro (also clears angle adjustment) */
     public void zeroGyro(){
+        setGyroAngleAdjustment(0);
         gyro.zeroYaw();
+    }
+
+    /* Set gyro angle adjustment */
+    public void setGyroAngleAdjustment(double angleDegrees) {
+        gyro.setAngleAdjustment(angleDegrees);
+    }
+
+    /* Use gyro angle adjustment to reset to odometry pose */
+    public void setYawToOdometryPose() {
+        setGyroAngleAdjustment(
+            (
+                getPose().getRotation().getDegrees()
+                -getYaw().getDegrees()
+            ) % 360.0
+        );
     }
 
     /* @return continuous Rotation2d object representing gyro yaw */

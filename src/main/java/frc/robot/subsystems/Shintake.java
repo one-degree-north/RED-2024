@@ -64,7 +64,7 @@ public class Shintake extends SubsystemBase {
     flywheelConfigs.CurrentLimits.SupplyCurrentThreshold = 60;
     flywheelConfigs.CurrentLimits.SupplyTimeThreshold = 0.1;
 
-    flywheelConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    flywheelConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     flywheelConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
@@ -105,7 +105,7 @@ public class Shintake extends SubsystemBase {
   }
 
   public void stopIntake() {
-    m_intake.stopMotor();
+    setIntakePercentSpeed(0);
   }
 
   public void stopShooter() {
