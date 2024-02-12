@@ -292,12 +292,12 @@ public class Elevatarm extends SubsystemBase {
   public void periodic() {
 
     elevatarmMech2d.setLength(
-      m_elevator.getPosition().getValue()/ElevatarmConstants.elevatorMechanismRotationsToMetersRatio 
+      getElevatorMeters()
       + ElevatarmConstants.minDistanceOfShintakeRelativeToPivot
     );
     
     elevatarmMech2d.setAngle(
-      Units.rotationsToDegrees(m_armLeader.getPosition().getValue())
+      Units.rotationsToDegrees(getArmRotation2d().getRotations())
     );
 
     recalculateFeedForward();

@@ -80,9 +80,7 @@ public class AutonomousShootContinuousCommand extends Command {
             < MechanismSetpointConstants.armAllowableError
             &&
             AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
-            < AllianceFlipUtil.flipPose(new Pose2d(new Translation2d(
-              MechanismSetpointConstants.xPositionCutoffToAutoScore, 0), new Rotation2d(0)))
-              .getX()
+            < MechanismSetpointConstants.xPositionCutoffToAutoScore
             ;
         })
         .andThen(
