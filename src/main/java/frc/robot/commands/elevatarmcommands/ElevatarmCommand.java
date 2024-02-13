@@ -52,7 +52,16 @@ public class ElevatarmCommand extends Command {
               ElevatarmConstants.elevatorLowToGroundMinRetraction, ElevatarmConstants.elevatorForwardSoftLimit);
 
       m_commandToRun = 
-            new InstantCommand(() -> s_Elevatarm.setElevatorPosition(elevatorClampedSetpoint))
+            new InstantCommand(() -> 
+            {
+              s_Elevatarm.setElevatorPosition(elevatorClampedSetpoint);
+              if (s_Elevatarm.getArmRotation2d().getRotations() > ElevatarmConstants.elevatorMinRetractionInterferenceAngleCutoff) {
+                s_Elevatarm.setArmPosition(ElevatarmConstants.elevatorMinRetractionInterferenceAngleCutoff);
+              } else {
+                // safe to pivot if target is in danger zone & current in danger zone
+                s_Elevatarm.setArmPosition(m_pivotAngle);
+              }
+            })
               .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(elevatorClampedSetpoint);}))
             .andThen(
               new InstantCommand(() -> s_Elevatarm.setArmPosition(m_pivotAngle))
@@ -64,7 +73,16 @@ public class ElevatarmCommand extends Command {
        * This prevents any end effector collision with the front of the drivebase
       */
       m_commandToRun = 
-        new InstantCommand(() -> s_Elevatarm.setArmPosition(m_pivotAngle))
+        new InstantCommand(() -> {
+          s_Elevatarm.setArmPosition(m_pivotAngle);
+          if (ElevatarmConstants.elevatorLowToGroundMinRetraction > m_extensionMeters){
+            s_Elevatarm.setElevatorPosition(ElevatarmConstants.elevatorLowToGroundMinRetraction);
+          }
+          else {
+            // safe to extend if currently in danger zone and elevator extension is globally safe
+            s_Elevatarm.setElevatorPosition(m_extensionMeters);
+          }
+        })
               .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle);}))
             .andThen(
               new InstantCommand(() -> s_Elevatarm.setElevatorPosition(m_extensionMeters))

@@ -61,7 +61,7 @@ public class AutonomousShootContinuousCommand extends Command {
       new AutonomousElevatarmAutoAimCommand(s_Elevatarm, s_Swerve)
       )
       // race the auto aim commands with the following sequence:
-        // wait until arm + swerve are at setpoints (swerve must be behind x position cutoff)
+        // wait until arm + swerve are at setpoints (swerve must be behind x position cutoff, and slower than specified velocity)
         // after arm + swerve are at setpoints, feed the note into shooter
       .raceWith(new WaitUntilCommand(() -> {
             return Math.abs(
@@ -81,6 +81,9 @@ public class AutonomousShootContinuousCommand extends Command {
             &&
             AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
             < MechanismSetpointConstants.xPositionCutoffToAutoScore
+            &&
+            Math.abs(s_Swerve.getTranslationalSpeed())
+            < MechanismSetpointConstants.allowableVelocityToAutoScore
             ;
         })
         .andThen(

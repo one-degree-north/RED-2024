@@ -79,6 +79,7 @@ public class ShintakeCommand extends Command {
             .andThen(new WaitCommand(ShintakeConstants.shooterDelaySeconds))
           )
         ;
+        break;
       default:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))

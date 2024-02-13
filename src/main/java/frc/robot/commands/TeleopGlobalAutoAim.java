@@ -119,6 +119,9 @@ public class TeleopGlobalAutoAim extends Command {
         > AllianceFlipUtil.flipPose(new Pose2d(new Translation2d(
           MechanismSetpointConstants.xPositionCutoffToAutoScore, 0), new Rotation2d(0)))
           .getX()
+        ||
+        Math.abs(s_Swerve.getTranslationalSpeed())
+        > MechanismSetpointConstants.allowableVelocityToAutoScore
         ) {
             s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
             s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());

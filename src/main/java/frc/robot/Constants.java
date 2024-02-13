@@ -89,6 +89,8 @@ public final class Constants {
         // What x position should the robot be less than such that it can auto aim+score on speaker?
         // This gets translated by alliance
         public static final double xPositionCutoffToAutoScore = 0;
+        // in meters per second
+        public static final double allowableVelocityToAutoScore = 1;
     }
 
     public static final class ElevatarmConstants {
@@ -96,6 +98,7 @@ public final class Constants {
         public static final int armLeaderID = 0;
         public static final int armFollowerID = 0;
         public static final int armEncoderPort = 0;
+        public static final int elevatarmLockSwitchPort = 0;
 
         public static final double armAbsoluteEncoderAngleOffset = 0.0;
         public static final double armForwardSoftLimit = 0.0;

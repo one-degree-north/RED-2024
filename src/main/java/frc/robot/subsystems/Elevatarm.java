@@ -17,6 +17,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -52,11 +53,17 @@ public class Elevatarm extends SubsystemBase {
   private DutyCycleOut elevatorDutyCycle = new DutyCycleOut(0);
 
   private MechanismLigament2d elevatarmMech2d;
+
+  private DigitalInput m_lockButton;
+
+  private boolean isBraked = true;
   
   public Elevatarm() {
     m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID);
     m_armFollower = new TalonFX(ElevatarmConstants.armFollowerID);
     m_armEncoder = new DutyCycleEncoder(ElevatarmConstants.armEncoderPort);
+    
+    m_lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
 
     m_elevator = new TalonFX(ElevatarmConstants.elevatorID);
     m_elevatorEncoder = new DutyCycleEncoder(ElevatarmConstants.elevatorEncoderPort);
@@ -278,18 +285,33 @@ public class Elevatarm extends SubsystemBase {
   }
 
   public void setCoast() {
-    m_armLeader.setNeutralMode(NeutralModeValue.Coast);
-    m_armFollower.setNeutralMode(NeutralModeValue.Coast);
+    if (isBraked){
+      m_armLeader.setNeutralMode(NeutralModeValue.Coast);
+      m_armFollower.setNeutralMode(NeutralModeValue.Coast);
+      m_elevator.setNeutralMode(NeutralModeValue.Coast);
+      isBraked = false;
+    }
   }
 
   public void setBrake() {
-    m_armLeader.setNeutralMode(NeutralModeValue.Brake);
-    m_armFollower.setNeutralMode(NeutralModeValue.Brake);
+    if (!isBraked) {
+      m_armLeader.setNeutralMode(NeutralModeValue.Brake);
+      m_armFollower.setNeutralMode(NeutralModeValue.Brake);
+      m_elevator.setNeutralMode(NeutralModeValue.Brake);
+      isBraked = true;
+    }
   }
   
 
   @Override
   public void periodic() {
+    if (DriverStation.isDisabled()) {
+      if (m_lockButton.get()) {
+        setBrake();
+      } else if (!m_lockButton.get()) {
+        setCoast();
+      }
+    }
 
     elevatarmMech2d.setLength(
       getElevatorMeters()
