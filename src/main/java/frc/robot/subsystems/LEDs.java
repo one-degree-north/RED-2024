@@ -21,6 +21,7 @@ public class LEDs extends VirtualSubsystem {
   private final AddressableLED m_led;
   private final AddressableLEDBuffer m_ledBuffer;
   private final Swerve m_swerve;
+  private final Shintake m_shintake;
   private final Notifier loadingNotifier;
 
   private Alliance alliance = null;
@@ -43,10 +44,11 @@ public class LEDs extends VirtualSubsystem {
   private SubsystemState autoAlignState = SubsystemState.NOTREADY;
   
   /** Creates a new LEDs. */
-  public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose) {
+  public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose, Shintake shintake) {
     m_led = new AddressableLED(port);
     m_ledBuffer = new AddressableLEDBuffer(length);
     m_swerve = swerve;
+    m_shintake = shintake;
     this.autoPose = autoPose;
     
     m_led.setLength(m_ledBuffer.getLength());
@@ -97,7 +99,7 @@ public class LEDs extends VirtualSubsystem {
 
     // This method will be called once per scheduler run
 
-    if (DriverStation.isDisabled()) {
+    if (DriverStation.isDisabled() || !DriverStation.isEStopped()) {
       // First check to see if AprilTag has been detected
       checkForAprilTags();
       // Only check for auto align if apriltag is detected
@@ -112,7 +114,6 @@ public class LEDs extends VirtualSubsystem {
     }
   
     else if (DriverStation.isEnabled()) {
-      solid(Section.FULL, Color.kBlack);
       /* Main logic for drivetrain colors when enabled */
       if (DriverStation.isTeleop()) {
         solid(Section.UNDERGLOW, teleopColor);
@@ -121,6 +122,16 @@ public class LEDs extends VirtualSubsystem {
       } else if (DriverStation.isTest()) {
         breath(Section.UNDERGLOW, teleopColor, Color.kBlack, breathSlowDuration);
       }
+
+      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 0 
+      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 0
+      ) {
+        breath(Section.SHINTAKE, teleopColor, Color.kBlack, breathFastDuration );
+      }
+      else if (m_shintake.isNoteIntaked()) {
+        breath(Section.SHINTAKE, Color.kOrange, Color.kBlack, breathSlowDuration);
+      }
+      
     }
   
 
@@ -261,7 +272,8 @@ public class LEDs extends VirtualSubsystem {
   }
 
   private static enum Section {
-    FULL, UNDERGLOW, LEFTDRIVE, RIGHTDRIVE, FRONTDRIVE, BACKDRIVE;
+    FULL, UNDERGLOW, LEFTDRIVE, RIGHTDRIVE, FRONTDRIVE, BACKDRIVE,
+    SHINTAKE;
 
     private int start() {
       switch (this) {
@@ -277,6 +289,8 @@ public class LEDs extends VirtualSubsystem {
           return 20;
         case FRONTDRIVE:
           return 30;
+        case SHINTAKE:
+          return 40;
         default:
           return 0;
       }
@@ -296,6 +310,8 @@ public class LEDs extends VirtualSubsystem {
           return 30;
         case FRONTDRIVE:
           return 40;
+        case SHINTAKE:
+          return 50;
         default:
           return length;
       }

@@ -42,6 +42,7 @@ public class RobotContainer {
 
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
+    private final Shintake s_Shintake = new Shintake();
 
     /* Auto Chooser */
     private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
@@ -57,7 +58,7 @@ public class RobotContainer {
             else return s_Swerve.getPose();
         };
 
-    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier);
+    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier, s_Shintake);
     
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
