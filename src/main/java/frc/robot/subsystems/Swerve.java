@@ -83,7 +83,6 @@ public class Swerve extends SubsystemBase {
 
         /* Configure AutoBuilder and rotation override for PathPlanner paths */
         configureAutoBuilder();
-        PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
     }
 
     /* Drive the swerve.
@@ -150,6 +149,8 @@ public class Swerve extends SubsystemBase {
                     },
                     this // Reference to this subsystem to set requirements
         );
+
+        PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
     }
 
     /* Method used to obtain rotation target override for PPHolonomicDriveController.
