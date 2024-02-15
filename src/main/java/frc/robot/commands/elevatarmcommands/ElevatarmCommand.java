@@ -65,7 +65,8 @@ public class ElevatarmCommand extends Command {
               .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(elevatorClampedSetpoint);}))
             .andThen(
               new InstantCommand(() -> s_Elevatarm.setArmPosition(m_pivotAngle))
-              .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle);}))
+              .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle)
+              && this.isElevatorAtSetpoint(elevatorClampedSetpoint);}))
             )
       ;
     } else if (s_Elevatarm.getArmRotation2d().getRotations() <= ElevatarmConstants.elevatorMinRetractionInterferenceAngleCutoff) {
@@ -83,10 +84,11 @@ public class ElevatarmCommand extends Command {
             s_Elevatarm.setElevatorPosition(m_extensionMeters);
           }
         })
-              .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle);}))
+              .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(m_extensionMeters);}))
             .andThen(
               new InstantCommand(() -> s_Elevatarm.setElevatorPosition(m_extensionMeters))
-              .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(m_extensionMeters);}))
+              .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle)
+              && this.isElevatorAtSetpoint(m_extensionMeters);}))
             )
       ;
     } else {
