@@ -212,12 +212,12 @@ public class Swerve extends SubsystemBase {
      * @return pathfinding command
      */
     public Command goToPose(Pose2d pose, double goalEndVelocity, double rotationDelayDistance) {
-        Pose2d targetPose = AllianceFlipUtil.flipPose(pose);
+        Pose2d targetPose = pose;
 
         PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
         
-        return AutoBuilder.pathfindToPose(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
+        return AutoBuilder.pathfindToPoseFlipped(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
     }
 
     /* Gets robot pose (influenced by vision data). 
