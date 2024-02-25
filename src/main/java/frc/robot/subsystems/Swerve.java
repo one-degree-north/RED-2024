@@ -150,6 +150,8 @@ public class Swerve extends SubsystemBase {
                     this // Reference to this subsystem to set requirements
         );
 
+        // May need to flip this depending on alliance. testing needed
+
         PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
     }
 
@@ -161,7 +163,9 @@ public class Swerve extends SubsystemBase {
             case NONE:
                 return Optional.empty();
             case SPEAKER_AUTO_AIM:
-                return Optional.of(getShotData().goalHeading());
+                Pose2d tempPose = new Pose2d(0, 0, getShotData().goalHeading());
+                tempPose = AllianceFlipUtil.flipPose(tempPose);
+                return Optional.of(tempPose.getRotation());
             default:
                 return Optional.empty();
         }
@@ -249,6 +253,16 @@ public class Swerve extends SubsystemBase {
             getCurrentChassisSpeeds().vyMetersPerSecond * getPose().getRotation().getCos()
             + getCurrentChassisSpeeds().vxMetersPerSecond * getPose().getRotation().getSin()
         ));
+    }
+
+    public boolean isInClimbZone() {
+        return 
+            // Within x bounds of climb area
+            (AllianceFlipUtil.flipPose(getPose()).getX() < 6.3 && AllianceFlipUtil.flipPose(getPose()).getX() > 2.7)
+            &&
+            // bounded by equations that define climb area
+            (AllianceFlipUtil.flipPose(getPose()).getY() < 0.54 * AllianceFlipUtil.flipPose(getPose()).getX() + 3
+            && AllianceFlipUtil.flipPose(getPose()).getY() > -0.56 * AllianceFlipUtil.flipPose(getPose()).getX() + 5.31);
     }
 
     /* @return SwerveModuleState array for each module */

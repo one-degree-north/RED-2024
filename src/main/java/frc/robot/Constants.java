@@ -52,6 +52,11 @@ public final class Constants {
         public static final Pose2d middleSpeakerScoringPose = new Pose2d();
         public static final Pose2d rightSpeakerScoringPose = new Pose2d();
 
+        public static final Pose2d leftClimbPose = new Pose2d();
+        public static final Pose2d middleClimbPose = new Pose2d();
+        public static final Pose2d rightClimbPose = new Pose2d();
+
+
     }
 
     public static final class MechanismSetpointConstants {
@@ -82,13 +87,23 @@ public final class Constants {
         public static final double elevatorSpeakerPosition = elevatorGroundIntakePosition;
 
         // Climb in meters or meters per second
+
+        // high pos is the pos needed to grab chain with low hook
         public static final double climbHighPosition = 0;
+
+        // low pos is the bare minimum pos needed to grab chain with high hook
         public static final double climbLowPosition = 0;
+
+        // standard pos is the height needed to grab chain with high hook on the high side of the chain
         public static final double climbStandardPosition = 0;
+
+        // stowed pos is where the climb should be during the majority of the match
+        public static final double climbStowedPosition = 0;
 
         // What x position should the robot be less than such that it can auto aim+score on speaker?
         // This gets translated by alliance
         public static final double xPositionCutoffToAutoScore = 0;
+        
         // in meters per second
         public static final double allowableVelocityToAutoScore = 1;
     }
@@ -206,7 +221,7 @@ public final class Constants {
         public static final double climbReverseSoftLimit = 0.0;
 
         // Meters per second
-        public static final double climbStandardVelocity = 0.1;
+        public static final double climbStandardVelocity = 0.05;
     }
 
     public static final class ShintakeConstants {
@@ -334,7 +349,7 @@ public final class Constants {
         // gears and using SYSID.
         public static final double driveKS = (0.12698);
         public static final double driveKV = (2.1248);
-        public static final double driveKA = (0.14197); // TODO: Used to divide by 12 to convert
+        public static final double driveKA = (0.14197);
 
         /* Swerve Profiling Values */
         // This must be tuned to specific robot.
@@ -403,7 +418,7 @@ public final class Constants {
                 new Translation3d(Units.inchesToMeters(-9), Units.inchesToMeters(-8), Units.inchesToMeters(8.75)),
                 new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(135)));
 
-        // Calculated field length for 2023 game (used to circumvent "flipping tags" as
+        // Calculated field length for 2024 game (used to circumvent "flipping tags" as
         // well as mirror coordinates for red/blue alliance)
         public static final double FIELD_LENGTH_METERS = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField()
                 .getFieldLength();

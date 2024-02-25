@@ -5,7 +5,6 @@
 package frc.robot.commands.elevatarmcommands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -21,12 +20,12 @@ public class ElevatarmCommand extends Command {
 
   /** Creates a new ElevatarmCommand. */
   public ElevatarmCommand(
-    Rotation2d pivotAngle, 
+    double pivotAngle, 
     double extensionMeters, 
     Elevatarm elevatarm) {
       
     this.s_Elevatarm = elevatarm;
-    this.m_pivotAngle = pivotAngle.getRotations();
+    this.m_pivotAngle = pivotAngle;
     this.m_extensionMeters = extensionMeters;
     addRequirements(s_Elevatarm);
   }

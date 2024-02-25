@@ -5,7 +5,6 @@
 package frc.robot.commands.autocommands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -45,7 +44,7 @@ public class AutonomousShootContinuousCommand extends Command {
       new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake, false).finallyDo(() -> s_Shintake.stopIntake())
       .alongWith(
         new ElevatarmCommand(
-          Rotation2d.fromRotations(MechanismSetpointConstants.armGroundIntakePosition), 
+          MechanismSetpointConstants.armGroundIntakePosition, 
           MechanismSetpointConstants.elevatorGroundIntakePosition, 
           s_Elevatarm)
       )
@@ -82,7 +81,8 @@ public class AutonomousShootContinuousCommand extends Command {
             &&
             Math.abs(s_Swerve.getTranslationalSpeed())
             < MechanismSetpointConstants.allowableVelocityToAutoScore
-            ;
+            &&
+            s_Swerve.getShotData().inYDistanceRange();
         })
         .andThen(
           new ShintakeCommand(ShintakeMode.JUSTFEEDTOSHOOT, s_Shintake, false).finallyDo(() -> s_Shintake.stopIntake())

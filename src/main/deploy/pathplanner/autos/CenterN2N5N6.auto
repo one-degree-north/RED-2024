@@ -2,31 +2,75 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3711200952529907,
+      "x": 1.3711200952529905,
       "y": 5.518359661102295
     },
-    "rotation": -1.5575115390099846e-19
+    "rotation": -8.239093184310216e-19
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "CenterAutos.1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterAutos.3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterAutos.4"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.7
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "CenterAutos.1"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "CenterAutos.3"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.7
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "CenterAutos.4"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutonomousShootContinuousCommand"
+                }
+              }
+            ]
           }
         }
       ]

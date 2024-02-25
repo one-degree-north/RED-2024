@@ -19,6 +19,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -167,6 +168,10 @@ public class Climb extends SubsystemBase {
     return false;
   }
 
+  public boolean areEncodersReset() {
+    return isClimbEncodersReset;
+  }
+
   // position in meters
   public boolean setEncoderPositionLeft(double meters) {
     return m_climbLeft.setPosition(meters
@@ -262,6 +267,11 @@ public class Climb extends SubsystemBase {
   public void disablePneumaticBreak() {
     m_leftPneumaticBreak.set(Value.kReverse);
     m_rightPneumaticBreak.set(Value.kReverse);
+  }
+
+  public void disableClimbMotors() {
+    setControlLeft(new NeutralOut());
+    setControlRight(new NeutralOut());
   }
 
   @Override

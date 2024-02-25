@@ -65,13 +65,13 @@ public class ClimbPositionCommand extends Command {
     public double leftClimbSetpoint() {
       switch (this) {
         case LEFTHIGH:
-          return MechanismSetpointConstants.climbHighPosition;
-        case MIDDLE:
           return MechanismSetpointConstants.climbStandardPosition;
+        case MIDDLE:
+          return MechanismSetpointConstants.climbHighPosition;
         case RIGHTHIGH:
           return MechanismSetpointConstants.climbLowPosition;
         default:
-          return MechanismSetpointConstants.climbStandardPosition;
+          return MechanismSetpointConstants.climbStowedPosition;
       }
     }
 
@@ -80,11 +80,11 @@ public class ClimbPositionCommand extends Command {
         case LEFTHIGH:
           return MechanismSetpointConstants.climbLowPosition;
         case MIDDLE:
-          return MechanismSetpointConstants.climbStandardPosition;
-        case RIGHTHIGH:
           return MechanismSetpointConstants.climbHighPosition;
-        default:
+        case RIGHTHIGH:
           return MechanismSetpointConstants.climbStandardPosition;
+        default:
+          return MechanismSetpointConstants.climbStowedPosition;
       }
     }
 
