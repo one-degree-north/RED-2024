@@ -17,6 +17,8 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+    public static final boolean tuningMode = false;
+
     // INVERTS ARE IN SUBSYSTEMS THEMSELVES - NOT HERE
 
     public static final class TeleopConstants {
