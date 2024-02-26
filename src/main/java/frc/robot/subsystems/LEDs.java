@@ -31,7 +31,7 @@ public class LEDs extends VirtualSubsystem {
   private Color autoColor;
 
   // Constants
-  private static final int length = 60;
+  private static final int length = 121;
   private static final double waveExponent = 0.4;
   private static final double waveCycleLength = 30;
   private static final double waveFastCycleDuration = 0.25;
