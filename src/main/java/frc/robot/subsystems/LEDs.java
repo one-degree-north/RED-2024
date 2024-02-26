@@ -125,10 +125,8 @@ public class LEDs extends VirtualSubsystem {
 
       if (m_climb.areEncodersReset()) {
         climbState = SubsystemState.READY;
-        solid(Section.CLIMB, Color.kGreen);
       } else {
         climbState = SubsystemState.NOTREADY;
-        breath(Section.CLIMB, Color.kRed, Color.kBlack, breathSlowDuration);
       }
 
       /* Fast green wave if all subsystems are ready */
@@ -151,9 +149,9 @@ public class LEDs extends VirtualSubsystem {
       }
 
       if (isSourceIntake) {
-        breath(Section.CLIMB, Color.kOrange, Color.kBlack, breathSlowDuration);
+        breath(Section.SHINTAKE, Color.kOrange, Color.kBlack, breathSlowDuration);
       } else {
-        solid(Section.CLIMB, Color.kGreen);
+        solid(Section.SHINTAKE, Color.kGreen);
       }
 
       if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 10 
@@ -309,7 +307,7 @@ public class LEDs extends VirtualSubsystem {
 
   private static enum Section {
     FULL, UNDERGLOW, LEFTDRIVE, RIGHTDRIVE, FRONTDRIVE, BACKDRIVE,
-    SHINTAKE, CLIMB;
+    SHINTAKE;
 
     private int start() {
       switch (this) {
@@ -327,8 +325,6 @@ public class LEDs extends VirtualSubsystem {
           return 30;
         case SHINTAKE:
           return 40;
-        case CLIMB:
-          return 50;
         default:
           return 0;
       }
@@ -350,8 +346,6 @@ public class LEDs extends VirtualSubsystem {
           return 40;
         case SHINTAKE:
           return 50;
-        case CLIMB:
-          return 70;
         default:
           return length;
       }
