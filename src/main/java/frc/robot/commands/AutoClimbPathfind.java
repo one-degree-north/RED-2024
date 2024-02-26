@@ -12,18 +12,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.subsystems.Swerve;
 
-public class AutoScorePathfind extends Command {
+public class AutoClimbPathfind extends Command {
   /** Creates a new AutoScore. */
 
   private Command m_selectedCommand;
-  private Supplier<AutoScorePosition> m_selectedPositionSupplier;
-  private AutoScorePosition m_lastSelectedPosition;
+  private Supplier<AutoClimbPosition> m_selectedPositionSupplier;
+  private AutoClimbPosition m_lastSelectedPosition;
   private boolean m_ended;
 
 
   private Swerve m_swerve;
 
-  public AutoScorePathfind(Supplier<AutoScorePosition> selectedPositionSupplier, Swerve swerve) {
+  public AutoClimbPathfind(Supplier<AutoClimbPosition> selectedPositionSupplier, Swerve swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_selectedPositionSupplier = selectedPositionSupplier;
     m_swerve = swerve;
@@ -35,7 +35,7 @@ public class AutoScorePathfind extends Command {
   @Override
   public void initialize() {
     m_ended = false;
-    // m_lastSelectedPosition = m_selectedPositionSupplier.get();
+    m_lastSelectedPosition = m_selectedPositionSupplier.get();
     m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0);
     m_selectedCommand.initialize();
   }
@@ -74,7 +74,7 @@ public class AutoScorePathfind extends Command {
     return m_selectedCommand.isFinished();
   }
 
-  public static enum AutoScorePosition {
+  public static enum AutoClimbPosition {
     // TODO: add amp scoring pose, add actual scoring poses
     LEFT, CENTER, RIGHT;
     private Pose2d getPose() {
@@ -83,25 +83,25 @@ public class AutoScorePathfind extends Command {
         // Swap right with left on red alliance
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.rightSpeakerScoringPose;
+            return PathGenerationConstants.rightClimbPose;
           case CENTER:
-            return PathGenerationConstants.middleSpeakerScoringPose;
+            return PathGenerationConstants.middleClimbPose;
           case RIGHT:
-            return PathGenerationConstants.leftSpeakerScoringPose;
+            return PathGenerationConstants.leftClimbPose;
           default:
-            return PathGenerationConstants.middleSpeakerScoringPose;
+            return PathGenerationConstants.middleClimbPose;
         }
       } else {
         // Regular orientation since standard is blue origin
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.leftSpeakerScoringPose;
+            return PathGenerationConstants.leftClimbPose;
           case CENTER:
-            return PathGenerationConstants.middleSpeakerScoringPose;
+            return PathGenerationConstants.middleClimbPose;
           case RIGHT:
-            return PathGenerationConstants.rightSpeakerScoringPose;
+            return PathGenerationConstants.rightClimbPose;
           default:
-            return PathGenerationConstants.middleSpeakerScoringPose;
+            return PathGenerationConstants.middleClimbPose;
         }
       }
     }

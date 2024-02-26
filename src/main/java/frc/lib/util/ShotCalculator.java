@@ -7,13 +7,15 @@ import frc.robot.Constants;
 
 /**
  * Code is from Mechanical Advantage's util classes
+ * This does not technically properly account for velocity perfectly, but should work in practice at low robot velocities
  */
 public class ShotCalculator {
   public record ShotData(
       double effectiveRobotToSpeakerDist,
       double radialFeedforward, // ff value due to radial velocity of robot to speaker
       Rotation2d goalHeading,
-      double clampedArmAngle) {} // heading of robot to match tangential velocity
+      double clampedArmAngle,
+      boolean inYDistanceRange) {} // heading of robot to match tangential velocity
 
   /** In theory we will aim at different locations inside speaker */
   public static ShotData calculate(
@@ -27,14 +29,12 @@ public class ShotCalculator {
     // Positive when traveling CCW about speaker
     double tangentialComponent = tangentialVelocity.getY();
 
-    // TODO: what does this do
-    // Ig this is the estimated time of the note in the air
-    // later on this will be a function of the distance
+    double rawDistToGoal = robot.getDistance(speaker);
+
     double shotTime = 1.05;
 
     // Add robot velocity to raw shot speed
-    double rawDistToGoal = robot.getDistance(speaker);
-    double shotSpeed = rawDistToGoal / shotTime + radialComponent;
+    double shotSpeed = rawDistToGoal / shotTime - radialComponent;
     if (shotSpeed <= 0.0) shotSpeed = 0.0;
     // Aim opposite of tangentialComponent (negative lead when tangentialComponent is positive)
     // Rotation is accounted for when inverting pose
@@ -42,9 +42,11 @@ public class ShotCalculator {
         GeomUtil.inverse(GeomUtil.toPose2d(robot)).transformBy(GeomUtil.toTransform2d(speaker)).getTranslation().getAngle();
     // Aim opposite of tangentialComponent (negative lead when tangentialComponent is positive)
     goalHeading = goalHeading.plus(new Rotation2d(shotSpeed, tangentialComponent)).plus(Rotation2d.fromRotations(0.5));
+
+    // (incorrectly) assume that shot time does not change while moving radially
     double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
 
-    // This will be replaced with a formula to return arm angle in radians based on distance in meters
+    // This will be replaced with a formula to return arm angle in rotations based on distance in meters
     /* IN ROTATIONS */
     double armAngle = effectiveDist;
 
@@ -53,8 +55,10 @@ public class ShotCalculator {
     double clampedArmAngle = MathUtil.clamp(armAngle, 
         Constants.ElevatarmConstants.armReverseSoftLimit, 
         Constants.ElevatarmConstants.armForwardSoftLimit);
+    
+    boolean inYDistanceRange = Math.abs(robot.getY()-speaker.getY()) < 2.1;
 
     // Use radial component of velocity for ff value
-    return new ShotData(effectiveDist, radialComponent, goalHeading, clampedArmAngle);
+    return new ShotData(effectiveDist, radialComponent, goalHeading, clampedArmAngle, inYDistanceRange);
   }
 }

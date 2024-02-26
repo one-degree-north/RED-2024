@@ -34,7 +34,11 @@ public class AutonomousElevatarmAutoAimCommand extends Command {
   public void execute() {
     if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) > MechanismSetpointConstants.elevatorAllowableError) {
       s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-    } else {
+    } else if (s_Swerve.isInClimbZone()) {
+      s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+      s_Elevatarm.setArmPosition(MechanismSetpointConstants.armGroundIntakePosition);
+    }
+     else {
       s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
       s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
     }

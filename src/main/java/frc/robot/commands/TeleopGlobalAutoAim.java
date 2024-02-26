@@ -116,9 +116,7 @@ public class TeleopGlobalAutoAim extends Command {
         > MechanismSetpointConstants.swerveRotationAllowableError
         ||
         AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
-        > AllianceFlipUtil.flipPose(new Pose2d(new Translation2d(
-          MechanismSetpointConstants.xPositionCutoffToAutoScore, 0), new Rotation2d(0)))
-          .getX()
+        > MechanismSetpointConstants.xPositionCutoffToAutoScore
         ||
         Math.abs(s_Swerve.getTranslationalSpeed())
         > MechanismSetpointConstants.allowableVelocityToAutoScore

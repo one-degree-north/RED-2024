@@ -22,6 +22,8 @@ public class LEDs extends VirtualSubsystem {
   private final AddressableLEDBuffer m_ledBuffer;
   private final Swerve m_swerve;
   private final Shintake m_shintake;
+  private final Elevatarm m_elevatarm;
+  private final Climb m_climb;
   private final Notifier loadingNotifier;
 
   private Alliance alliance = null;
@@ -39,16 +41,22 @@ public class LEDs extends VirtualSubsystem {
   
   private Supplier<Pose2d> autoPose;
 
+  private boolean isSourceIntake;
+
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
   private SubsystemState autoAlignState = SubsystemState.NOTREADY;
+  private SubsystemState armAndShintakeState = SubsystemState.NOTREADY;
+  private SubsystemState climbState = SubsystemState.NOTREADY;
   
   /** Creates a new LEDs. */
-  public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose, Shintake shintake) {
+  public LEDs(int port, Swerve swerve, Supplier<Pose2d> autoPose, Shintake shintake, Elevatarm elevatarm, Climb climb) {
     m_led = new AddressableLED(port);
     m_ledBuffer = new AddressableLEDBuffer(length);
     m_swerve = swerve;
     m_shintake = shintake;
+    m_elevatarm = elevatarm;
+    m_climb = climb;
     this.autoPose = autoPose;
     
     m_led.setLength(m_ledBuffer.getLength());
@@ -106,9 +114,28 @@ public class LEDs extends VirtualSubsystem {
       if (visionState == SubsystemState.READY) 
         autoAlign();
 
+      if (m_elevatarm.isArmEncoderReset() && m_elevatarm.isElevatorEncoderReset()){
+        armAndShintakeState = SubsystemState.READY;
+        solid(Section.SHINTAKE, Color.kGreen);
+      }
+      else {
+        armAndShintakeState = SubsystemState.NOTREADY;
+        breath(Section.SHINTAKE, Color.kRed, Color.kBlack, breathSlowDuration);
+      }
+
+      if (m_climb.areEncodersReset()) {
+        climbState = SubsystemState.READY;
+        solid(Section.CLIMB, Color.kGreen);
+      } else {
+        climbState = SubsystemState.NOTREADY;
+        breath(Section.CLIMB, Color.kRed, Color.kBlack, breathSlowDuration);
+      }
+
       /* Fast green wave if all subsystems are ready */
       if (visionState == SubsystemState.READY 
-        && autoAlignState == SubsystemState.READY) {
+        && autoAlignState == SubsystemState.READY
+        && armAndShintakeState == SubsystemState.READY
+        && climbState == SubsystemState.READY) {
         wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
     }
@@ -123,15 +150,20 @@ public class LEDs extends VirtualSubsystem {
         breath(Section.UNDERGLOW, teleopColor, Color.kBlack, breathSlowDuration);
       }
 
-      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 0 
-      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 0
+      if (isSourceIntake) {
+        breath(Section.CLIMB, Color.kOrange, Color.kBlack, breathSlowDuration);
+      } else {
+        solid(Section.CLIMB, Color.kGreen);
+      }
+
+      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 10 
+      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 10
       ) {
-        breath(Section.SHINTAKE, teleopColor, Color.kBlack, breathFastDuration );
+        wave(Section.SHINTAKE, teleopColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
       else if (m_shintake.isNoteIntaked()) {
-        breath(Section.SHINTAKE, Color.kOrange, Color.kBlack, breathSlowDuration);
+        breath(Section.SHINTAKE, teleopColor, Color.kBlack, breathSlowDuration);
       }
-      
     }
   
 
@@ -140,6 +172,10 @@ public class LEDs extends VirtualSubsystem {
     }
 
     m_led.setData(m_ledBuffer);
+  }
+
+  public void setIntakingLEDs(boolean isSourceIntake) {
+    this.isSourceIntake = isSourceIntake;
   }
   
   private synchronized void checkForAprilTags() {
@@ -273,7 +309,7 @@ public class LEDs extends VirtualSubsystem {
 
   private static enum Section {
     FULL, UNDERGLOW, LEFTDRIVE, RIGHTDRIVE, FRONTDRIVE, BACKDRIVE,
-    SHINTAKE;
+    SHINTAKE, CLIMB;
 
     private int start() {
       switch (this) {
@@ -291,6 +327,8 @@ public class LEDs extends VirtualSubsystem {
           return 30;
         case SHINTAKE:
           return 40;
+        case CLIMB:
+          return 50;
         default:
           return 0;
       }
@@ -312,6 +350,8 @@ public class LEDs extends VirtualSubsystem {
           return 40;
         case SHINTAKE:
           return 50;
+        case CLIMB:
+          return 70;
         default:
           return length;
       }
