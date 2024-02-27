@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.util.VirtualSubsystem;
+import monologue.Logged;
+import monologue.Monologue;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,7 +19,7 @@ import frc.lib.util.VirtualSubsystem;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot implements Logged {
   public static CTREConfigs ctreConfigs;
 
   private Command m_autonomousCommand;
@@ -39,6 +41,8 @@ public class Robot extends TimedRobot {
 
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
+
+    Monologue.setupMonologue(this, "Robot", false, false);
   }
 
   /**
@@ -56,6 +60,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
+    Monologue.updateAll();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -66,7 +71,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // m_robotContainer.disabledLEDBehavior();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

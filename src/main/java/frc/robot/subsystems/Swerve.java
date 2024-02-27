@@ -342,7 +342,6 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
-
         SmartDashboard.putString("Pose", "(" + getPose().getX()
         + ", " + getPose().getY() + "), " + getPose().getRotation().getDegrees());
 
