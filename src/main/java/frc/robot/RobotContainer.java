@@ -54,7 +54,7 @@ public class RobotContainer {
     public final Swerve s_Swerve = new Swerve();
     private final Shintake s_Shintake = new Shintake();
     private final Elevatarm s_Elevatarm = new Elevatarm();
-    private final Climb s_Climb = new Climb();
+    // private final Climb s_Climb = new Climb();
 
     /* Auto Chooser */
     // change default auto
@@ -71,7 +71,7 @@ public class RobotContainer {
             else return s_Swerve.getPose();
         };
 
-    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, s_Climb);
+    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, null);
 
     private AutoIntakePosition selectedIntakePosition = AutoIntakePosition.CENTER;
     private AutoClimbPosition selectedClimbPosition = AutoClimbPosition.CENTER;
@@ -340,15 +340,15 @@ public class RobotContainer {
     private void configureSmartDashboardCommands() {
         SmartDashboard.putData(autoChooser);
 
-        SmartDashboard.putData(
-            "Enable Compressor",
-            new InstantCommand(() -> s_Climb.enableCompressor())
-        );
+        // SmartDashboard.putData(
+        //     "Enable Compressor",
+        //     new InstantCommand(() -> s_Climb.enableCompressor())
+        // );
 
-        SmartDashboard.putData(
-            "Disable Compressor",
-            new InstantCommand(() -> s_Climb.disableCompressor())
-        );
+        // SmartDashboard.putData(
+        //     "Disable Compressor",
+        //     new InstantCommand(() -> s_Climb.disableCompressor())
+        // );
 
         SmartDashboard.putData(
             "Home Position", 
@@ -404,30 +404,30 @@ public class RobotContainer {
             )
         );
 
-        SmartDashboard.putData(
-            "Climb Middle Position", 
-            new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb)
-        );
+        // SmartDashboard.putData(
+        //     "Climb Middle Position", 
+        //     new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb)
+        // );
 
-        SmartDashboard.putData(
-            "Climb Left High Position", 
-            new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
-        );
+        // SmartDashboard.putData(
+        //     "Climb Left High Position", 
+        //     new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
+        // );
 
-        SmartDashboard.putData(
-            "Climb Right High Position", 
-            new ClimbPositionCommand(ClimbPosition.RIGHTHIGH, s_Climb)
-        );
+        // SmartDashboard.putData(
+        //     "Climb Right High Position", 
+        //     new ClimbPositionCommand(ClimbPosition.RIGHTHIGH, s_Climb)
+        // );
 
-        SmartDashboard.putData(
-            "Climb Stowed Position", 
-            new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
-        );
+        // SmartDashboard.putData(
+        //     "Climb Stowed Position", 
+        //     new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
+        // );
 
-        SmartDashboard.putData(
-            "Toggle Pneumatic Break",
-            new InstantCommand(() -> s_Climb.togglePneumaticBreak())
-        );
+        // SmartDashboard.putData(
+        //     "Toggle Pneumatic Break",
+        //     new InstantCommand(() -> s_Climb.togglePneumaticBreak())
+        // );
 
         SmartDashboard.putData(
             "Run Ground Intake",
