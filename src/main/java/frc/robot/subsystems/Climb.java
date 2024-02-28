@@ -269,6 +269,11 @@ public class Climb extends SubsystemBase {
     m_rightPneumaticBreak.set(Value.kReverse);
   }
 
+  public void togglePneumaticBreak() {
+    m_leftPneumaticBreak.toggle();
+    m_rightPneumaticBreak.toggle();
+  }
+
   public void disableClimbMotors() {
     setControlLeft(new NeutralOut());
     setControlRight(new NeutralOut());

@@ -148,7 +148,8 @@ public class Shintake extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Left Shooter Vel (rpm)", getLeftShooterVelocityRPM());
     SmartDashboard.putNumber("Right Shooter Vel (rpm)", getRightShooterVelocityRPM());
-    SmartDashboard.putBoolean("IR Sensor", isNoteIntaked());
+    SmartDashboard.putNumber("Intake Percent Speed", getIntakePercentSpeed());
+    SmartDashboard.putBoolean("Intake Sensor State", isNoteIntaked());
 
   }   
 }

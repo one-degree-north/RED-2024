@@ -60,7 +60,7 @@ public class ClimbPositionCommand extends Command {
   }
 
   public enum ClimbPosition {
-    LEFTHIGH, MIDDLE, RIGHTHIGH;
+    LEFTHIGH, MIDDLE, RIGHTHIGH, STOWED;
 
     public double leftClimbSetpoint() {
       switch (this) {
@@ -70,6 +70,8 @@ public class ClimbPositionCommand extends Command {
           return MechanismSetpointConstants.climbHighPosition;
         case RIGHTHIGH:
           return MechanismSetpointConstants.climbLowPosition;
+        case STOWED:
+          return MechanismSetpointConstants.climbStowedPosition;
         default:
           return MechanismSetpointConstants.climbStowedPosition;
       }
@@ -83,6 +85,8 @@ public class ClimbPositionCommand extends Command {
           return MechanismSetpointConstants.climbHighPosition;
         case RIGHTHIGH:
           return MechanismSetpointConstants.climbStandardPosition;
+        case STOWED:
+          return MechanismSetpointConstants.climbStowedPosition;
         default:
           return MechanismSetpointConstants.climbStowedPosition;
       }

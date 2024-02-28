@@ -131,8 +131,8 @@ public final class Constants {
         public static final double armkV = 0.0;
         public static final double armkA = 0.0;
         // Rotations per second
-        public static final double armCruiseVelocity = 0.0;
-        public static final double armAcceleration = 0.0;
+        public static final double armCruiseVelocity = 0.25;
+        public static final double armAcceleration = 0.25;
 
         public static final double armGearRatio = 120.0 / 1.0; // Max increase to 250:1
 
@@ -154,8 +154,8 @@ public final class Constants {
         public static final double elevatorkV = 0.0;
         public static final double elevatorkA = 0.0;
         // Meters per second
-        public static final double elevatorCruiseVelocity = 0.0;
-        public static final double elevatorAcceleration = 0.0;
+        public static final double elevatorCruiseVelocity = 0.1;
+        public static final double elevatorAcceleration = 0.1;
 
         public static final double elevatorOutputDiameter = Units.inchesToMeters(1.432);
 
@@ -208,8 +208,8 @@ public final class Constants {
         public static final double climbPositionkV = 0.0;
         public static final double climbPositionkA = 0.0;
         // Meters per second
-        public static final double climbCruiseVelocity = 0.0;
-        public static final double climbAcceleration = 0.0;
+        public static final double climbCruiseVelocity = 0.1;
+        public static final double climbAcceleration = 0.1;
 
         public static final double climbVelocitykP = 0.0;
         public static final double climbVelocitykI = 0.0;

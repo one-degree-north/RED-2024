@@ -35,9 +35,6 @@ public class Elevatarm extends SubsystemBase {
 
   private DutyCycleEncoder m_armEncoder;
   private DutyCycleEncoder m_elevatorEncoder;
-  
-  private DigitalInput m_elevatorLimitSwitchMin;
-  private DigitalInput m_elevatorLimitSwitchMax;
 
   private TalonFXConfiguration armConfig = new TalonFXConfiguration();
 
@@ -67,8 +64,6 @@ public class Elevatarm extends SubsystemBase {
 
     m_elevator = new TalonFX(ElevatarmConstants.elevatorID);
     m_elevatorEncoder = new DutyCycleEncoder(ElevatarmConstants.elevatorEncoderPort);
-    m_elevatorLimitSwitchMin = new DigitalInput(ElevatarmConstants.elevatorLimitMinPort);
-    m_elevatorLimitSwitchMax = new DigitalInput(ElevatarmConstants.elevatorLimitMaxPort);
 
     configMotors();
 
@@ -240,15 +235,11 @@ public class Elevatarm extends SubsystemBase {
         ElevatarmConstants.elevatorReverseSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio,
         ElevatarmConstants.elevatorForwardSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio)
     )
-      .withLimitForwardMotion(m_elevatorLimitSwitchMax.get())
-      .withLimitReverseMotion(m_elevatorLimitSwitchMin.get())
     );
   }
 
   public void setElevatorPercent(double percent) {
     setControlElevator(elevatorDutyCycle.withOutput(percent)
-      .withLimitForwardMotion(m_elevatorLimitSwitchMax.get())
-      .withLimitReverseMotion(m_elevatorLimitSwitchMin.get())
     );
   }
 
