@@ -448,6 +448,11 @@ public class RobotContainer {
             new ShintakeCommand(ShintakeMode.SHOOT
                 , s_Shintake, true)
         );
+
+        SmartDashboard.putData(
+            "Stop All Shintake",
+            new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
+        );
     }
 
     private void configureNamedCommands() {
