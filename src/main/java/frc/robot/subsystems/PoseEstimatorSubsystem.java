@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.VecBuilder;
@@ -17,12 +18,14 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
 
 /**
  * Pose estimator that uses odometry and AprilTags with PhotonVision.
  */
-public class PoseEstimatorSubsystem extends SubsystemBase {
+public class PoseEstimatorSubsystem extends SubsystemBase implements Logged {
 
   // Kalman Filter Configuration. These can be "tuned-to-taste" based on how much
   // you trust your various sensors. Smaller numbers will cause the filter to
@@ -53,7 +56,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
   
   private PhotonRunnable[] cameras;
   private Notifier[] cameraNotifiers;
+
+  // remove camera field2ds if monologue implementation works
   private Field2d[] cameraField2ds;
+
+  private ArrayList<Pose2d> arrayListVisionPoses = new ArrayList<>();
 
   // private final PhotonRunnable photonEstimator = new PhotonRunnable("Arducam_OV9281_USB_Camera");
   
@@ -99,6 +106,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     // Update pose estimator with drivetrain sensors
     poseEstimator.update(rotationSupplier.get(), modulePositionSupplier.get());
 
+    ArrayList<Pose2d> tempArrayList = new ArrayList<>();
+
     // TODO: Make this create multiple Field2ds for each camera
     for (int i=0; i < cameras.length; i++) {
       var visionPose = cameras[i].grabLatestEstimatedPose();
@@ -112,6 +121,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         // Set the pose on the dashboard
         cameraField2ds[i].setRobotPose(pose2d);
+        tempArrayList.add(pose2d);
       } else {
         // Jank workaround
         cameraField2ds[i].setRobotPose(new Pose2d(1000, 1000, new Rotation2d()));
@@ -130,6 +140,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     field2d.setRobotPose(dashboardPose);
     SmartDashboard.putData("Pose Estimator Field2d", field2d);
 
+    arrayListVisionPoses = tempArrayList;
+
+  }
+
+  @Log
+  public Pose2d[] getArrayOfVisionPoses() {
+    return arrayListVisionPoses.toArray(new Pose2d[arrayListVisionPoses.size()]);
   }
 
   public PhotonRunnable[] getCameras() {

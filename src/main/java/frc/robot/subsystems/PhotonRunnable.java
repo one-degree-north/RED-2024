@@ -4,6 +4,8 @@ import static frc.robot.Constants.VisionConstants.APRILTAG_AMBIGUITY_THRESHOLD;
 import static frc.robot.Constants.VisionConstants.FIELD_LENGTH_METERS;
 import static frc.robot.Constants.VisionConstants.FIELD_WIDTH_METERS;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.photonvision.EstimatedRobotPose;
@@ -12,22 +14,30 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import monologue.Annotations.Log;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 /**
  * Runnable that gets AprilTag data from PhotonVision.
  */
-public class PhotonRunnable implements Runnable {
+import monologue.Logged;
+
+public class PhotonRunnable implements Runnable, Logged {
 
   private final PhotonPoseEstimator photonPoseEstimator;
   private final PhotonCamera photonCamera;
   private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
 
+  private ArrayList<Pose3d> trackedVisionTargets = new ArrayList<>();
+  private AprilTagFieldLayout layout;
+
   public PhotonRunnable(String cameraName, Transform3d ROBOT_TO_APRILTAG_CAMERA) {
     this.photonCamera = new PhotonCamera(cameraName); 
     PhotonPoseEstimator photonPoseEstimator = null;
-    var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     // PV estimates will always be blue, they'll get flipped by robot thread
     layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     if (photonCamera != null) {
@@ -55,8 +65,24 @@ public class PhotonRunnable implements Runnable {
             atomicEstimatedRobotPose.set(estimatedRobotPose);
           }
         });
+
+        ArrayList<Pose3d> tempTrackedVisionTargets = new ArrayList<>();
+
+        photonResults.getTargets().forEach(target -> {
+          Optional<Pose3d> pose = layout.getTagPose(target.getFiducialId());
+          if (pose.isPresent())
+            tempTrackedVisionTargets.add(pose.get());
+        });
+
+        trackedVisionTargets = tempTrackedVisionTargets;
+
       }
     }  
+  }
+
+  @Log
+  public Pose3d[] getTrackedVisionTargets() {
+    return trackedVisionTargets.toArray(new Pose3d[trackedVisionTargets.size()]);
   }
 
   public boolean isConnected() {
