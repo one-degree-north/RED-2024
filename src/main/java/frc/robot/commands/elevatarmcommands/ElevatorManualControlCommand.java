@@ -10,11 +10,13 @@ import frc.robot.subsystems.Elevatarm;
 public class ElevatorManualControlCommand extends Command {
   private Elevatarm s_Elevatarm;
   private double m_percent;
+  private boolean m_closedLoop;
 
   /** Creates a new ElevatorManualControlCommand. */
-  public ElevatorManualControlCommand(double percent, Elevatarm elevatarm) {
+  public ElevatorManualControlCommand(double percent, Elevatarm elevatarm, boolean closedLoop) {
     this.s_Elevatarm = elevatarm;
     this.m_percent = percent;
+    this.m_closedLoop = closedLoop;
     addRequirements(s_Elevatarm);
   }
 
@@ -31,7 +33,10 @@ public class ElevatorManualControlCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    s_Elevatarm.setElevatorPosition(s_Elevatarm.getElevatorMeters());
+    if (m_closedLoop)
+      s_Elevatarm.setElevatorPosition(s_Elevatarm.getElevatorMeters());
+    else
+      s_Elevatarm.setElevatorPercent(0);
   }
 
   // Returns true when the command should end.

@@ -136,18 +136,18 @@ public class RobotContainer {
 
         // TESTING MODE BUTTON BINDS
         mainController.povUp().whileTrue(
-            new ArmManualControlCommand(0.2, s_Elevatarm)
+            new ArmManualControlCommand(0.2, s_Elevatarm, false)
         );
         mainController.povDown().whileTrue(
-            new ArmManualControlCommand(-0.2, s_Elevatarm)
+            new ArmManualControlCommand(-0.2, s_Elevatarm, false)
         );
 
         mainController.povRight().whileTrue(
-            new ElevatorManualControlCommand(0.2, s_Elevatarm)
+            new ElevatorManualControlCommand(0.2, s_Elevatarm, false)
         );
 
         mainController.povLeft().whileTrue(
-            new ElevatorManualControlCommand(-0.2, s_Elevatarm)
+            new ElevatorManualControlCommand(-0.2, s_Elevatarm, false)
         );
 
         mainController.R2().onTrue(
