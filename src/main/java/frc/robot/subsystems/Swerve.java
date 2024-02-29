@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.Optional;
 import java.util.function.Supplier;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -75,8 +76,15 @@ public class Swerve extends SubsystemBase {
 
         /* Create PoseEstimatorSubsytem with two cameras */
         PoseEstimator = new PoseEstimatorSubsystem(rotSupplier, modSupplier, 
+        //FL
             new PhotonRunnable("Arducam11", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1), 
-            new PhotonRunnable("Arducam12", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2));
+        //FR
+            new PhotonRunnable("Arducam12", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2),
+        //BR
+            new PhotonRunnable("Arducam12B", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_3),
+        //BL
+            new PhotonRunnable("Arducam11B", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_4)
+        );
 
         /* Initialize ChassisSpeeds */
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
@@ -174,7 +182,6 @@ public class Swerve extends SubsystemBase {
     public void setRotationTargetOverride(RotationOverride setting) {
         currentOverride = setting;
     }
-
 
     /* Method used by SwerveControllerCommand in dirtbikerx template code. 
      * @param desiredStates SwerveModuleState array to set each module to

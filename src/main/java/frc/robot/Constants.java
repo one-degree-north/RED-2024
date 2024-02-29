@@ -278,8 +278,8 @@ public final class Constants {
                 .Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
         /* Drivetrain Constants */
         // This must be tuned to specific robot.
-        public static final double trackWidth = Units.inchesToMeters(17.75);
-        public static final double wheelBase = Units.inchesToMeters(17.75);
+        public static final double trackWidth = Units.inchesToMeters(22.5);
+        public static final double wheelBase = Units.inchesToMeters(22.5);
         public static final double drivebaseRadius = Math.hypot(trackWidth, wheelBase) / 2.0;
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
@@ -413,12 +413,28 @@ public final class Constants {
 
         // 3D Translation from AprilTag camera to center of robot
         // TODO: Get offset values
+
+        // Start from front left and go clockwise
+
+        //FL
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_1 = new Transform3d(
-                new Translation3d(Units.inchesToMeters(9), Units.inchesToMeters(8), Units.inchesToMeters(8.75)),
-                new Rotation3d(0.0, -Units.degreesToRadians(30), -Units.degreesToRadians(45)));
+                new Translation3d(Units.inchesToMeters(10.96), Units.inchesToMeters(11.47), Units.inchesToMeters(8.32)),
+                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(30)));
+
+        //FR
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_2 = new Transform3d(
-                new Translation3d(Units.inchesToMeters(-9), Units.inchesToMeters(-8), Units.inchesToMeters(8.75)),
-                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(135)));
+                new Translation3d(Units.inchesToMeters(10.96), Units.inchesToMeters(-11.47), Units.inchesToMeters(8.32)),
+                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(-30)));
+
+        //BR
+        public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_3 = new Transform3d(
+                new Translation3d(Units.inchesToMeters(-10.96), Units.inchesToMeters(-11.47), Units.inchesToMeters(8.32)),
+                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(-150)));
+
+        //BL
+        public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_4 = new Transform3d(
+                new Translation3d(Units.inchesToMeters(-10.96), Units.inchesToMeters(11.47), Units.inchesToMeters(8.32)),
+                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(150)));
 
         // Calculated field length for 2024 game (used to circumvent "flipping tags" as
         // well as mirror coordinates for red/blue alliance)
