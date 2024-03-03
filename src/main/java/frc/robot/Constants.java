@@ -231,12 +231,19 @@ public final class Constants {
         public static final int intakeID = 1;
         public static final int irSensorPort = 3;
 
-        public static final double shooterkP = 0;
-        public static final double shooterkI = 0;
-        public static final double shooterkD = 0;
-        public static final double shooterkS = 0;
-        public static final double shooterkV = 0;
-        public static final double shooterkA = 0;
+        public static final double leftShooterkP = 0;
+        public static final double leftShooterkI = 0;
+        public static final double leftShooterkD = 0;
+        public static final double leftShooterkS = 0;
+        public static final double leftShooterkV = 0;
+        public static final double leftShooterkA = 0;
+
+        public static final double rightShooterkP = 0;
+        public static final double rightShooterkI = 0;
+        public static final double rightShooterkD = 0;
+        public static final double rightShooterkS = 0;
+        public static final double rightShooterkV = 0;
+        public static final double rightShooterkA = 0;
 
         public static final double flywheelGearing = 1.0/1.0; // 1:1
 

@@ -59,13 +59,12 @@ public class Shintake extends SubsystemBase {
     flywheelConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     //PID Slot 0 (Velocity PID)
-    flywheelConfigs.Slot0.kP = ShintakeConstants.shooterkP;
-    flywheelConfigs.Slot0.kI = ShintakeConstants.shooterkI;
-    flywheelConfigs.Slot0.kD = ShintakeConstants.shooterkD;
-
-    flywheelConfigs.Slot0.kS = ShintakeConstants.shooterkS;
-    flywheelConfigs.Slot0.kV = ShintakeConstants.shooterkV;
-    flywheelConfigs.Slot0.kA = ShintakeConstants.shooterkA;
+    flywheelConfigs.Slot0.kP = ShintakeConstants.leftShooterkP;
+    flywheelConfigs.Slot0.kI = ShintakeConstants.leftShooterkI;
+    flywheelConfigs.Slot0.kD = ShintakeConstants.leftShooterkD;
+    flywheelConfigs.Slot0.kS = ShintakeConstants.leftShooterkS;
+    flywheelConfigs.Slot0.kV = ShintakeConstants.leftShooterkV;
+    flywheelConfigs.Slot0.kA = ShintakeConstants.leftShooterkA;
 
     //Feedback Configs
     // Gear ratio
@@ -73,6 +72,13 @@ public class Shintake extends SubsystemBase {
 
     //Add Configs
     m_flywheelLeft.getConfigurator().apply(flywheelConfigs);
+
+    flywheelConfigs.Slot0.kP = ShintakeConstants.rightShooterkP;
+    flywheelConfigs.Slot0.kI = ShintakeConstants.rightShooterkI;
+    flywheelConfigs.Slot0.kD = ShintakeConstants.rightShooterkD;
+    flywheelConfigs.Slot0.kS = ShintakeConstants.rightShooterkS;
+    flywheelConfigs.Slot0.kV = ShintakeConstants.rightShooterkV;
+    flywheelConfigs.Slot0.kA = ShintakeConstants.rightShooterkA;
 
     m_flywheelRight.getConfigurator().apply(flywheelConfigs);
     // Set right flywheel to opposite invert (CCW+ is "not inverted")
