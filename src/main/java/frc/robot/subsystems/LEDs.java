@@ -108,7 +108,7 @@ public class LEDs extends VirtualSubsystem {
 
     // This method will be called once per scheduler run
 
-    if (DriverStation.isDisabled() || !DriverStation.isEStopped()) {
+    if (DriverStation.isDisabled() && !DriverStation.isEStopped()) {
       // First check to see if AprilTag has been detected
       checkForAprilTags();
       // Only check for auto align if apriltag is detected
@@ -139,10 +139,12 @@ public class LEDs extends VirtualSubsystem {
         wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
     }
-  
+
     else if (DriverStation.isEnabled()) {
       /* Main logic for drivetrain colors when enabled */
-      rainbow(Section.UNDERGLOW, waveCycleLength, breathSlowDuration);
+      if (m_shintake.isNoteIntaked()){
+        rainbow(Section.FULL, waveCycleLength, breathSlowDuration*2);
+      }
 
       Color shintakeColor = isSourceIntake ? Color.kOrange : Color.kGreen;
 
@@ -151,11 +153,8 @@ public class LEDs extends VirtualSubsystem {
       ) {
         wave(Section.SHINTAKE, shintakeColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
-      else if (m_shintake.isNoteIntaked()) {
-        breath(Section.SHINTAKE, shintakeColor, Color.kBlack, breathSlowDuration);
-      } 
-      else {
-        solid(Section.SHINTAKE, shintakeColor);
+      else if (!m_shintake.isNoteIntaked()) {
+        breath(Section.FULL, shintakeColor, Color.kBlack, breathSlowDuration);
       }
     }
   

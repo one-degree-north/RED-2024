@@ -330,12 +330,12 @@ public class RobotContainer {
         //     )
         // );
 
-        buttonBoard.button(9).onTrue(
+        buttonBoard.button(1).onTrue(
             // set to source high mode
             new InstantCommand(() -> s_LEDs.setIntakingLEDs(true))
         );
 
-        buttonBoard.button(10).onTrue(
+        buttonBoard.button(2).onTrue(
             // set to ground mode
             new InstantCommand(() -> s_LEDs.setIntakingLEDs(false))
         );
