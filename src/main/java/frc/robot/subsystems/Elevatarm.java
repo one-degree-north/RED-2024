@@ -29,8 +29,8 @@ import frc.robot.Constants.ElevatarmConstants;
 public class Elevatarm extends SubsystemBase {
   /** Creates a new Elevatarm. */
 
-  private TalonFX m_armLeader;
-  private TalonFX m_armFollower;
+  public TalonFX m_armLeader;
+  public TalonFX m_armFollower;
   private TalonFX m_elevator;
 
   private DutyCycleEncoder m_armEncoder;
@@ -45,9 +45,15 @@ public class Elevatarm extends SubsystemBase {
 
   private MotionMagicVoltage armMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut armDutyCycle = new DutyCycleOut(0);
+  private double m_armMotionMagicSetpoint = 0;
+  private double m_armDutyCycleOutput = 0;
   
   private MotionMagicVoltage elevatorMotionMagic = new MotionMagicVoltage(0).withSlot(0);
   private DutyCycleOut elevatorDutyCycle = new DutyCycleOut(0);
+  private double m_elevatorMotionMagicSetpoint = 0;
+  private double m_elevatorDutyCycleOutput = 0;
+
+  private ControlState control = ControlState.OPEN_LOOP;
 
   private MechanismLigament2d elevatarmMech2d;
 
@@ -56,13 +62,16 @@ public class Elevatarm extends SubsystemBase {
   private boolean isBraked = true;
   
   public Elevatarm() {
-    m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID);
-    m_armFollower = new TalonFX(ElevatarmConstants.armFollowerID);
+    m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID, "*");
+    m_armFollower = new TalonFX(ElevatarmConstants.armFollowerID, "*");
+    // Set follower
+    m_armFollower.setControl(new Follower(m_armLeader.getDeviceID(), true));
+    
     m_armEncoder = new DutyCycleEncoder(ElevatarmConstants.armEncoderPort);
     
     m_lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
 
-    m_elevator = new TalonFX(ElevatarmConstants.elevatorID);
+    m_elevator = new TalonFX(ElevatarmConstants.elevatorID, "*");
     m_elevatorEncoder = new DutyCycleEncoder(ElevatarmConstants.elevatorEncoderPort);
 
     configMotors();
@@ -114,8 +123,6 @@ public class Elevatarm extends SubsystemBase {
 
 
     m_armLeader.getConfigurator().apply(armConfig);
-    // Set follower
-    m_armFollower.setControl(new Follower(ElevatarmConstants.armLeaderID, true));
 
     // Elevator config
 
@@ -216,31 +223,24 @@ public class Elevatarm extends SubsystemBase {
 
   /* In rotations */
   public void setArmPosition(double position) {
-    setControlArm(armMotionMagic.withPosition(
-      MathUtil.clamp(
-        position, 
-        ElevatarmConstants.armReverseSoftLimit,
-        ElevatarmConstants.armForwardSoftLimit))
-    );
+    control = ControlState.CLOSED_LOOP;
+    m_armMotionMagicSetpoint = position;
   }
 
   public void setArmPercent(double percent) {
-    setControlArm(armDutyCycle.withOutput(percent));
+    control = ControlState.OPEN_LOOP;
+    m_armDutyCycleOutput = percent;
+    
   }
 
   public void setElevatorPosition(double position) {
-    setControlElevator(elevatorMotionMagic.withPosition(
-        MathUtil.clamp(
-        position*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio, 
-        ElevatarmConstants.elevatorReverseSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio,
-        ElevatarmConstants.elevatorForwardSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio)
-    )
-    );
+    control = ControlState.CLOSED_LOOP;
+    m_elevatorMotionMagicSetpoint = position;
   }
 
   public void setElevatorPercent(double percent) {
-    setControlElevator(elevatorDutyCycle.withOutput(percent)
-    );
+    control = ControlState.OPEN_LOOP;
+    m_elevatorDutyCycleOutput = percent;
   }
 
   public boolean isArmEncoderReset() {
@@ -251,7 +251,7 @@ public class Elevatarm extends SubsystemBase {
     return isElevatorEncoderReset;
   }
 
-  public void recalculateFeedForward() {
+  public double[] recalculateFeedForward() {
     // This assumes that arm feedforward is tuned with elevator at maximum extension
     double updatedArmkG = 
       ElevatarmConstants.armkG 
@@ -266,12 +266,10 @@ public class Elevatarm extends SubsystemBase {
       // Scale with arm angle 
       // (sin because initial measurement is taken with upright arm)
       // Max kG is when arm is upright, min kG is when arm is horizontal
-    
-    armMotionMagic.FeedForward = updatedArmkG;
-    elevatorMotionMagic.FeedForward = updatedElevatorkG;
-
     SmartDashboard.putNumber("Arm kG", updatedArmkG);
     SmartDashboard.putNumber("Elevator kG", updatedElevatorkG);
+
+    return new double[]{updatedArmkG, updatedElevatorkG};
 
   }
 
@@ -296,6 +294,34 @@ public class Elevatarm extends SubsystemBase {
 
   @Override
   public void periodic() {
+    switch (control) {
+      case OPEN_LOOP:
+        setControlArm(armDutyCycle.withOutput(m_armDutyCycleOutput));
+        setControlElevator(elevatorDutyCycle.withOutput(m_elevatorDutyCycleOutput));
+        break;
+      case CLOSED_LOOP:
+        setControlArm(armMotionMagic
+          .withPosition(
+            MathUtil.clamp(
+              m_armMotionMagicSetpoint, 
+              ElevatarmConstants.armReverseSoftLimit,
+              ElevatarmConstants.armForwardSoftLimit)
+          )
+          .withFeedForward(recalculateFeedForward()[0])
+        );
+
+        setControlElevator(elevatorMotionMagic
+          .withPosition(
+            MathUtil.clamp(
+              m_elevatorMotionMagicSetpoint*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio, 
+              ElevatarmConstants.elevatorReverseSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio,
+              ElevatarmConstants.elevatorForwardSoftLimit*ElevatarmConstants.elevatorMechanismRotationsToMetersRatio)
+          )
+          .withFeedForward(recalculateFeedForward()[1])
+        );
+        break;
+    }
+
     if (DriverStation.isDisabled()) {
       if (m_lockButton.get()) {
         setBrake();
@@ -303,6 +329,8 @@ public class Elevatarm extends SubsystemBase {
         setCoast();
       }
     }
+
+    SmartDashboard.putBoolean("Brake mode", m_lockButton.get());
 
     elevatarmMech2d.setLength(
       getElevatorMeters()
@@ -320,5 +348,10 @@ public class Elevatarm extends SubsystemBase {
     
     SmartDashboard.putNumber("Elevator Pos (m)", getElevatorMeters());
     SmartDashboard.putNumber("Elevator Through Bore Pos (m)", getElevatorAbsoluteEncoderDistance());
+
+  }
+
+  private enum ControlState {
+    OPEN_LOOP, CLOSED_LOOP;
   }
 }

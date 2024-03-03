@@ -57,8 +57,8 @@ public class Climb extends SubsystemBase {
   private boolean isClimbEncodersReset = false;
   
   public Climb() {
-    m_climbLeft = new TalonFX(ClimbConstants.leftClimbID);
-    m_climbRight = new TalonFX(ClimbConstants.rightClimbID);
+    m_climbLeft = new TalonFX(ClimbConstants.leftClimbID, "*");
+    m_climbRight = new TalonFX(ClimbConstants.rightClimbID, "*");
 
     m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.leftPneumaticBreakPort1, ClimbConstants.leftPneumaticBreakPort2);
     m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);

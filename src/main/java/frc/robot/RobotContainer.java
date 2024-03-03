@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -58,7 +60,7 @@ public class RobotContainer {
 
     /* Auto Chooser */
     // change default auto
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("6 Note Auto");
+    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("7 Note Auto");
 
     // KNOWN LIMITATION: Will return error if "None" command is selected
     public Supplier<Pose2d> autoStartingPoseSupplier = 
@@ -71,7 +73,7 @@ public class RobotContainer {
             else return s_Swerve.getPose();
         };
 
-    private final LEDs s_LEDs = new LEDs(9, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, null);
+    private final LEDs s_LEDs = new LEDs(0, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, null);
 
     private AutoIntakePosition selectedIntakePosition = AutoIntakePosition.CENTER;
     private AutoClimbPosition selectedClimbPosition = AutoClimbPosition.CENTER;
@@ -82,16 +84,16 @@ public class RobotContainer {
     public RobotContainer() {
         /* Adding Autos */
 
-        s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve, 
-                () -> -mainController.getLeftY(), 
-                () -> -mainController.getLeftX(), 
-                () -> -mainController.getRightX(), 
-                () -> false,
-                mainController.touchpad()
-            )
-        );
+        // s_Swerve.setDefaultCommand(
+        //     new TeleopSwerve(
+        //         s_Swerve, 
+        //         () -> -mainController.getLeftY(), 
+        //         () -> -mainController.getLeftX(), 
+        //         () -> -mainController.getRightX(), 
+        //         () -> false,
+        //         mainController.touchpad()
+        //     )
+        // );
 
         // s_Elevatarm.setDefaultCommand(
         //     new RepeatCommand(
@@ -135,40 +137,43 @@ public class RobotContainer {
         /* Driver Buttons */
 
         // TESTING MODE BUTTON BINDS
-        mainController.povUp().whileTrue(
-            new ArmManualControlCommand(0.2, s_Elevatarm, false)
-        );
-        mainController.povDown().whileTrue(
-            new ArmManualControlCommand(-0.2, s_Elevatarm, false)
+        mainController.triangle().whileTrue(
+            new ArmManualControlCommand(0.1, s_Elevatarm, false)
         );
 
+        mainController.cross().whileTrue(
+            new ArmManualControlCommand(-0.1, s_Elevatarm, false)
+        );
+
+       
+
         mainController.povRight().whileTrue(
-            new ElevatorManualControlCommand(0.2, s_Elevatarm, false)
+            new ElevatorManualControlCommand(0.1, s_Elevatarm, false)
         );
 
         mainController.povLeft().whileTrue(
-            new ElevatorManualControlCommand(-0.2, s_Elevatarm, false)
+            new ElevatorManualControlCommand(-0.1, s_Elevatarm, false)
         );
 
-        mainController.R2().onTrue(
-            new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(
-                ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM))
-        );
+        // mainController.R2().onTrue(
+        //     new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(
+        //         ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM))
+        // );
 
-        mainController.R2().onFalse(
-            new InstantCommand(() -> s_Shintake.stopShooter())
-        );
+        // mainController.R2().onFalse(
+        //     new InstantCommand(() -> s_Shintake.stopShooter())
+        // );
 
-        mainController.R1().onTrue(
-            new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
-        );
+        // mainController.R1().onTrue(
+        //     new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
+        // );
 
-        mainController.triangle().onTrue(
-            new InstantCommand(
-                () -> s_Elevatarm.setElevatorPosition( 
-                    MechanismSetpointConstants.elevatorGroundIntakePosition)
-            )
-        );
+        // mainController.triangle().onTrue(
+        //     new InstantCommand(
+        //         () -> s_Elevatarm.setElevatorPosition( 
+        //             MechanismSetpointConstants.elevatorGroundIntakePosition)
+        //     )
+        // );
 
         // // REAL MATCH BUTTON BINDS
         // // Ground intake
@@ -325,15 +330,15 @@ public class RobotContainer {
         //     )
         // );
 
-        // buttonBoard.button(9).onTrue(
-        //     // set to source high mode
-        //     new InstantCommand(() -> s_LEDs.setIntakingLEDs(true))
-        // );
+        buttonBoard.button(9).onTrue(
+            // set to source high mode
+            new InstantCommand(() -> s_LEDs.setIntakingLEDs(true))
+        );
 
-        // buttonBoard.button(10).onTrue(
-        //     // set to ground mode
-        //     new InstantCommand(() -> s_LEDs.setIntakingLEDs(false))
-        // );
+        buttonBoard.button(10).onTrue(
+            // set to ground mode
+            new InstantCommand(() -> s_LEDs.setIntakingLEDs(false))
+        );
         
     }
 
@@ -350,109 +355,109 @@ public class RobotContainer {
         //     new InstantCommand(() -> s_Climb.disableCompressor())
         // );
 
-        SmartDashboard.putData(
-            "Home Position", 
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armStowedPosition, 
-                    MechanismSetpointConstants.elevatorStowedPosition, 
-                    s_Elevatarm
-            )
-        );
-
-        SmartDashboard.putData(
-            "Ground Intake Position", 
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armGroundIntakePosition, 
-                    MechanismSetpointConstants.elevatorGroundIntakePosition, 
-                    s_Elevatarm
-            )
-        );
-
-        SmartDashboard.putData(
-            "Source Intake Position", 
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armSourcePosition, 
-                    MechanismSetpointConstants.elevatorSourcePosition, 
-                    s_Elevatarm
-            )
-        );
-
-        SmartDashboard.putData(
-            "Amp Scoring Position", 
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armAmpPosition, 
-                    MechanismSetpointConstants.elevatorAmpPosition, 
-                    s_Elevatarm
-            )
-        );
-
-        SmartDashboard.putData(
-            "Trap Position", 
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armTrapPosition, 
-                    MechanismSetpointConstants.elevatorTrapPosition, 
-                    s_Elevatarm
-            )
-        );
-
-        SmartDashboard.putData(
-            "Pre Trap Position",
-            new ElevatarmCommand(
-                    MechanismSetpointConstants.armPreTrapPosition, 
-                    MechanismSetpointConstants.elevatorPreTrapPosition, 
-                    s_Elevatarm
-            )
-        );
-
         // SmartDashboard.putData(
-        //     "Climb Middle Position", 
-        //     new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb)
+        //     "Home Position", 
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armStowedPosition, 
+        //             MechanismSetpointConstants.elevatorStowedPosition, 
+        //             s_Elevatarm
+        //     )
         // );
 
         // SmartDashboard.putData(
-        //     "Climb Left High Position", 
-        //     new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
+        //     "Ground Intake Position", 
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armGroundIntakePosition, 
+        //             MechanismSetpointConstants.elevatorGroundIntakePosition, 
+        //             s_Elevatarm
+        //     )
         // );
 
         // SmartDashboard.putData(
-        //     "Climb Right High Position", 
-        //     new ClimbPositionCommand(ClimbPosition.RIGHTHIGH, s_Climb)
+        //     "Source Intake Position", 
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armSourcePosition, 
+        //             MechanismSetpointConstants.elevatorSourcePosition, 
+        //             s_Elevatarm
+        //     )
         // );
 
         // SmartDashboard.putData(
-        //     "Climb Stowed Position", 
-        //     new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
+        //     "Amp Scoring Position", 
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armAmpPosition, 
+        //             MechanismSetpointConstants.elevatorAmpPosition, 
+        //             s_Elevatarm
+        //     )
         // );
 
         // SmartDashboard.putData(
-        //     "Toggle Pneumatic Break",
-        //     new InstantCommand(() -> s_Climb.togglePneumaticBreak())
+        //     "Trap Position", 
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armTrapPosition, 
+        //             MechanismSetpointConstants.elevatorTrapPosition, 
+        //             s_Elevatarm
+        //     )
         // );
 
-        SmartDashboard.putData(
-            "Run Ground Intake",
-            new ShintakeCommand(ShintakeMode.GROUND_INTAKE
-                , s_Shintake, true)
-        );
+        // SmartDashboard.putData(
+        //     "Pre Trap Position",
+        //     new ElevatarmCommand(
+        //             MechanismSetpointConstants.armPreTrapPosition, 
+        //             MechanismSetpointConstants.elevatorPreTrapPosition, 
+        //             s_Elevatarm
+        //     )
+        // );
 
-        // Tune source intake delay
-        SmartDashboard.putData(
-            "Run Source Intake",
-            new ShintakeCommand(ShintakeMode.SOURCE_INTAKE
-                , s_Shintake, true)
-        );
+        // // SmartDashboard.putData(
+        // //     "Climb Middle Position", 
+        // //     new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb)
+        // // );
 
-        // Tune shooter ramp time, shooter delay
-        SmartDashboard.putData(
-            "Run Shooter",
-            new ShintakeCommand(ShintakeMode.SHOOT
-                , s_Shintake, true)
-        );
+        // // SmartDashboard.putData(
+        // //     "Climb Left High Position", 
+        // //     new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
+        // // );
 
-        SmartDashboard.putData(
-            "Stop All Shintake",
-            new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
-        );
+        // // SmartDashboard.putData(
+        // //     "Climb Right High Position", 
+        // //     new ClimbPositionCommand(ClimbPosition.RIGHTHIGH, s_Climb)
+        // // );
+
+        // // SmartDashboard.putData(
+        // //     "Climb Stowed Position", 
+        // //     new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
+        // // );
+
+        // // SmartDashboard.putData(
+        // //     "Toggle Pneumatic Break",
+        // //     new InstantCommand(() -> s_Climb.togglePneumaticBreak())
+        // // );
+
+        // SmartDashboard.putData(
+        //     "Run Ground Intake",
+        //     new ShintakeCommand(ShintakeMode.GROUND_INTAKE
+        //         , s_Shintake, true)
+        // );
+
+        // // Tune source intake delay
+        // SmartDashboard.putData(
+        //     "Run Source Intake",
+        //     new ShintakeCommand(ShintakeMode.SOURCE_INTAKE
+        //         , s_Shintake, true)
+        // );
+
+        // // Tune shooter ramp time, shooter delay
+        // SmartDashboard.putData(
+        //     "Run Shooter",
+        //     new ShintakeCommand(ShintakeMode.SHOOT
+        //         , s_Shintake, true)
+        // );
+
+        // SmartDashboard.putData(
+        //     "Stop All Shintake",
+        //     new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
+        // );
     }
 
     private void configureNamedCommands() {

@@ -79,9 +79,9 @@ public class Swerve extends SubsystemBase {
         //FL
             new PhotonRunnable("Arducam11", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1), 
         //FR
-            new PhotonRunnable("Arducam12", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2),
+            new PhotonRunnable("Arducam_OV9281_USB_Camera", Constants.VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2),
         //BR
-            new PhotonRunnable("Arducam12B", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_3),
+            new PhotonRunnable("USB_Camera (1)", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_3),
         //BL
             new PhotonRunnable("Arducam11B", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_4)
         );
@@ -323,15 +323,25 @@ public class Swerve extends SubsystemBase {
     }
 
     /* @return field relative left camera Pose3d */
-    public Pose3d getLeftCameraFieldPosition() {
+    public Pose3d getFrontLeftCameraFieldPosition() {
         Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
         return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_1);
     }
 
     /* @return field relative right camera Pose3d */
-    public Pose3d getRightCameraFieldPosition() {
+    public Pose3d getFrontRightCameraFieldPosition() {
         Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
         return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_2);
+    }
+
+    public Pose3d getBackRightCameraFieldPosition() {
+        Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
+        return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_3);
+    }
+
+    public Pose3d getBackLeftCameraFieldPosition() {
+        Pose3d robotPose = new Pose3d(PoseEstimator.getCurrentPose());
+        return robotPose.transformBy(VisionConstants.ROBOT_TO_APRILTAG_CAMERA_4);
     }
 
     /* @return alliance-based speaker position (Translation2d) */
@@ -365,7 +375,7 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("Distance to Speaker (m)", getPose().getTranslation().getDistance(
             getAllianceSpeakerPos()));
 
-        cameraFieldPoses.set(new Pose3d[] {getLeftCameraFieldPosition(), getRightCameraFieldPosition()});
+        cameraFieldPoses.set(new Pose3d[] {getFrontLeftCameraFieldPosition(), getFrontRightCameraFieldPosition(), getBackRightCameraFieldPosition(), getBackLeftCameraFieldPosition()});
     }
 
     public enum RotationOverride {

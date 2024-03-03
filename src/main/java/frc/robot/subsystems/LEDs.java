@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.util.VirtualSubsystem;
 
@@ -41,7 +42,7 @@ public class LEDs extends VirtualSubsystem {
   
   private Supplier<Pose2d> autoPose;
 
-  private boolean isSourceIntake;
+  private boolean isSourceIntake = false;
 
   // States
   private SubsystemState visionState = SubsystemState.NOTREADY;
@@ -141,27 +142,20 @@ public class LEDs extends VirtualSubsystem {
   
     else if (DriverStation.isEnabled()) {
       /* Main logic for drivetrain colors when enabled */
-      if (DriverStation.isTeleop()) {
-        solid(Section.UNDERGLOW, teleopColor);
-      } else if (DriverStation.isAutonomous()) {
-        solid(Section.UNDERGLOW, autoColor);
-      } else if (DriverStation.isTest()) {
-        breath(Section.UNDERGLOW, teleopColor, Color.kBlack, breathSlowDuration);
-      }
+      rainbow(Section.UNDERGLOW, waveCycleLength, breathSlowDuration);
 
-      if (isSourceIntake) {
-        breath(Section.SHINTAKE, Color.kOrange, Color.kBlack, breathSlowDuration);
-      } else {
-        solid(Section.SHINTAKE, Color.kGreen);
-      }
+      Color shintakeColor = isSourceIntake ? Color.kOrange : Color.kGreen;
 
-      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 10 
-      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 10
+      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 100 
+      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 100
       ) {
-        wave(Section.SHINTAKE, teleopColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
+        wave(Section.SHINTAKE, shintakeColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
       else if (m_shintake.isNoteIntaked()) {
-        breath(Section.SHINTAKE, teleopColor, Color.kBlack, breathSlowDuration);
+        breath(Section.SHINTAKE, shintakeColor, Color.kBlack, breathSlowDuration);
+      } 
+      else {
+        solid(Section.SHINTAKE, shintakeColor);
       }
     }
   
@@ -171,10 +165,16 @@ public class LEDs extends VirtualSubsystem {
     }
 
     m_led.setData(m_ledBuffer);
+
+    SmartDashboard.putBoolean("Intaking LEDs", getIntakingLEDs());
   }
 
   public void setIntakingLEDs(boolean isSourceIntake) {
     this.isSourceIntake = isSourceIntake;
+  }
+
+  public boolean getIntakingLEDs() {
+    return isSourceIntake;
   }
   
   private synchronized void checkForAprilTags() {
@@ -289,6 +289,18 @@ public class LEDs extends VirtualSubsystem {
     }
   }
 
+  private void rainbow(Section section, double cycleLength, double duration) {
+    double x = (1 - ((Timer.getFPGATimestamp() / duration) % 1.0)) * 180.0;
+    double xDiffPerLed = 180.0 / cycleLength;
+    for (int i = 0; i < section.end(); i++) {
+      x += xDiffPerLed;
+      x %= 180.0;
+      if (i >= section.start()) {
+        m_ledBuffer.setHSV(i, (int) x, 255, 255);
+      }
+    }
+  }
+
   private void breath(Section section, Color c1, Color c2, double duration) {
     breath(section, c1, c2, duration, Timer.getFPGATimestamp());
   }
@@ -319,13 +331,13 @@ public class LEDs extends VirtualSubsystem {
         case LEFTDRIVE:
           return 0;
         case BACKDRIVE:
-          return 10;
+          return 71;
         case RIGHTDRIVE:
-          return 20;
+          return 47;
         case FRONTDRIVE:
-          return 30;
+          return 22;
         case SHINTAKE:
-          return 40;
+          return 94;
         default:
           return 0;
       }
@@ -336,17 +348,17 @@ public class LEDs extends VirtualSubsystem {
         case FULL:
           return length;
         case UNDERGLOW:
-          return 40;
+          return 94;
         case LEFTDRIVE:
-          return 10;
+          return 22;
         case BACKDRIVE:
-          return 20;
+          return 94;
         case RIGHTDRIVE:
-          return 30;
+          return 71;
         case FRONTDRIVE:
-          return 40;
+          return 47;
         case SHINTAKE:
-          return 50;
+          return 121;
         default:
           return length;
       }

@@ -33,8 +33,8 @@ public class Shintake extends SubsystemBase {
 
   public Shintake() {
     
-    m_flywheelLeft = new TalonFX(ShintakeConstants.leftShooterID);
-    m_flywheelRight = new TalonFX(ShintakeConstants.rightShooterID);
+    m_flywheelLeft = new TalonFX(ShintakeConstants.leftShooterID, "*");
+    m_flywheelRight = new TalonFX(ShintakeConstants.rightShooterID, "*");
 
     flywheelConfigs = new TalonFXConfiguration();
 
@@ -141,7 +141,7 @@ public class Shintake extends SubsystemBase {
   }
   
   public boolean isNoteIntaked() {
-    return intakeSensor.get();
+    return !intakeSensor.get();
   }
 
   @Override

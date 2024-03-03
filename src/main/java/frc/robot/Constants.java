@@ -112,14 +112,14 @@ public final class Constants {
 
     public static final class ElevatarmConstants {
         // Arm IDs
-        public static final int armLeaderID = 0;
-        public static final int armFollowerID = 0;
+        public static final int armLeaderID = 14;
+        public static final int armFollowerID = 13;
         public static final int armEncoderPort = 0;
-        public static final int elevatarmLockSwitchPort = 0;
+        public static final int elevatarmLockSwitchPort = 9;
 
         public static final double armAbsoluteEncoderAngleOffset = 0.0;
-        public static final double armForwardSoftLimit = 0.0;
-        public static final double armReverseSoftLimit = 0.0;
+        public static final double armForwardSoftLimit = 100;
+        public static final double armReverseSoftLimit = -100;
 
         // Arm MotionMagic gains
         public static final double armkP = 0.0;
@@ -136,14 +136,12 @@ public final class Constants {
 
         public static final double armGearRatio = 120.0 / 1.0; // Max increase to 250:1
 
-        public static final int elevatorID = 0;
-        public static final int elevatorEncoderPort = 0;
-        public static final int elevatorLimitMinPort = 0;
-        public static final int elevatorLimitMaxPort = 0;
+        public static final int elevatorID = 15;
+        public static final int elevatorEncoderPort = 1;
 
         public static final double elevatorAbsoluteEncoderDistanceOffset = 0.0;
-        public static final double elevatorForwardSoftLimit = 0.0;
-        public static final double elevatorReverseSoftLimit = 0.0;
+        public static final double elevatorForwardSoftLimit = 100;
+        public static final double elevatorReverseSoftLimit = -100;
 
         public static final double elevatorkP = 0.0;
         public static final double elevatorkI = 0.0;
@@ -227,11 +225,11 @@ public final class Constants {
     }
 
     public static final class ShintakeConstants {
-        public static final int leftShooterID = 0;
-        public static final int rightShooterID = 0;
+        public static final int leftShooterID = 17;
+        public static final int rightShooterID = 16;
 
         public static final int intakeID = 1;
-        public static final int irSensorPort = 0;
+        public static final int irSensorPort = 3;
 
         public static final double shooterkP = 0;
         public static final double shooterkI = 0;
@@ -419,12 +417,12 @@ public final class Constants {
         //FL
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_1 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(10.96), Units.inchesToMeters(11.47), Units.inchesToMeters(8.32)),
-                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(30)));
+                new Rotation3d(Units.degreesToRadians(180), -Units.degreesToRadians(30), Units.degreesToRadians(30)));
 
         //FR
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_2 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(10.96), Units.inchesToMeters(-11.47), Units.inchesToMeters(8.32)),
-                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(-30)));
+                new Rotation3d(Units.degreesToRadians(180), -Units.degreesToRadians(30), Units.degreesToRadians(-30)));
 
         //BR
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_3 = new Transform3d(
@@ -434,7 +432,7 @@ public final class Constants {
         //BL
         public static final Transform3d ROBOT_TO_APRILTAG_CAMERA_4 = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-10.96), Units.inchesToMeters(11.47), Units.inchesToMeters(8.32)),
-                new Rotation3d(0.0, -Units.degreesToRadians(30), Units.degreesToRadians(150)));
+                new Rotation3d(Units.degreesToRadians(180), -Units.degreesToRadians(30), Units.degreesToRadians(150)));
 
         // Calculated field length for 2024 game (used to circumvent "flipping tags" as
         // well as mirror coordinates for red/blue alliance)
