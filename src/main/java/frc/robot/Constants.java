@@ -117,7 +117,7 @@ public final class Constants {
         public static final int armEncoderPort = 0;
         public static final int elevatarmLockSwitchPort = 9;
 
-        public static final double armAbsoluteEncoderAngleOffset = 0.0;
+        public static final double armAbsoluteEncoderAngleOffset = -0.278;
         public static final double armForwardSoftLimit = 100;
         public static final double armReverseSoftLimit = -100;
 
@@ -139,7 +139,7 @@ public final class Constants {
         public static final int elevatorID = 15;
         public static final int elevatorEncoderPort = 1;
 
-        public static final double elevatorAbsoluteEncoderDistanceOffset = 0.0;
+        public static final double elevatorAbsoluteEncoderDistanceOffset = -0.00278;
         public static final double elevatorForwardSoftLimit = 100;
         public static final double elevatorReverseSoftLimit = -100;
 
@@ -161,9 +161,9 @@ public final class Constants {
         public static final double elevatorMechanismRotationsToMetersRatio = 1 / (elevatorOutputDiameter * Math.PI);
 
         // Distance from pivot to center of fully retracted end effector
-        public static final double minDistanceOfShintakeRelativeToPivot = Units.inchesToMeters(23.5);
+        public static final double minDistanceOfShintakeRelativeToPivot = Units.inchesToMeters(25);
         public static final double maxDistanceOfShintakeRelativeToPivot = elevatorForwardSoftLimit + minDistanceOfShintakeRelativeToPivot; 
-            // Maximum should be 34.5
+            // Maximum should be 34 inches
 
         // In meters
         public static final Translation2d positionOfPivotRelativeToOrigin = new Translation2d(-13.5, 7.6);

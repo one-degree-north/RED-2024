@@ -151,7 +151,7 @@ public class LEDs extends VirtualSubsystem {
       if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 100 
       || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 100
       ) {
-        wave(Section.SHINTAKE, shintakeColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
+        wave(Section.SHINTAKE, teleopColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
       else if (!m_shintake.isNoteIntaked()) {
         breath(Section.FULL, shintakeColor, Color.kBlack, breathSlowDuration);

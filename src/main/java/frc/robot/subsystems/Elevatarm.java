@@ -187,12 +187,12 @@ public class Elevatarm extends SubsystemBase {
 
   /* Rotations */
   private double getArmAbsoluteEncoderAngle() {
-    return m_armEncoder.getAbsolutePosition();
+    return -m_armEncoder.getAbsolutePosition();
   }
 
   /* Meters */
   private double getElevatorAbsoluteEncoderDistance() {
-    return m_elevatorEncoder.getAbsolutePosition()
+    return -m_elevatorEncoder.getAbsolutePosition()
       / ElevatarmConstants.elevatorMechanismRotationsToMetersRatio;
   }
 

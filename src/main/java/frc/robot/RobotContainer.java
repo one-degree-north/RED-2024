@@ -138,11 +138,11 @@ public class RobotContainer {
 
         // TESTING MODE BUTTON BINDS
         mainController.triangle().whileTrue(
-            new ArmManualControlCommand(0.1, s_Elevatarm, false)
+            new ArmManualControlCommand(0.5, s_Elevatarm, false)
         );
 
         mainController.cross().whileTrue(
-            new ArmManualControlCommand(-0.1, s_Elevatarm, false)
+            new ArmManualControlCommand(-0.5, s_Elevatarm, false)
         );
 
        
