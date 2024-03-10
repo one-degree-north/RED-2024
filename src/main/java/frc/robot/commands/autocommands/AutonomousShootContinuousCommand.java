@@ -85,7 +85,14 @@ public class AutonomousShootContinuousCommand extends Command {
             Math.abs(s_Swerve.getTranslationalSpeed())
             < MechanismSetpointConstants.allowableVelocityToAutoScore
             &&
-            s_Swerve.getShotData().inYDistanceRange();
+            s_Swerve.getShotData().inYDistanceRange()
+            && 
+            Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+            < MechanismSetpointConstants.flywheelVelocityAllowableError
+            && 
+            Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
+            < MechanismSetpointConstants.flywheelVelocityAllowableError
+            ;
         })
         .andThen(
           new ShintakeCommand(ShintakeMode.JUSTFEEDTOSHOOT, s_Shintake, false).finallyDo(() -> s_Shintake.stopIntake())

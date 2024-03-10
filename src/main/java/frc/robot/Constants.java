@@ -54,10 +54,10 @@ public final class Constants {
         public static final Pose2d middleSpeakerScoringPose = new Pose2d();
         public static final Pose2d rightSpeakerScoringPose = new Pose2d();
 
-        public static final Pose2d leftClimbPose = new Pose2d();
-        public static final Pose2d middleClimbPose = new Pose2d();
-        public static final Pose2d rightClimbPose = new Pose2d();
-
+        // These are only used for trap scoring
+        public static final Pose2d leftClimbPreHookPose = new Pose2d();
+        public static final Pose2d middleClimbPreHookPose = new Pose2d();
+        public static final Pose2d rightClimbPreHookPose = new Pose2d();
 
     }
 
@@ -66,6 +66,7 @@ public final class Constants {
         public static final double elevatorAllowableError = 0.05;
         public static final double climbAllowableError = 0.05;
         public static final double swerveRotationAllowableError = 0.1;
+        public static final double flywheelVelocityAllowableError = 10; // RPM
 
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;
@@ -176,7 +177,7 @@ public final class Constants {
         public static final double elevatorMinRetractionInterferenceAngleCutoff = 0;
 
 
-        public static final double armMinAngleForClimbClearance = 0;
+        public static final double armCutoffAngleForClimbClearance = 0;
 
     }
 
@@ -253,7 +254,7 @@ public final class Constants {
         public static final double flywheelGearing = 1.0/1.0; // 1:1
 
         // Approximate time shooter takes to hit max velocity
-        public static final double shooterRampTimeSeconds = 1;
+        public static final double shooterTimeoutRampTimeSeconds = 1;
 
         // Time taken for note to be shot after beam break is triggered
         public static final double shooterDelaySeconds = 0.5;

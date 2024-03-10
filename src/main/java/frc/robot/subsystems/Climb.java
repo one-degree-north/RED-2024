@@ -298,6 +298,9 @@ public class Climb extends SubsystemBase {
     SmartDashboard.putNumber("Left Through Bore Pos (m)", getLeftAbsoluteEncoderDistance());
     SmartDashboard.putNumber("Right Through Bore Pos (m)", getRightAbsoluteEncoderDistance());
 
+    SmartDashboard.putBoolean("Left Pneumatic Break State", m_leftPneumaticBreak.get() == Value.kForward);
+    SmartDashboard.putBoolean("Right Pneumatic Break State", m_rightPneumaticBreak.get() == Value.kForward);
+
     SmartDashboard.putNumber("Pressure (PSI)", m_compressor.getPressure());
   }
   

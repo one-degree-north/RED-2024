@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.ElevatarmConstants;
 import frc.robot.Constants.MechanismSetpointConstants;
+import frc.robot.commands.climbcommands.ClimbPositionCommand;
+import frc.robot.commands.climbcommands.ClimbPositionCommand.ClimbPosition;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevatarm;
 
@@ -104,26 +106,27 @@ public class ElevatarmCommand extends Command {
       ;
     }
     
-    // IF the climb is too high
+    // If the climb is too high, stow the climb before moving the elevatarm.
+    // The logic is only followed when pivoting acros the minimum angle for climb clearance
     if (
-      (s_Climb.getPositionLeft() > ClimbConstants.climbMaxExtensionForElevatarmClearance
-    || s_Climb.getPositionRight() > ClimbConstants.climbMaxExtensionForElevatarmClearance)
-    && (
       (
-      s_Elevatarm.getArmRotation2d().getRotations() < ElevatarmConstants.armMinAngleForClimbClearance
-      && m_pivotAngle > ElevatarmConstants.armMinAngleForClimbClearance
+        s_Climb.getPositionLeft() > ClimbConstants.climbMaxExtensionForElevatarmClearance
+        || 
+        s_Climb.getPositionRight() > ClimbConstants.climbMaxExtensionForElevatarmClearance)
+    && 
+    (
+      (
+      s_Elevatarm.getArmRotation2d().getRotations() < ElevatarmConstants.armCutoffAngleForClimbClearance
+      && m_pivotAngle > ElevatarmConstants.armCutoffAngleForClimbClearance
       ) || 
       (
-        s_Elevatarm.getArmRotation2d().getRotations() > ElevatarmConstants.armMinAngleForClimbClearance
-        && m_pivotAngle < ElevatarmConstants.armMinAngleForClimbClearance
+        s_Elevatarm.getArmRotation2d().getRotations() > ElevatarmConstants.armCutoffAngleForClimbClearance
+        && m_pivotAngle < ElevatarmConstants.armCutoffAngleForClimbClearance
       )
-    
     )
     ) {
-      m_commandToRun = new WaitUntilCommand(() -> {
-        return s_Climb.getPositionLeft() < ClimbConstants.climbMaxExtensionForElevatarmClearance
-        && s_Climb.getPositionRight() < ClimbConstants.climbMaxExtensionForElevatarmClearance;
-      }).andThen(m_commandToRun);
+      m_commandToRun = new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
+      .andThen(m_commandToRun);
     }
 
     m_commandToRun.initialize();

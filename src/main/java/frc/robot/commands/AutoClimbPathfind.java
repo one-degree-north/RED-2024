@@ -83,25 +83,25 @@ public class AutoClimbPathfind extends Command {
         // Swap right with left on red alliance
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.rightClimbPose;
+            return PathGenerationConstants.rightClimbPreHookPose;
           case CENTER:
-            return PathGenerationConstants.middleClimbPose;
+            return PathGenerationConstants.middleClimbPreHookPose;
           case RIGHT:
-            return PathGenerationConstants.leftClimbPose;
+            return PathGenerationConstants.leftClimbPreHookPose;
           default:
-            return PathGenerationConstants.middleClimbPose;
+            return PathGenerationConstants.middleClimbPreHookPose;
         }
       } else {
         // Regular orientation since standard is blue origin
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.leftClimbPose;
+            return PathGenerationConstants.leftClimbPreHookPose;
           case CENTER:
-            return PathGenerationConstants.middleClimbPose;
+            return PathGenerationConstants.middleClimbPreHookPose;
           case RIGHT:
-            return PathGenerationConstants.rightClimbPose;
+            return PathGenerationConstants.rightClimbPreHookPose;
           default:
-            return PathGenerationConstants.middleClimbPose;
+            return PathGenerationConstants.middleClimbPreHookPose;
         }
       }
     }

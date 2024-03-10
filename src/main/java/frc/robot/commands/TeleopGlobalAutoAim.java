@@ -3,9 +3,11 @@ package frc.robot.commands;
 import frc.lib.util.AllianceFlipUtil;
 import frc.lib.util.ShotCalculator.ShotData;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.Constants.ShintakeConstants;
 import frc.robot.Constants.TeleopConstants;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevatarm;
 import frc.robot.subsystems.Shintake;
 import frc.robot.subsystems.Swerve;
@@ -37,12 +39,14 @@ public class TeleopGlobalAutoAim extends Command {
 
     private Shintake s_Shintake;
     private Elevatarm s_Elevatarm;
+    private Climb s_Climb;
 
-    public TeleopGlobalAutoAim(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
+    public TeleopGlobalAutoAim(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, Climb s_Climb, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup) {
         this.s_Swerve = s_Swerve;
         this.s_Elevatarm = s_Elevatarm;
         this.s_Shintake = s_Shintake;
-        addRequirements(s_Swerve, s_Elevatarm, s_Shintake);
+        this.s_Climb = s_Climb;
+        addRequirements(s_Swerve, s_Elevatarm, s_Shintake, s_Climb);
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
@@ -94,9 +98,14 @@ public class TeleopGlobalAutoAim extends Command {
 
         // let shooter run the whole time this command is run
         s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM);
-
+        // Move climb to save position if it is not already there
+        if (s_Climb.getPositionLeft() > ClimbConstants.climbMaxExtensionForElevatarmClearance
+        || s_Climb.getPositionRight() > ClimbConstants.climbMaxExtensionForElevatarmClearance) {
+            s_Climb.setSetpointPositionLeft(MechanismSetpointConstants.climbStowedPosition);
+            s_Climb.setSetpointPositionRight(MechanismSetpointConstants.climbStowedPosition);
+        }
         // if elevator is not at correct length, do this before running anything else with the elevator / arm
-        if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) 
+        else if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) 
         > MechanismSetpointConstants.elevatorAllowableError) {
             s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
 
@@ -117,6 +126,12 @@ public class TeleopGlobalAutoAim extends Command {
         ||
         AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
         > MechanismSetpointConstants.xPositionCutoffToAutoScore
+        ||
+        Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+        > MechanismSetpointConstants.flywheelVelocityAllowableError
+        ||
+        Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
+        > MechanismSetpointConstants.flywheelVelocityAllowableError
         ||
         Math.abs(s_Swerve.getTranslationalSpeed())
         > MechanismSetpointConstants.allowableVelocityToAutoScore

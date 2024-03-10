@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.Constants.ShintakeConstants;
 import frc.robot.subsystems.Shintake;
 
@@ -61,7 +62,20 @@ public class ShintakeCommand extends Command {
       case SHOOT:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM))
-          .alongWith(new WaitCommand(ShintakeConstants.shooterRampTimeSeconds))
+          .alongWith(
+            new WaitCommand(ShintakeConstants.shooterTimeoutRampTimeSeconds)
+            .raceWith(
+              new WaitUntilCommand(() -> {
+                return 
+                Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+                < MechanismSetpointConstants.flywheelVelocityAllowableError
+                && 
+                Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+                < MechanismSetpointConstants.flywheelVelocityAllowableError;
+              }
+              )
+            )
+          )
           .andThen(
               new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
               .alongWith(
