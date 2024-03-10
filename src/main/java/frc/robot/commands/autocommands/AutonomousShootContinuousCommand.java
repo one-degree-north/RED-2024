@@ -14,6 +14,7 @@ import frc.robot.Constants.ShintakeConstants;
 import frc.robot.commands.elevatarmcommands.ElevatarmCommand;
 import frc.robot.commands.shintakecommands.ShintakeCommand;
 import frc.robot.commands.shintakecommands.ShintakeCommand.ShintakeMode;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Elevatarm;
 import frc.robot.subsystems.Shintake;
 import frc.robot.subsystems.Swerve;
@@ -25,11 +26,13 @@ public class AutonomousShootContinuousCommand extends Command {
   private Shintake s_Shintake;
   private Swerve s_Swerve;
   private Elevatarm s_Elevatarm;
+  private Climb s_Climb;
   /** Creates a new AutonomousShootContinuousCommand. */
-  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm) {
+  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm, Climb climb) {
     this.s_Shintake = shintake;
     this.s_Swerve = swerve;
     this.s_Elevatarm = elevatarm;
+    this.s_Climb = climb;
     addRequirements(s_Shintake, s_Elevatarm);
     
     // Use addRequirements() here to declare subsystem dependencies.
@@ -46,7 +49,7 @@ public class AutonomousShootContinuousCommand extends Command {
         new ElevatarmCommand(
           MechanismSetpointConstants.armGroundIntakePosition, 
           MechanismSetpointConstants.elevatorGroundIntakePosition, 
-          s_Elevatarm)
+          s_Elevatarm, s_Climb)
       )
       .onlyIf(() -> !s_Shintake.isNoteIntaked())
       

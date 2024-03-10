@@ -56,24 +56,16 @@ public class RobotContainer {
     public final Swerve s_Swerve = new Swerve();
     private final Shintake s_Shintake = new Shintake();
     private final Elevatarm s_Elevatarm = new Elevatarm();
-    // private final Climb s_Climb = new Climb();
+    private final Climb s_Climb = new Climb();
 
     /* Auto Chooser */
     // change default auto
-    private final SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser("7 Note Auto");
+    private final SendableChooser<Command> autoChooser;
 
     // KNOWN LIMITATION: Will return error if "None" command is selected
-    public Supplier<Pose2d> autoStartingPoseSupplier = 
-        () -> {
-            if ((DriverStation.isFMSAttached() || DriverStation.isDSAttached()) 
-            && (autoChooser.getSelected() != Commands.none()) 
-            && (autoChooser.getSelected() != null))
-                return AllianceFlipUtil.flipPose(PathPlannerAuto.
-                    getStaringPoseFromAutoFile(autoChooser.getSelected().getName()));
-            else return s_Swerve.getPose();
-        };
+    public Supplier<Pose2d> autoStartingPoseSupplier;
 
-    private final LEDs s_LEDs = new LEDs(0, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, null);
+    private final LEDs s_LEDs;
 
     private AutoIntakePosition selectedIntakePosition = AutoIntakePosition.CENTER;
     private AutoClimbPosition selectedClimbPosition = AutoClimbPosition.CENTER;
@@ -126,6 +118,25 @@ public class RobotContainer {
         configureButtonBindings();
         configureNamedCommands();
         configureSmartDashboardCommands();
+
+
+        // Instantiate auto chooser after named commands
+
+        autoChooser = AutoBuilder.buildAutoChooser("7 Note Auto");
+
+        autoStartingPoseSupplier = 
+        () -> {
+            if ((DriverStation.isFMSAttached() || DriverStation.isDSAttached()) 
+            && (autoChooser.getSelected() != Commands.none()) 
+            && (autoChooser.getSelected() != null))
+                return AllianceFlipUtil.flipPose(PathPlannerAuto.
+                    getStaringPoseFromAutoFile(autoChooser.getSelected().getName()));
+            else return s_Swerve.getPose();
+        };
+
+        s_LEDs = new LEDs(0, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, s_Climb);
+        
+
     }
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
@@ -241,13 +252,12 @@ public class RobotContainer {
         //             s_Elevatarm),
         //             s_Shintake.getDefaultCommand()
         //         ),
-        //         Commands.parallel(
-        //             new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb),
-        //             new ElevatarmCommand(
-        //                 MechanismSetpointConstants.armPreTrapPosition, 
-        //                 MechanismSetpointConstants.elevatorPreTrapPosition, 
-        //                 s_Elevatarm)
-        //         ),
+        //         new ElevatarmCommand(
+        //             MechanismSetpointConstants.armPreTrapPosition, 
+        //             MechanismSetpointConstants.elevatorPreTrapPosition, 
+        //             s_Elevatarm),
+        //         new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb),
+        //             
         //         new TeleopSwerve(s_Swerve, () -> 0.1, () -> 0, () -> 0, () -> true, () -> false)
         //             .raceWith(Commands.waitSeconds(0.2)),
         //         new ClimbVelocityCommand(-ClimbConstants.climbStandardVelocity, ClimbToMove.BOTH, s_Climb)
@@ -461,7 +471,7 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("AutonomousShootContinuousCommand", new AutonomousShootContinuousCommand(s_Shintake, s_Swerve, s_Elevatarm));
+        NamedCommands.registerCommand("AutonomousShootContinuousCommand", new AutonomousShootContinuousCommand(s_Shintake, s_Swerve, s_Elevatarm, s_Climb));
     }
 
     /**

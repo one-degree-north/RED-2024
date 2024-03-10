@@ -24,7 +24,7 @@ public class LEDs extends VirtualSubsystem {
   private final Swerve m_swerve;
   private final Shintake m_shintake;
   private final Elevatarm m_elevatarm;
-  // private final Climb m_climb;
+  private final Climb m_climb;
   private final Notifier loadingNotifier;
 
   private Alliance alliance = null;
@@ -57,7 +57,7 @@ public class LEDs extends VirtualSubsystem {
     m_swerve = swerve;
     m_shintake = shintake;
     m_elevatarm = elevatarm;
-    // m_climb = climb;
+    m_climb = climb;
     this.autoPose = autoPose;
     
     m_led.setLength(m_ledBuffer.getLength());
@@ -124,17 +124,17 @@ public class LEDs extends VirtualSubsystem {
         breath(Section.SHINTAKE, Color.kRed, Color.kBlack, breathSlowDuration);
       }
 
-      // if (m_climb.areEncodersReset()) {
-      //   climbState = SubsystemState.READY;
-      // } else {
-      //   climbState = SubsystemState.NOTREADY;
-      // }
+      if (m_climb.areEncodersReset()) {
+        climbState = SubsystemState.READY;
+      } else {
+        climbState = SubsystemState.NOTREADY;
+      }
 
       /* Fast green wave if all subsystems are ready */
       if (visionState == SubsystemState.READY 
         && autoAlignState == SubsystemState.READY
         && armAndShintakeState == SubsystemState.READY
-        // && climbState == SubsystemState.READY
+        && climbState == SubsystemState.READY
         ) {
         wave(Section.FULL, Color.kGreen, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }

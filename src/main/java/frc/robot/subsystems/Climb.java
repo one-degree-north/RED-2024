@@ -18,6 +18,7 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -52,7 +53,8 @@ public class Climb extends SubsystemBase {
   private TalonFXConfiguration climbConfigs = new TalonFXConfiguration();
 
   private MotionMagicVoltage climbMotionMagic = new MotionMagicVoltage(0).withSlot(0);;
-  private VelocityVoltage climbVelocity = new VelocityVoltage(0).withSlot(1);;
+  private VelocityVoltage climbVelocity = new VelocityVoltage(0).withSlot(1);
+  private DutyCycleOut climbDutyCycle = new DutyCycleOut(0);
 
   private boolean isClimbEncodersReset = false;
   
@@ -232,6 +234,14 @@ public class Climb extends SubsystemBase {
         *ClimbConstants.climbMechanismRotationsToMetersRatio
       )
     ));
+  }
+
+  public boolean setDutyCycleLeft(double dutyCycle) {
+    return setControlLeft(climbDutyCycle.withOutput(dutyCycle));
+  }
+
+  public boolean setDutyCycleRight(double dutyCycle) {
+    return setControlRight(climbDutyCycle.withOutput(dutyCycle));
   }
 
   public void zeroVelocity() {

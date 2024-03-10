@@ -175,20 +175,23 @@ public final class Constants {
         // retracted) interfering with the drivetrain (in rotations)
         public static final double elevatorMinRetractionInterferenceAngleCutoff = 0;
 
+
+        public static final double armMinAngleForClimbClearance = 0;
+
     }
 
     public static final class ClimbConstants {
-        public static final int leftClimbID = 0;
-        public static final int rightClimbID = 0;
+        public static final int leftClimbID = 18;
+        public static final int rightClimbID = 19;
 
         public static final int leftClimbEncoderPort = 4;
         public static final int rightClimbEncoderPort = 5;
 
         public static final int leftPneumaticBreakPort1 = 0;
-        public static final int leftPneumaticBreakPort2 = 0;
+        public static final int leftPneumaticBreakPort2 = 1;
 
-        public static final int rightPneumaticBreakPort1 = 0;
-        public static final int rightPneumaticBreakPort2 = 0;
+        public static final int rightPneumaticBreakPort1 = 8;
+        public static final int rightPneumaticBreakPort2 = 9;
 
         // in meters
         public static final double leftClimbAbsoluteEncoderOffset = 0;
@@ -217,8 +220,10 @@ public final class Constants {
         public static final double climbVelocitykV = 0.0;
         public static final double climbVelocitykA = 0.0;
 
-        public static final double climbForwardSoftLimit = 0.0;
-        public static final double climbReverseSoftLimit = 0.0;
+        public static final double climbForwardSoftLimit = 100;
+        public static final double climbReverseSoftLimit = -100;
+
+        public static final double climbMaxExtensionForElevatarmClearance = 0;
 
         // Meters per second
         public static final double climbStandardVelocity = 0.05;
