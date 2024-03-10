@@ -181,8 +181,8 @@ public final class Constants {
         public static final int leftClimbID = 0;
         public static final int rightClimbID = 0;
 
-        public static final int leftClimbEncoderPort = 0;
-        public static final int rightClimbEncoderPort = 0;
+        public static final int leftClimbEncoderPort = 4;
+        public static final int rightClimbEncoderPort = 5;
 
         public static final int leftPneumaticBreakPort1 = 0;
         public static final int leftPneumaticBreakPort2 = 0;
