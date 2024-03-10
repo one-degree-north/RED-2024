@@ -9,6 +9,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N3;
@@ -45,7 +46,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase implements Logged {
    * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
    * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
    */
-  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
+  private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.9, 0.9, 1.8);
 
   private final Supplier<Rotation2d> rotationSupplier;
   private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
@@ -116,8 +117,35 @@ public class PoseEstimatorSubsystem extends SubsystemBase implements Logged {
         if (!DriverStation.isEnabled()) tagSeenSinceLastDisable = true;
         
         var pose2d = visionPose.estimatedPose.toPose2d();
+
+        Vector<N3> dynamicVisionMeasurementStdDevs;
+
+        if (cameras[i].getTrackedVisionTargets().length > 0) {
+          Pose3d closestTarget = cameras[i].getTrackedVisionTargets()[0];
+          for (Pose3d target : cameras[i].getTrackedVisionTargets()) {
+            if (
+              target.toPose2d().getTranslation()
+              .getDistance(pose2d.getTranslation())
+              <
+              closestTarget.toPose2d().getTranslation()
+              .getDistance(pose2d.getTranslation())
+            ) 
+            {
+              closestTarget = target;
+            }
+          }
+          // scale with distance to closest target and number of targets
+          double scalingFactor = 
+            closestTarget.toPose2d().getTranslation().getDistance(pose2d.getTranslation())
+          * (1.0/cameras[i].getTrackedVisionTargets().length);
+
+          dynamicVisionMeasurementStdDevs = visionMeasurementStdDevs.times(scalingFactor);
+          
+        } else {
+          dynamicVisionMeasurementStdDevs = visionMeasurementStdDevs;
+        }
         
-        poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds);
+        poseEstimator.addVisionMeasurement(pose2d, visionPose.timestampSeconds, dynamicVisionMeasurementStdDevs);
 
         // Set the pose on the dashboard
         cameraField2ds[i].setRobotPose(pose2d);
