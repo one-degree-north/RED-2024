@@ -263,13 +263,32 @@ public class Swerve extends SubsystemBase {
     }
 
     public boolean isInClimbZone() {
+        // since climb zones are mirrored
+        Pose2d flippedPose = new Pose2d(new Translation2d(
+            VisionConstants.FIELD_LENGTH_METERS-getPose().getX(), 
+            getPose().getY()), 
+            Rotation2d.fromRotations(0.5)
+            .rotateBy(getPose().getRotation().unaryMinus()));
+
         return 
             // Within x bounds of climb area
+            (
             (AllianceFlipUtil.flipPose(getPose()).getX() < 6.3 && AllianceFlipUtil.flipPose(getPose()).getX() > 2.7)
             &&
             // bounded by equations that define climb area
             (AllianceFlipUtil.flipPose(getPose()).getY() < 0.54 * AllianceFlipUtil.flipPose(getPose()).getX() + 3
-            && AllianceFlipUtil.flipPose(getPose()).getY() > -0.56 * AllianceFlipUtil.flipPose(getPose()).getX() + 5.31);
+            && AllianceFlipUtil.flipPose(getPose()).getY() > -0.56 * AllianceFlipUtil.flipPose(getPose()).getX() + 5.31)
+            )
+            
+            ||
+            
+            (
+            (AllianceFlipUtil.flipPose(flippedPose).getX() < 6.3 && AllianceFlipUtil.flipPose(flippedPose).getX() > 2.7)
+            &&
+            // bounded by equations that define climb area
+            (AllianceFlipUtil.flipPose(flippedPose).getY() < 0.54 * AllianceFlipUtil.flipPose(flippedPose).getX() + 3
+            && AllianceFlipUtil.flipPose(flippedPose).getY() > -0.56 * AllianceFlipUtil.flipPose(flippedPose).getX() + 5.31)
+            );
     }
 
     /* @return SwerveModuleState array for each module */
