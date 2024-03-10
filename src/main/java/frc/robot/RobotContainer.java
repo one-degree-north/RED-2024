@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.time.Instant;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -89,35 +90,35 @@ public class RobotContainer {
             )
         );
 
-        s_Elevatarm.setDefaultCommand(
-            Commands.either(
-                new InstantCommand(),
-                new RepeatCommand(
-                    Commands.either(
-                        new ElevatarmCommand(
-                            MechanismSetpointConstants.armGroundIntakePosition, 
-                            MechanismSetpointConstants.elevatorGroundIntakePosition, 
-                            s_Elevatarm,
-                            s_Climb
-                        ),
+        // s_Elevatarm.setDefaultCommand(
+        //     Commands.either(
+        //         new InstantCommand(),
+        //         new RepeatCommand(
+        //             Commands.either(
+        //                 new ElevatarmCommand(
+        //                     MechanismSetpointConstants.armGroundIntakePosition, 
+        //                     MechanismSetpointConstants.elevatorGroundIntakePosition, 
+        //                     s_Elevatarm,
+        //                     s_Climb
+        //                 ),
 
-                        new ElevatarmCommand(
-                            MechanismSetpointConstants.armStowedPosition, 
-                            MechanismSetpointConstants.elevatorStowedPosition, 
-                            s_Elevatarm,
-                            s_Climb
-                        ),
+        //                 new ElevatarmCommand(
+        //                     MechanismSetpointConstants.armStowedPosition, 
+        //                     MechanismSetpointConstants.elevatorStowedPosition, 
+        //                     s_Elevatarm,
+        //                     s_Climb
+        //                 ),
 
-                        () -> {
-                            return s_Swerve.isInClimbZone();
-                        }
-                    )
-                ),
-                () -> {
-                    return isGameEnded;
-                }
-            )
-        );
+        //                 () -> {
+        //                     return s_Swerve.isInClimbZone();
+        //                 }
+        //             )
+        //         ),
+        //         () -> {
+        //             return isGameEnded;
+        //         }
+        //     )
+        // );
 
         s_Shintake.setDefaultCommand(
             new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
@@ -298,21 +299,24 @@ public class RobotContainer {
 
 
         // // Button board bindings
-        // buttonBoard.button(0).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.LEFT));
-        // buttonBoard.button(1).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.CENTER));
-        // buttonBoard.button(2).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.RIGHT));
+        // // bottom row
+        // buttonBoard.button(3).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.LEFT));
+        // buttonBoard.button(5).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.CENTER));
+        // buttonBoard.button(7).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.RIGHT));
 
-        // buttonBoard.button(3).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.LEFT));
-        // buttonBoard.button(4).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.CENTER));
-        // buttonBoard.button(5).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.RIGHT));
+        // // top row
+        // buttonBoard.button(10).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.LEFT));
+        // buttonBoard.button(11).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.CENTER));
+        // buttonBoard.button(12).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.RIGHT));
 
-        // buttonBoard.button(6).onTrue(
+        // // middle row
+        // buttonBoard.button(4).onTrue(
         //     Commands.parallel(
         //         new InstantCommand(() -> s_Climb.disablePneumaticBreak()),
         //         new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
         //     )
         // );
-        // buttonBoard.button(6).onFalse(
+        // buttonBoard.button(4).onFalse(
         //     Commands.sequence(
         //         new ClimbVelocityCommand(-ClimbConstants.climbStandardVelocity, ClimbToMove.BOTH, s_Climb)
         //             .until(() -> 
@@ -326,13 +330,13 @@ public class RobotContainer {
         //     )
         // );
 
-        // buttonBoard.button(7).onTrue(
+        // buttonBoard.button(6).onTrue(
         //     Commands.parallel(
         //         new InstantCommand(() -> s_Climb.disablePneumaticBreak()),
         //         new ClimbPositionCommand(ClimbPosition.MIDDLE, s_Climb)
         //     )
         // );
-        // buttonBoard.button(7).onFalse(
+        // buttonBoard.button(6).onFalse(
         //     Commands.sequence(
         //         new ClimbVelocityCommand(-ClimbConstants.climbStandardVelocity, ClimbToMove.BOTH, s_Climb)
         //             .until(() -> 
@@ -374,6 +378,13 @@ public class RobotContainer {
             // set to ground mode
             new InstantCommand(() -> s_LEDs.setIntakingLEDs(false))
         );
+
+        // buttonBoard.button(9).onTrue(
+        //     new InstantCommand(
+        //         () -> {isGameEnded = !isGameEnded;})
+        // );
+
+
         
     }
 
