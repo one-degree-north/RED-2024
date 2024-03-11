@@ -70,9 +70,9 @@ public final class Constants {
 
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;
-        public static final double armStowedPosition = 0;
+        public static final double armStowedPosition = 0.06;
 
-        public static final double elevatorGroundIntakePosition = 0;
+        public static final double elevatorGroundIntakePosition = ElevatarmConstants.elevatorLowToGroundMinRetraction;
         public static final double armGroundIntakePosition = 0;
 
         public static final double elevatorSourcePosition = 0;
@@ -113,48 +113,48 @@ public final class Constants {
 
     public static final class ElevatarmConstants {
         // Arm IDs
-        public static final int armLeaderID = 14;
-        public static final int armFollowerID = 13;
+        public static final int armLeaderID = 13;
+        public static final int armFollowerID = 14;
         public static final int armEncoderPort = 0;
         public static final int elevatarmLockSwitchPort = 9;
 
-        public static final double armAbsoluteEncoderAngleOffset = -0.278;
-        public static final double armForwardSoftLimit = 100;
-        public static final double armReverseSoftLimit = -100;
+        public static final double armAbsoluteEncoderAngleOffset = -0.2778;
+        public static final double armForwardSoftLimit = 0.26;
+        public static final double armReverseSoftLimit = 0;
 
         // Arm MotionMagic gains
-        public static final double armkP = 0.0;
+        public static final double armkP = 69.457;
         public static final double armkI = 0.0;
-        public static final double armkD = 0.0;
+        public static final double armkD = 24.131;
         // Arm kG must be calculated with elevator locked fully extended
-        public static final double armkG = 0.0;
-        public static final double armkS = 0.0;
-        public static final double armkV = 0.0;
-        public static final double armkA = 0.0;
+        public static final double armkG = 0.49811;
+        public static final double armkS = 0.19043;
+        public static final double armkV = 13.203;
+        public static final double armkA = 1.565;
         // Rotations per second
         public static final double armCruiseVelocity = 0.25;
-        public static final double armAcceleration = 0.25;
+        public static final double armAcceleration = 0.5;
 
         public static final double armGearRatio = 120.0 / 1.0; // Max increase to 250:1
 
         public static final int elevatorID = 15;
         public static final int elevatorEncoderPort = 1;
 
-        public static final double elevatorAbsoluteEncoderDistanceOffset = -0.00278;
-        public static final double elevatorForwardSoftLimit = 100;
-        public static final double elevatorReverseSoftLimit = -100;
+        public static final double elevatorAbsoluteEncoderDistanceOffset = -0.001561;
+        public static final double elevatorForwardSoftLimit = 0.21277;
+        public static final double elevatorReverseSoftLimit = 0;
 
-        public static final double elevatorkP = 0.0;
+        public static final double elevatorkP = 0.0191;
         public static final double elevatorkI = 0.0;
         public static final double elevatorkD = 0.0;
         // Elevator kG must be calculated with arm locked straight upwards
-        public static final double elevatorkG = 0.0;
-        public static final double elevatorkS = 0.0;
-        public static final double elevatorkV = 0.0;
+        public static final double elevatorkG = 0.35;
+        public static final double elevatorkS = 0.15;
+        public static final double elevatorkV = 0.625;
         public static final double elevatorkA = 0.0;
         // Meters per second
-        public static final double elevatorCruiseVelocity = 0.1;
-        public static final double elevatorAcceleration = 0.1;
+        public static final double elevatorCruiseVelocity = 0.3;
+        public static final double elevatorAcceleration = 0.5;
 
         public static final double elevatorOutputDiameter = Units.inchesToMeters(1.432);
 
@@ -171,13 +171,13 @@ public final class Constants {
 
         // The minimum retraction of the elevator when it is less than the intereference
         // angle cutoff (in meters and relative to minimum possible retraction of elevator)
-        public static final double elevatorLowToGroundMinRetraction = 0;
+        public static final double elevatorLowToGroundMinRetraction = 0.109;
         // Lowest possible angle that the arm can be at without the end effector (fully
         // retracted) interfering with the drivetrain (in rotations)
-        public static final double elevatorMinRetractionInterferenceAngleCutoff = 0;
+        public static final double elevatorMinRetractionInterferenceAngleCutoff = 0.055;
 
 
-        public static final double armCutoffAngleForClimbClearance = 0;
+        public static final double armCutoffAngleForClimbClearance = 0.167;
 
     }
 
@@ -195,36 +195,36 @@ public final class Constants {
         public static final int rightPneumaticBreakPort2 = 9;
 
         // in meters
-        public static final double leftClimbAbsoluteEncoderOffset = 0;
-        public static final double rightClimbAbsoluteEncoderOffset = 0;
+        public static final double leftClimbAbsoluteEncoderOffset = 0.068;
+        public static final double rightClimbAbsoluteEncoderOffset = -0.08;
 
         public static final double climbOutputDiameter = Units.inchesToMeters(1.25);
         public static final double climbIntegratedSensorToAbsoluteSensorRatio = 10.5/1.0;
         public static final double climbMechanismRotationsToMetersRatio = 1 / (climbOutputDiameter * Math.PI);
 
-        public static final double climbPositionkP = 0.0;
+        public static final double climbPositionkP = 48.088;
         public static final double climbPositionkI = 0.0;
-        public static final double climbPositionkD = 0.0;
+        public static final double climbPositionkD = 1.4743;
         public static final double climbPositionkG = 0.0;
-        public static final double climbPositionkS = 0.0;
-        public static final double climbPositionkV = 0.0;
-        public static final double climbPositionkA = 0.0;
+        public static final double climbPositionkS = 0.25343;
+        public static final double climbPositionkV = 1.1985;
+        public static final double climbPositionkA = 0.019932;
         // Meters per second
         public static final double climbCruiseVelocity = 0.1;
         public static final double climbAcceleration = 0.1;
 
-        public static final double climbVelocitykP = 0.0;
+        public static final double climbVelocitykP = 0.86493;
         public static final double climbVelocitykI = 0.0;
         public static final double climbVelocitykD = 0.0;
         public static final double climbVelocitykG = 0.0;
-        public static final double climbVelocitykS = 0.0;
-        public static final double climbVelocitykV = 0.0;
-        public static final double climbVelocitykA = 0.0;
+        public static final double climbVelocitykS = 0.25343;
+        public static final double climbVelocitykV = 1.1985;
+        public static final double climbVelocitykA = 0.019932;
 
         public static final double climbForwardSoftLimit = 100;
         public static final double climbReverseSoftLimit = -100;
 
-        public static final double climbMaxExtensionForElevatarmClearance = 0;
+        public static final double climbMaxExtensionForElevatarmClearance = 0.0007;
 
         // Meters per second
         public static final double climbStandardVelocity = 0.05;
@@ -237,19 +237,19 @@ public final class Constants {
         public static final int intakeID = 1;
         public static final int irSensorPort = 3;
 
-        public static final double leftShooterkP = 0;
+        public static final double leftShooterkP = 0.10011;
         public static final double leftShooterkI = 0;
         public static final double leftShooterkD = 0;
-        public static final double leftShooterkS = 0;
-        public static final double leftShooterkV = 0;
-        public static final double leftShooterkA = 0;
+        public static final double leftShooterkS = 0.21867;
+        public static final double leftShooterkV = 0.11989;
+        public static final double leftShooterkA = 0.0101;
 
-        public static final double rightShooterkP = 0;
+        public static final double rightShooterkP = 0.11627;
         public static final double rightShooterkI = 0;
         public static final double rightShooterkD = 0;
-        public static final double rightShooterkS = 0;
-        public static final double rightShooterkV = 0;
-        public static final double rightShooterkA = 0;
+        public static final double rightShooterkS = 0.19384;
+        public static final double rightShooterkV = 0.11783;
+        public static final double rightShooterkA = 0.014849;
 
         public static final double flywheelGearing = 1.0/1.0; // 1:1
 

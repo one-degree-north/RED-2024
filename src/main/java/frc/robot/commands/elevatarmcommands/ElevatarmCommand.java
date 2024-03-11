@@ -90,7 +90,8 @@ public class ElevatarmCommand extends Command {
             s_Elevatarm.setElevatorPosition(m_extensionMeters);
           }
         })
-              .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(m_extensionMeters);}))
+              .alongWith(new WaitUntilCommand(() -> {return this.isElevatorAtSetpoint(m_extensionMeters)
+                || this.isElevatorAtSetpoint(ElevatarmConstants.elevatorLowToGroundMinRetraction);}))
             .andThen(
               new InstantCommand(() -> s_Elevatarm.setElevatorPosition(m_extensionMeters))
               .alongWith(new WaitUntilCommand(() -> {return this.isArmAtSetpoint(m_pivotAngle)

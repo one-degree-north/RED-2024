@@ -29,14 +29,17 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.ElevatarmConstants;
 
 public class Climb extends SubsystemBase {
   /** Creates a new Climb. */
@@ -57,6 +60,9 @@ public class Climb extends SubsystemBase {
   private VelocityVoltage climbVelocity = new VelocityVoltage(0).withSlot(1);
   private DutyCycleOut climbDutyCycle = new DutyCycleOut(0);
 
+  private DigitalInput m_lockButton;
+  private boolean isBraked = true;
+
   private boolean isClimbEncodersReset = false;
   
   public Climb() {
@@ -64,15 +70,18 @@ public class Climb extends SubsystemBase {
     m_climbRight = new TalonFX(ClimbConstants.rightClimbID, "*");
 
     m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.leftPneumaticBreakPort1, ClimbConstants.leftPneumaticBreakPort2);
-    m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);
+    m_rightPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);
 
     m_climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
     m_climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
 
+    m_lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
+
     m_compressor = new Compressor(PneumaticsModuleType.REVPH);
 
     configMotors();
-    enableCompressor();
+    // enableCompressor();
+    disableCompressor();
   }
 
   public void enableCompressor() {
@@ -91,7 +100,7 @@ public class Climb extends SubsystemBase {
     climbConfigs.CurrentLimits.SupplyTimeThreshold = 0.1;
 
     climbConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    climbConfigs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    climbConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     //PID Slot 0 (Motion Magic Position)
     climbConfigs.Slot0.kP = ClimbConstants.climbPositionkP;
@@ -140,20 +149,32 @@ public class Climb extends SubsystemBase {
     m_climbRight.setInverted(climbConfigs.MotorOutput.Inverted == InvertedValue.CounterClockwise_Positive);
 
     Timer.delay(1.0);
-    resetMotorsToAbsolute();
   }
 
   //Methods
-  public void resetMotorsToAbsolute(){
-    double offsetLeftClimbDistance = getLeftAbsoluteEncoderDistance() - ClimbConstants.leftClimbAbsoluteEncoderOffset;
-    double offsetRightClimbDistance = getRightAbsoluteEncoderDistance() - ClimbConstants.rightClimbAbsoluteEncoderOffset;
-    if (m_climbLeftEncoder.isConnected() && m_climbRightEncoder.isConnected()) { 
-      // only successful if no error
-      boolean c1 = setEncoderPositionLeft(offsetLeftClimbDistance);
-      boolean c2 = setEncoderPositionRight(offsetRightClimbDistance);
-      isClimbEncodersReset = c1 && c2;
+
+  public void zeroClimbEncoders() {
+    boolean c1 = m_climbLeft.setPosition(0).isOK();
+    boolean c2 = m_climbRight.setPosition(0).isOK();
+    isClimbEncodersReset = c1 && c2;
+  }
+
+  public void setCoast() {
+    if (isBraked){
+      m_climbLeft.setNeutralMode(NeutralModeValue.Coast);
+      m_climbRight.setNeutralMode(NeutralModeValue.Coast);
+      isClimbEncodersReset = false;
+      isBraked = false;
     }
-    
+  }
+
+  public void setBrakeAndZero() {
+    if (!isBraked) {
+      m_climbLeft.setNeutralMode(NeutralModeValue.Brake);
+      m_climbRight.setNeutralMode(NeutralModeValue.Brake);
+      isBraked = true;
+      zeroClimbEncoders();
+    }
   }
 
   public boolean setControlLeft(ControlRequest req) {
@@ -267,7 +288,7 @@ public class Climb extends SubsystemBase {
   }
 
   public double getRightAbsoluteEncoderDistance() {
-    return m_climbRightEncoder.getAbsolutePosition()
+    return -m_climbRightEncoder.getAbsolutePosition()
     /ClimbConstants.climbMechanismRotationsToMetersRatio;
   }
 
@@ -293,6 +314,13 @@ public class Climb extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (DriverStation.isDisabled()) {
+      if (m_lockButton.get()) {
+        setBrakeAndZero();
+      } else if (!m_lockButton.get()) {
+        setCoast();
+      }
+    }
 
     SmartDashboard.putNumber("Left Climb Pos (m)", getPositionLeft());
     SmartDashboard.putNumber("Right Climb Pos (m)", getPositionRight());

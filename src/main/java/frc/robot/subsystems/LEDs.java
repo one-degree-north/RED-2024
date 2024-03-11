@@ -128,6 +128,9 @@ public class LEDs extends VirtualSubsystem {
         climbState = SubsystemState.READY;
       } else {
         climbState = SubsystemState.NOTREADY;
+        if (armAndShintakeState == SubsystemState.READY) {
+          solid(Section.SHINTAKE, Color.kRed);
+        }
       }
 
       /* Fast green wave if all subsystems are ready */

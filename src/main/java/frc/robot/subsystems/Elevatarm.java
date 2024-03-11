@@ -161,10 +161,10 @@ public class Elevatarm extends SubsystemBase {
     m_elevator.getConfigurator().apply(elevatorConfig);
 
     Timer.delay(1.0);
-    resetToAbsolute();
+    resetArmToAbsolute();
   }
 
-  private void resetToAbsolute() {
+  private void resetArmToAbsolute() {
     // TODO: Double check encoder ratios with design
     if (m_armEncoder.isConnected()) {
       double absolutePosition = 
@@ -178,13 +178,13 @@ public class Elevatarm extends SubsystemBase {
       double absolutePosition =
         getElevatorAbsoluteEncoderDistance()
         - ElevatarmConstants.elevatorAbsoluteEncoderDistanceOffset;
-      /* For the elevator, it is configured such that on-board units is mechanism meters.
-       * This is safe to use as "reasonable" meter values lie within 
-       * getPosition and getVelocity method return ranges
-       */
-      isElevatorEncoderReset = m_elevator.setPosition(absolutePosition
+      m_elevator.setPosition(absolutePosition
       * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio).isOK();
     }
+  }
+
+  private void zeroElevatorEncoder() {
+    isElevatorEncoderReset = m_elevator.setPosition(0).isOK();
   }
 
   /* Rotations */
@@ -280,15 +280,19 @@ public class Elevatarm extends SubsystemBase {
       m_armLeader.setNeutralMode(NeutralModeValue.Coast);
       m_armFollower.setNeutralMode(NeutralModeValue.Coast);
       m_elevator.setNeutralMode(NeutralModeValue.Coast);
+
+      isElevatorEncoderReset = false;
       isBraked = false;
     }
   }
 
-  public void setBrake() {
+  public void setBrakeAndZero() {
     if (!isBraked) {
       m_armLeader.setNeutralMode(NeutralModeValue.Brake);
       m_armFollower.setNeutralMode(NeutralModeValue.Brake);
       m_elevator.setNeutralMode(NeutralModeValue.Brake);
+
+      zeroElevatorEncoder();
       isBraked = true;
     }
   }
@@ -326,11 +330,12 @@ public class Elevatarm extends SubsystemBase {
 
     if (DriverStation.isDisabled()) {
       if (m_lockButton.get()) {
-        setBrake();
+        setBrakeAndZero();
       } else if (!m_lockButton.get()) {
         setCoast();
       }
     }
+    
 
     SmartDashboard.putBoolean("Brake mode", m_lockButton.get());
 

@@ -30,8 +30,10 @@ import frc.robot.commands.*;
 import frc.robot.commands.AutoClimbPathfind.AutoClimbPosition;
 import frc.robot.commands.AutoIntakePathfind.AutoIntakePosition;
 import frc.robot.commands.autocommands.AutonomousShootContinuousCommand;
+import frc.robot.commands.climbcommands.ClimbManualControlCommand;
 import frc.robot.commands.climbcommands.ClimbPositionCommand;
 import frc.robot.commands.climbcommands.ClimbVelocityCommand;
+import frc.robot.commands.climbcommands.ClimbManualControlCommand.ClimbToMoveManual;
 import frc.robot.commands.climbcommands.ClimbPositionCommand.ClimbPosition;
 import frc.robot.commands.climbcommands.ClimbVelocityCommand.ClimbToMove;
 import frc.robot.commands.elevatarmcommands.ArmManualControlCommand;
@@ -79,46 +81,46 @@ public class RobotContainer {
     public RobotContainer() {
         /* Adding Autos */
 
-        s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve, 
-                () -> -mainController.getLeftY(), 
-                () -> -mainController.getLeftX(), 
-                () -> -mainController.getRightX(), 
-                () -> false,
-                mainController.touchpad()
-            )
-        );
-
-        // s_Elevatarm.setDefaultCommand(
-        //     Commands.either(
-        //         new InstantCommand(),
-        //         new RepeatCommand(
-        //             Commands.either(
-        //                 new ElevatarmCommand(
-        //                     MechanismSetpointConstants.armGroundIntakePosition, 
-        //                     MechanismSetpointConstants.elevatorGroundIntakePosition, 
-        //                     s_Elevatarm,
-        //                     s_Climb
-        //                 ),
-
-        //                 new ElevatarmCommand(
-        //                     MechanismSetpointConstants.armStowedPosition, 
-        //                     MechanismSetpointConstants.elevatorStowedPosition, 
-        //                     s_Elevatarm,
-        //                     s_Climb
-        //                 ),
-
-        //                 () -> {
-        //                     return s_Swerve.isInClimbZone();
-        //                 }
-        //             )
-        //         ),
-        //         () -> {
-        //             return isGameEnded;
-        //         }
+        // s_Swerve.setDefaultCommand(
+        //     new TeleopSwerve(
+        //         s_Swerve, 
+        //         () -> -mainController.getLeftY(), 
+        //         () -> -mainController.getLeftX(), 
+        //         () -> -mainController.getRightX(), 
+        //         () -> false,
+        //         mainController.touchpad()
         //     )
         // );
+
+        s_Elevatarm.setDefaultCommand(
+            Commands.either(
+                new InstantCommand(),
+                new RepeatCommand(
+                    Commands.either(
+                        new ElevatarmCommand(
+                            MechanismSetpointConstants.armGroundIntakePosition, 
+                            MechanismSetpointConstants.elevatorGroundIntakePosition, 
+                            s_Elevatarm,
+                            s_Climb
+                        ),
+
+                        new ElevatarmCommand(
+                            MechanismSetpointConstants.armStowedPosition, 
+                            MechanismSetpointConstants.elevatorStowedPosition, 
+                            s_Elevatarm,
+                            s_Climb
+                        ),
+
+                        () -> {
+                            return s_Swerve.isInClimbZone();
+                        }
+                    )
+                ),
+                () -> {
+                    return isGameEnded;
+                }
+            )
+        );
 
         s_Shintake.setDefaultCommand(
             new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
@@ -159,23 +161,39 @@ public class RobotContainer {
         /* Driver Buttons */
 
         // TESTING MODE BUTTON BINDS
-        mainController.triangle().whileTrue(
-            new ArmManualControlCommand(0.5, s_Elevatarm, false)
-        );
+        // mainController.triangle().whileTrue(
+        //     new ArmManualControlCommand(0.1, s_Elevatarm, false)
+        // );
 
-        mainController.cross().whileTrue(
-            new ArmManualControlCommand(-0.5, s_Elevatarm, false)
-        );
+        // mainController.cross().whileTrue(
+        //     new ArmManualControlCommand(-0.1, s_Elevatarm, false)
+        // );
 
        
 
-        mainController.povRight().whileTrue(
-            new ElevatorManualControlCommand(0.1, s_Elevatarm, false)
-        );
+        // mainController.povRight().whileTrue(
+        //     new ElevatorManualControlCommand(0.1, s_Elevatarm, false)
+        // );
 
-        mainController.povLeft().whileTrue(
-            new ElevatorManualControlCommand(-0.1, s_Elevatarm, false)
-        );
+        // mainController.povLeft().whileTrue(
+        //     new ElevatorManualControlCommand(-0.1, s_Elevatarm, false)
+        // );
+
+        // mainController.circle().whileTrue(
+        //     new ClimbManualControlCommand(0.1, ClimbToMoveManual.BOTH, s_Climb, false)
+        // );
+
+        // mainController.square().whileTrue(
+        //     new ClimbManualControlCommand(-0.1, ClimbToMoveManual.BOTH, s_Climb, false)
+        // );
+
+        // mainController.L1().whileTrue(new ElevatarmCommand(
+        //     MechanismSetpointConstants.armStowedPosition, 
+        //     MechanismSetpointConstants.elevatorStowedPosition, s_Elevatarm, s_Climb));
+
+        // mainController.L2().whileTrue(new ElevatarmCommand(
+        //     MechanismSetpointConstants.armGroundIntakePosition, 
+        //     MechanismSetpointConstants.elevatorGroundIntakePosition, s_Elevatarm, s_Climb));
 
         // mainController.R2().onTrue(
         //     new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(
@@ -199,15 +217,15 @@ public class RobotContainer {
 
         // // REAL MATCH BUTTON BINDS
         // // Ground intake
-        // mainController.L2().whileTrue(
-        //     Commands.parallel(
-        //         new ElevatarmCommand(
-        //             MechanismSetpointConstants.armGroundIntakePosition, 
-        //             MechanismSetpointConstants.elevatorGroundIntakePosition, 
-        //             s_Elevatarm),
-        //         new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake, true)
-        //     )
-        // );
+        mainController.L2().whileTrue(
+            Commands.parallel(
+                new ElevatarmCommand(
+                    MechanismSetpointConstants.armGroundIntakePosition, 
+                    MechanismSetpointConstants.elevatorGroundIntakePosition, 
+                    s_Elevatarm, s_Climb),
+                new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake, true)
+            )
+        );
 
         // // Global speaker shoot
         // mainController.R2().whileTrue(
@@ -391,15 +409,15 @@ public class RobotContainer {
     private void configureSmartDashboardCommands() {
         SmartDashboard.putData(autoChooser);
 
-        // SmartDashboard.putData(
-        //     "Enable Compressor",
-        //     new InstantCommand(() -> s_Climb.enableCompressor())
-        // );
+        SmartDashboard.putData(
+            "Enable Compressor",
+            new InstantCommand(() -> s_Climb.enableCompressor())
+        );
 
-        // SmartDashboard.putData(
-        //     "Disable Compressor",
-        //     new InstantCommand(() -> s_Climb.disableCompressor())
-        // );
+        SmartDashboard.putData(
+            "Disable Compressor",
+            new InstantCommand(() -> s_Climb.disableCompressor())
+        );
 
         // SmartDashboard.putData(
         //     "Home Position", 
@@ -475,10 +493,10 @@ public class RobotContainer {
         // //     new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
         // // );
 
-        // // SmartDashboard.putData(
-        // //     "Toggle Pneumatic Break",
-        // //     new InstantCommand(() -> s_Climb.togglePneumaticBreak())
-        // // );
+        SmartDashboard.putData(
+            "Toggle Pneumatic Break",
+            new InstantCommand(() -> s_Climb.togglePneumaticBreak())
+        );
 
         // SmartDashboard.putData(
         //     "Run Ground Intake",
