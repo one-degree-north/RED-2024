@@ -4,6 +4,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatarmConstants;
+import frc.robot.Constants.MechanismSetpointConstants;
 
 /**
  * Code is from Mechanical Advantage's util classes
@@ -48,7 +50,7 @@ public class ShotCalculator {
 
     // This will be replaced with a formula to return arm angle in rotations based on distance in meters
     /* IN ROTATIONS */
-    double armAngle = effectiveDist;
+    double armAngle = MechanismSetpointConstants.armStowedPosition;
 
     // Potentially have this as output
     /* IN ROTATIONS */

@@ -65,7 +65,7 @@ public class Climb extends SubsystemBase {
 
   private boolean isClimbEncodersReset = false;
   
-  public Climb() {
+  public Climb(DigitalInput lockButton) {
     m_climbLeft = new TalonFX(ClimbConstants.leftClimbID, "*");
     m_climbRight = new TalonFX(ClimbConstants.rightClimbID, "*");
 
@@ -75,7 +75,7 @@ public class Climb extends SubsystemBase {
     m_climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
     m_climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
 
-    m_lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
+    m_lockButton = lockButton;
 
     m_compressor = new Compressor(PneumaticsModuleType.REVPH);
 

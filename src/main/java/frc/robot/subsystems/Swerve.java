@@ -391,8 +391,7 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Drivetrain Translational Speed (m/s)", getTranslationalSpeed());
         SmartDashboard.putNumber("Drivetrain Rotational Speed (rad/s)", getRotationalSpeed());
-        SmartDashboard.putNumber("Distance to Speaker (m)", getPose().getTranslation().getDistance(
-            getAllianceSpeakerPos()));
+        SmartDashboard.putNumber("Distance to Speaker (m)", getShotData().effectiveRobotToSpeakerDist());
 
         cameraFieldPoses.set(new Pose3d[] {getFrontLeftCameraFieldPosition(), getFrontRightCameraFieldPosition(), getBackRightCameraFieldPosition(), getBackLeftCameraFieldPosition()});
     }

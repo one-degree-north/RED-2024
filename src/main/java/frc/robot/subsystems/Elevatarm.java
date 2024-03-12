@@ -62,7 +62,7 @@ public class Elevatarm extends SubsystemBase {
 
   private boolean isBraked = true;
   
-  public Elevatarm() {
+  public Elevatarm(DigitalInput lockButton) {
     m_armLeader = new TalonFX(ElevatarmConstants.armLeaderID, "*");
     m_armFollower = new TalonFX(ElevatarmConstants.armFollowerID, "*");
     // Set follower
@@ -70,7 +70,7 @@ public class Elevatarm extends SubsystemBase {
     
     m_armEncoder = new DutyCycleEncoder(ElevatarmConstants.armEncoderPort);
     
-    m_lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
+    m_lockButton = lockButton;
 
     m_elevator = new TalonFX(ElevatarmConstants.elevatorID, "*");
     m_elevatorEncoder = new DutyCycleEncoder(ElevatarmConstants.elevatorEncoderPort);

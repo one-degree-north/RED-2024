@@ -50,10 +50,6 @@ public final class Constants {
         public static final Pose2d middleSourceIntakingPose = new Pose2d();
         public static final Pose2d rightSourceIntakingPose = new Pose2d();
 
-        public static final Pose2d leftSpeakerScoringPose = new Pose2d();
-        public static final Pose2d middleSpeakerScoringPose = new Pose2d();
-        public static final Pose2d rightSpeakerScoringPose = new Pose2d();
-
         // These are only used for trap scoring
         public static final Pose2d leftClimbPreHookPose = new Pose2d();
         public static final Pose2d middleClimbPreHookPose = new Pose2d();
@@ -62,7 +58,7 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
-        public static final double armAllowableError = 0.1;
+        public static final double armAllowableError = 0.01;
         public static final double elevatorAllowableError = 0.05;
         public static final double climbAllowableError = 0.05;
         public static final double swerveRotationAllowableError = 0.1;
@@ -261,7 +257,7 @@ public final class Constants {
 
         // Time taken for note to be outtaked after beam break sensor is triggered for
         // amp and trap scoring
-        public static final double ampAndTrapDelaySeconds = 1;
+        public static final double ampAndTrapDelaySeconds = 0.7;
 
         // Time taken for intaking to stop after beam break sensor is triggered for
         // source intaking
@@ -275,7 +271,7 @@ public final class Constants {
         // Regular shooter/intake preset velocities
         public static final double shooterLeftRPM = 6000;
         public static final double shooterRightRPM = 4000;
-        public static final double intakePercentSpeed = 0.7;
+        public static final double intakePercentSpeed = 0.5 ;
     }
 
     // TODO: Tune slew rate limiter to driver's preferences (this is basically
@@ -360,9 +356,9 @@ public final class Constants {
         /* Drive Motor Characterization Values */
         // This must be tuned to specific robot. We can do this by locking the rotation
         // gears and using SYSID.
-        public static final double driveKS = (0.12698);
-        public static final double driveKV = (2.1248);
-        public static final double driveKA = (0.14197);
+        public static final double driveKS = (0.40011);
+        public static final double driveKV = (0.74073);
+        public static final double driveKA = (0.015159);
 
         /* Swerve Profiling Values */
         // This must be tuned to specific robot.
@@ -383,7 +379,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(33.838);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(35.06);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -393,7 +389,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(111.269);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(112.5);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -403,7 +399,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(169.277);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(171.65);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -413,7 +409,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(160.927);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(159.2);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }

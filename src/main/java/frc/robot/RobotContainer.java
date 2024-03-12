@@ -9,7 +9,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.ElevatarmConstants;
 import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.Constants.PathGenerationConstants;
 import frc.robot.Constants.ShintakeConstants;
@@ -54,12 +57,14 @@ public class RobotContainer {
     private final CommandPS5Controller mainController = new CommandPS5Controller(0);
     private final CommandGenericHID buttonBoard = new CommandGenericHID(1);
 
+    private final DigitalInput lockButton = new DigitalInput(ElevatarmConstants.elevatarmLockSwitchPort);
+
 
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
     private final Shintake s_Shintake = new Shintake();
-    private final Elevatarm s_Elevatarm = new Elevatarm();
-    private final Climb s_Climb = new Climb();
+    private final Elevatarm s_Elevatarm = new Elevatarm(lockButton);
+    private final Climb s_Climb = new Climb(lockButton);
 
     /* Auto Chooser */
     // change default auto
@@ -74,23 +79,23 @@ public class RobotContainer {
     private AutoClimbPosition selectedClimbPosition = AutoClimbPosition.CENTER;
 
     private boolean isGameEnded = false;
-    
+
     
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         /* Adding Autos */
 
-        // s_Swerve.setDefaultCommand(
-        //     new TeleopSwerve(
-        //         s_Swerve, 
-        //         () -> -mainController.getLeftY(), 
-        //         () -> -mainController.getLeftX(), 
-        //         () -> -mainController.getRightX(), 
-        //         () -> false,
-        //         mainController.touchpad()
-        //     )
-        // );
+        s_Swerve.setDefaultCommand(
+            new TeleopSwerve(
+                s_Swerve, 
+                () -> -mainController.getLeftY(), 
+                () -> -mainController.getLeftX(), 
+                () -> -mainController.getRightX(), 
+                () -> false,
+                mainController.touchpad()
+            )
+        );
 
         s_Elevatarm.setDefaultCommand(
             Commands.either(
@@ -160,6 +165,25 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
 
+        mainController.R2().whileTrue(new ShintakeCommand(ShintakeMode.SHOOT, s_Shintake, true));
+
+        mainController.povUp().onTrue(
+            new ArmManualControlCommand(0.1, s_Elevatarm, true)
+        );
+
+        mainController.povDown().onTrue(
+            new ArmManualControlCommand(-0.1, s_Elevatarm, true)
+        );
+
+        mainController.povRight().onTrue(new ElevatarmCommand(
+            s_Elevatarm.getArmRotation2d().getRotations(), 
+            MechanismSetpointConstants.elevatorGroundIntakePosition, s_Elevatarm, s_Climb));
+
+        mainController.povLeft().onTrue(new ElevatarmCommand(
+            s_Elevatarm.getArmRotation2d().getRotations(), 
+            MechanismSetpointConstants.elevatorStowedPosition, s_Elevatarm, s_Climb));
+
+
         // TESTING MODE BUTTON BINDS
         // mainController.triangle().whileTrue(
         //     new ArmManualControlCommand(0.1, s_Elevatarm, false)
@@ -225,6 +249,10 @@ public class RobotContainer {
                     s_Elevatarm, s_Climb),
                 new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake, true)
             )
+        );
+
+        mainController.options().onTrue(
+            new InstantCommand(() -> isGameEnded = !isGameEnded)
         );
 
         // // Global speaker shoot
@@ -418,6 +446,8 @@ public class RobotContainer {
             "Disable Compressor",
             new InstantCommand(() -> s_Climb.disableCompressor())
         );
+
+        SmartDashboard.putBoolean("Open Loop?", isGameEnded);
 
         // SmartDashboard.putData(
         //     "Home Position", 
