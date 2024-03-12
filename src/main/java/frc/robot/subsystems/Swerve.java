@@ -104,7 +104,7 @@ public class Swerve extends SubsystemBase {
             translation.getX(), 
             translation.getY(), 
             rotation, 
-            getYaw()
+            flippedButNotRotationPose(getPose()).getRotation()
         )
         : new ChassisSpeeds(
             translation.getX(), 
@@ -237,6 +237,18 @@ public class Swerve extends SubsystemBase {
     */
     public Pose2d getPose() {
         return PoseEstimator.getCurrentPose(); 
+    }
+
+    public Pose2d flippedButNotRotationPose(Pose2d poseToFlip) {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            return new Pose2d(new Translation2d(
+                VisionConstants.FIELD_LENGTH_METERS-poseToFlip.getX(), 
+                poseToFlip.getY()), 
+                Rotation2d.fromRotations(0.5)
+                .rotateBy(poseToFlip.getRotation()));
+        }
+        return poseToFlip;
     }
 
     /* Resets robot pose.

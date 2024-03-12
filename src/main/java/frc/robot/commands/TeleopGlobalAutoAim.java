@@ -60,6 +60,7 @@ public class TeleopGlobalAutoAim extends Command {
 
         this.headingController = new PIDController(TeleopConstants.autoAimHeadingkP, TeleopConstants.autoAimHeadingkI, TeleopConstants.autoAimHeadingkD);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
+        headingController.setTolerance(MechanismSetpointConstants.swerveRotationAllowableError);
     }
 
     @Override

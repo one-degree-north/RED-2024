@@ -33,15 +33,15 @@ public final class Constants {
         public static final double headingMaxVelRadPerSec = AutoConstants.angularVelocityConstraint;
         public static final double headingMaxAccelRadPerSec = AutoConstants.angularAccelerationConstraint;
 
-        public static final double autoAimHeadingkP = 3.5;
+        public static final double autoAimHeadingkP = 3.0;
         public static final double autoAimHeadingkI = 0;
-        public static final double autoAimHeadingkD = 0.20;
+        public static final double autoAimHeadingkD = 1;
     }
 
     public static final class PathGenerationConstants {
         public static final Pose2d ampScoringPose = new Pose2d();
 
-        public static final Translation2d speakerTranslation = new Translation2d(Units.inchesToMeters(0),
+        public static final Translation2d speakerTranslation = new Translation2d(Units.inchesToMeters(4),
                 Units.inchesToMeters(218.42));
 
         // This is always from the perspective of the driver (left and right flip
@@ -61,8 +61,8 @@ public final class Constants {
         public static final double armAllowableError = 0.01;
         public static final double elevatorAllowableError = 0.05;
         public static final double climbAllowableError = 0.05;
-        public static final double swerveRotationAllowableError = 0.1;
-        public static final double flywheelVelocityAllowableError = 10; // RPM
+        public static final double swerveRotationAllowableError = 0.3;
+        public static final double flywheelVelocityAllowableError = 50; // RPM
 
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;

@@ -258,7 +258,7 @@ public class RobotContainer {
         // Global speaker shoot
         mainController.R2().whileTrue(
             new TeleopGlobalAutoAim(s_Swerve, s_Elevatarm, s_Shintake, s_Climb,
-                () -> mainController.getLeftY(), 
+                () -> -mainController.getLeftY(), 
                 () -> -mainController.getLeftX(), 
                 mainController.touchpad(),
                 mainController.circle()
@@ -347,23 +347,23 @@ public class RobotContainer {
 
         // // Button board bindings
         // // bottom row
-        // buttonBoard.button(3).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.LEFT));
-        // buttonBoard.button(5).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.CENTER));
-        // buttonBoard.button(7).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.RIGHT));
+        // buttonBoard.button(11).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.LEFT));
+        // buttonBoard.button(10).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.CENTER));
+        // buttonBoard.button(9).onTrue(new InstantCommand(() -> selectedIntakePosition = AutoIntakePosition.RIGHT));
 
         // // top row
-        // buttonBoard.button(10).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.LEFT));
-        // buttonBoard.button(11).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.CENTER));
-        // buttonBoard.button(12).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.RIGHT));
+        // buttonBoard.button(2).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.LEFT));
+        // buttonBoard.button(3).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.CENTER));
+        // buttonBoard.button(4).onTrue(new InstantCommand(() -> selectedClimbPosition = AutoClimbPosition.RIGHT));
 
         // // middle row
-        // buttonBoard.button(4).onTrue(
+        // buttonBoard.button(7).onTrue(
         //     Commands.parallel(
         //         new InstantCommand(() -> s_Climb.disablePneumaticBreak()),
         //         new ClimbPositionCommand(ClimbPosition.LEFTHIGH, s_Climb)
         //     )
         // );
-        // buttonBoard.button(4).onFalse(
+        // buttonBoard.button(7).onFalse(
         //     Commands.sequence(
         //         new ClimbVelocityCommand(-ClimbConstants.climbStandardVelocity, ClimbToMove.BOTH, s_Climb)
         //             .until(() -> 
@@ -397,13 +397,13 @@ public class RobotContainer {
         //     )
         // );
 
-        // buttonBoard.button(8).onTrue(
+        // buttonBoard.button(5).onTrue(
         //     Commands.parallel(
         //         new InstantCommand(() -> s_Climb.disablePneumaticBreak()),
         //         new ClimbPositionCommand(ClimbPosition.RIGHTHIGH, s_Climb)
         //     )
         // );
-        // buttonBoard.button(8).onFalse(
+        // buttonBoard.button(5).onFalse(
         //     Commands.sequence(
         //         new ClimbVelocityCommand(-ClimbConstants.climbStandardVelocity, ClimbToMove.BOTH, s_Climb)
         //             .until(() -> 
@@ -416,17 +416,17 @@ public class RobotContainer {
         //     )
         // );
 
-        buttonBoard.button(1).onTrue(
+        buttonBoard.button(8).onTrue(
             // set to source high mode
             new InstantCommand(() -> s_LEDs.setIntakingLEDs(true))
         );
 
-        buttonBoard.button(2).onTrue(
+        buttonBoard.button(1).onTrue(
             // set to ground mode
             new InstantCommand(() -> s_LEDs.setIntakingLEDs(false))
         );
 
-        // buttonBoard.button(9).onTrue(
+        // buttonBoard.button(12).onTrue(
         //     new InstantCommand(
         //         () -> {isGameEnded = !isGameEnded;})
         // );
