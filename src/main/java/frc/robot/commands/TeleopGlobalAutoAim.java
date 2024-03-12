@@ -43,7 +43,7 @@ public class TeleopGlobalAutoAim extends Command {
     private Climb s_Climb;
     private Trigger m_justShootTrigger;
 
-    public TeleopGlobalAutoAim(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, Climb s_Climb, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier resetGyroSup, Trigger justShootButton) {
+    public TeleopGlobalAutoAim(Swerve s_Swerve, Elevatarm s_Elevatarm, Shintake s_Shintake, Climb s_Climb, DoubleSupplier translationSup, DoubleSupplier strafeSup, Trigger resetGyroSup, Trigger justShootButton) {
         this.s_Swerve = s_Swerve;
         this.s_Elevatarm = s_Elevatarm;
         this.s_Shintake = s_Shintake;
@@ -134,8 +134,8 @@ public class TeleopGlobalAutoAim extends Command {
         )
         > MechanismSetpointConstants.swerveRotationAllowableError
         ||
-        AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
-        > MechanismSetpointConstants.xPositionCutoffToAutoScore
+        s_Swerve.getShotData().effectiveRobotToSpeakerDist() 
+        > MechanismSetpointConstants.distanceCutoffToAutoScore
         ||
         Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
         > MechanismSetpointConstants.flywheelVelocityAllowableError

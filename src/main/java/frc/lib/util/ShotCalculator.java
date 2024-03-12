@@ -50,15 +50,15 @@ public class ShotCalculator {
 
     // This will be replaced with a formula to return arm angle in rotations based on distance in meters
     /* IN ROTATIONS */
-    double armAngle = MechanismSetpointConstants.armStowedPosition;
+    double armAngle = -0.0327 + 0.0493 * effectiveDist - 0.00417 * Math.pow(effectiveDist, 2);
 
     // Potentially have this as output
     /* IN ROTATIONS */
     double clampedArmAngle = MathUtil.clamp(armAngle, 
         Constants.ElevatarmConstants.armReverseSoftLimit, 
-        Constants.ElevatarmConstants.armForwardSoftLimit);
+        0.12);
     
-    boolean inYDistanceRange = Math.abs(robot.getY()-speaker.getY()) < 2.1;
+    boolean inYDistanceRange = Math.abs(robot.getY()-speaker.getY()) < MechanismSetpointConstants.yDistanceDifferenceToAutoScore;
 
     // Use radial component of velocity for ff value
     return new ShotData(effectiveDist, radialComponent, goalHeading, clampedArmAngle, inYDistanceRange);

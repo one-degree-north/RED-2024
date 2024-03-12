@@ -327,6 +327,7 @@ public class Swerve extends SubsystemBase {
 
     /* Use gyro angle adjustment to reset to odometry pose */
     public void setYawToOdometryPose() {
+        gyro.zeroYaw();
         setGyroAngleAdjustment(
             (
                 AllianceFlipUtil.flipPose(getPose())

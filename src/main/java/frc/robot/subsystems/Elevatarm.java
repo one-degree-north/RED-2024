@@ -211,7 +211,8 @@ public class Elevatarm extends SubsystemBase {
   private void setControlArm(ControlRequest req) {
     if (m_armLeader.isAlive()
     && m_armFollower.isAlive()
-    && isArmEncoderReset) {
+    && isArmEncoderReset
+    && isElevatorEncoderReset) {
       m_armLeader.setControl(req);
     }
   }

@@ -79,8 +79,8 @@ public class AutonomousShootContinuousCommand extends Command {
             )
             < MechanismSetpointConstants.armAllowableError
             &&
-            AllianceFlipUtil.flipPose(s_Swerve.getPose()).getX() 
-            < MechanismSetpointConstants.xPositionCutoffToAutoScore
+            s_Swerve.getShotData().effectiveRobotToSpeakerDist()
+            < MechanismSetpointConstants.distanceCutoffToAutoScore
             &&
             Math.abs(s_Swerve.getTranslationalSpeed())
             < MechanismSetpointConstants.allowableVelocityToAutoScore

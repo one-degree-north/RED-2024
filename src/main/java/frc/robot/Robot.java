@@ -61,6 +61,8 @@ public class Robot extends TimedRobot implements Logged {
     VirtualSubsystem.periodicAll();
     CommandScheduler.getInstance().run();
     Monologue.updateAll();
+
+    m_robotContainer.robotPeriodic();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -151,10 +151,12 @@ public class LEDs extends VirtualSubsystem {
 
       Color shintakeColor = isSourceIntake ? Color.kOrange : Color.kGreen;
 
-      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 100 
-      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 100
+      Color allianceColor = DriverStation.isAutonomous() ? autoColor : teleopColor;
+
+      if (Math.abs(m_shintake.getLeftShooterVelocityRPM()) > 50 
+      || Math.abs(m_shintake.getRightShooterVelocityRPM()) > 50
       ) {
-        wave(Section.SHINTAKE, teleopColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
+        wave(Section.FULL, allianceColor, Color.kBlack, waveCycleLength, waveFastCycleDuration, false);
       }
       else if (!m_shintake.isNoteIntaked()) {
         breath(Section.FULL, shintakeColor, Color.kBlack, breathSlowDuration);

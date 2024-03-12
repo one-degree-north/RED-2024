@@ -167,19 +167,19 @@ public class RobotContainer {
 
         mainController.R2().whileTrue(new ShintakeCommand(ShintakeMode.SHOOT, s_Shintake, true));
 
-        mainController.povUp().onTrue(
+        mainController.povUp().whileTrue(
             new ArmManualControlCommand(0.1, s_Elevatarm, true)
         );
 
-        mainController.povDown().onTrue(
+        mainController.povDown().whileTrue(
             new ArmManualControlCommand(-0.1, s_Elevatarm, true)
         );
 
-        mainController.povRight().onTrue(new ElevatarmCommand(
+        mainController.povRight().whileTrue(new ElevatarmCommand(
             s_Elevatarm.getArmRotation2d().getRotations(), 
             MechanismSetpointConstants.elevatorGroundIntakePosition, s_Elevatarm, s_Climb));
 
-        mainController.povLeft().onTrue(new ElevatarmCommand(
+        mainController.povLeft().whileTrue(new ElevatarmCommand(
             s_Elevatarm.getArmRotation2d().getRotations(), 
             MechanismSetpointConstants.elevatorStowedPosition, s_Elevatarm, s_Climb));
 
@@ -239,8 +239,8 @@ public class RobotContainer {
         //     )
         // );
 
-        // // REAL MATCH BUTTON BINDS
-        // // Ground intake
+        // REAL MATCH BUTTON BINDS
+        // Ground intake
         mainController.L2().whileTrue(
             Commands.parallel(
                 new ElevatarmCommand(
@@ -255,16 +255,17 @@ public class RobotContainer {
             new InstantCommand(() -> isGameEnded = !isGameEnded)
         );
 
-        // // Global speaker shoot
-        // mainController.R2().whileTrue(
-        //     new TeleopGlobalAutoAim(s_Swerve, s_Elevatarm, s_Shintake, 
-        //         () -> -mainController.getLeftY(), 
-        //         () -> -mainController.getLeftX(), 
-        //         mainController.touchpad()
-        //     )
-        // );
+        // Global speaker shoot
+        mainController.R2().whileTrue(
+            new TeleopGlobalAutoAim(s_Swerve, s_Elevatarm, s_Shintake, s_Climb,
+                () -> mainController.getLeftY(), 
+                () -> -mainController.getLeftX(), 
+                mainController.touchpad(),
+                mainController.circle()
+            )
+        ); 
 
-        // // Source intake
+        // Source intake
         // mainController.L1().whileTrue(
         //     Commands.sequence(
         //         Commands.race(
@@ -275,12 +276,12 @@ public class RobotContainer {
         //         new ElevatarmCommand(
         //             MechanismSetpointConstants.armSourcePosition, 
         //             MechanismSetpointConstants.elevatorSourcePosition, 
-        //             s_Elevatarm),
+        //             s_Elevatarm, s_Climb),
         //         new ShintakeCommand(ShintakeMode.SOURCE_INTAKE, s_Shintake, true)
         //     )
         // );
 
-        // // Amp score
+        // Amp score
         // mainController.R1().whileTrue(
         //     Commands.sequence(
         //         Commands.race(
@@ -291,12 +292,12 @@ public class RobotContainer {
         //         new ElevatarmCommand(
         //             MechanismSetpointConstants.armAmpPosition, 
         //             MechanismSetpointConstants.elevatorAmpPosition, 
-        //             s_Elevatarm),
+        //             s_Elevatarm, s_Climb),
         //         new ShintakeCommand(ShintakeMode.AMP_AND_TRAP, s_Shintake, true)
         //     )
         // );
 
-        // // Trap sequence
+        // Trap sequence
         // mainController.cross().whileTrue(
         //     Commands.sequence(
         //         new InstantCommand(
@@ -447,8 +448,6 @@ public class RobotContainer {
             new InstantCommand(() -> s_Climb.disableCompressor())
         );
 
-        SmartDashboard.putBoolean("Open Loop?", isGameEnded);
-
         // SmartDashboard.putData(
         //     "Home Position", 
         //     new ElevatarmCommand(
@@ -556,6 +555,18 @@ public class RobotContainer {
 
     private void configureNamedCommands() {
         NamedCommands.registerCommand("AutonomousShootContinuousCommand", new AutonomousShootContinuousCommand(s_Shintake, s_Swerve, s_Elevatarm, s_Climb));
+    }
+
+    public void robotPeriodic() {
+        SmartDashboard.putBoolean("Closed Loop?", !isGameEnded);
+
+        SmartDashboard.putBoolean("Climb Pathfind Left", selectedClimbPosition == AutoClimbPosition.LEFT);
+        SmartDashboard.putBoolean("Climb Pathfind Center", selectedClimbPosition == AutoClimbPosition.CENTER);
+        SmartDashboard.putBoolean("Climb Pathfind Right", selectedClimbPosition == AutoClimbPosition.RIGHT);
+
+        SmartDashboard.putBoolean("Intake Pathfind Left", selectedIntakePosition == AutoIntakePosition.LEFT);
+        SmartDashboard.putBoolean("Intake Pathfind Center", selectedIntakePosition == AutoIntakePosition.CENTER);
+        SmartDashboard.putBoolean("Intake Pathfind Right", selectedIntakePosition == AutoIntakePosition.RIGHT);
     }
 
     /**

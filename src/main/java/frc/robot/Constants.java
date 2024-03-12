@@ -101,7 +101,9 @@ public final class Constants {
 
         // What x position should the robot be less than such that it can auto aim+score on speaker?
         // This gets translated by alliance
-        public static final double xPositionCutoffToAutoScore = 0;
+        public static final double distanceCutoffToAutoScore = 6;
+
+        public static final double yDistanceDifferenceToAutoScore = 2.2;
         
         // in meters per second
         public static final double allowableVelocityToAutoScore = 1;
