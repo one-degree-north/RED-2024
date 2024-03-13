@@ -73,7 +73,7 @@ public class TeleopGlobalAutoAim extends Command {
         double strafeVal = MathUtil.applyDeadband(strafe, TeleopConstants.stickDeadband);
 
         if (resetGyroSup.getAsBoolean()) {
-            s_Swerve.zeroGyro();
+            s_Swerve.zeroHeading();
         }
 
         // Convert joystick values to speeds

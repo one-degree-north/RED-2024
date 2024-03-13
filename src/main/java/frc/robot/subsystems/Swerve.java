@@ -393,8 +393,13 @@ public class Swerve extends SubsystemBase {
         }
     }
 
-    public void zeroHeading() {
+    public void resetHeading() {
         odo.resetPosition(getYaw(), getModulePositions(), flippedButNotRotationPose(getPose()));
+    }
+
+    public void zeroHeading() {
+        odo.resetPosition(getYaw(), getModulePositions(), flippedButNotRotationPose(new Pose2d(getPose().getTranslation(), new Rotation2d())));
+
     }
 
     public Rotation2d getHeading() {

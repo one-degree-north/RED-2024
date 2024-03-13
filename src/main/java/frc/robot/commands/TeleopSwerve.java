@@ -63,7 +63,7 @@ public class TeleopSwerve extends Command {
 
         if (resetGyroSup.getAsBoolean()) {
             lastHeadingRadians = 0;
-            s_Swerve.zeroGyro();
+            s_Swerve.zeroHeading();
         }
 
         // Convert joystick values to speeds
