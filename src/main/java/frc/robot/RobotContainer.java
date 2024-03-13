@@ -153,6 +153,8 @@ public class RobotContainer {
         };
 
         s_LEDs = new LEDs(0, s_Swerve, autoStartingPoseSupplier, s_Shintake, s_Elevatarm, s_Climb);
+
+        SmartDashboard.putData(autoChooser);
         
 
     }
@@ -182,6 +184,10 @@ public class RobotContainer {
         mainController.povLeft().whileTrue(new ElevatarmCommand(
             s_Elevatarm.getArmRotation2d().getRotations(), 
             MechanismSetpointConstants.elevatorStowedPosition, s_Elevatarm, s_Climb));
+
+        mainController.triangle().whileTrue(new ClimbVelocityCommand(0.1, ClimbToMove.BOTH, s_Climb));
+        mainController.cross().whileTrue(new ClimbVelocityCommand(-0.1, ClimbToMove.BOTH, s_Climb));
+
 
 
         // TESTING MODE BUTTON BINDS
