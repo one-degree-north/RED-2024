@@ -88,7 +88,7 @@ public class Shintake extends SubsystemBase {
     //NEO 550 Intake Config
     m_intake.restoreFactoryDefaults();
     m_intake.setSmartCurrentLimit(20);
-    m_intake.setInverted(false);
+    m_intake.setInverted(true);
     m_intake.setIdleMode(IdleMode.kBrake);
     m_intake.enableVoltageCompensation(12);
   }

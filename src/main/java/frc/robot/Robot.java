@@ -104,7 +104,7 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     // set yaw to odometry/vision rotation
-    m_robotContainer.s_Swerve.setYawToOdometryPose();
+    m_robotContainer.s_Swerve.zeroHeading();
   }
 
   /** This function is called periodically during operator control. */

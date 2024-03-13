@@ -35,11 +35,11 @@ public final class Constants {
 
         public static final double autoAimHeadingkP = 3.0;
         public static final double autoAimHeadingkI = 0;
-        public static final double autoAimHeadingkD = 1;
+        public static final double autoAimHeadingkD = 0;
     }
 
     public static final class PathGenerationConstants {
-        public static final Pose2d ampScoringPose = new Pose2d();
+        public static final Pose2d ampScoringPose = new Pose2d(1.523, 7.821, Rotation2d.fromDegrees(-90.35));
 
         public static final Translation2d speakerTranslation = new Translation2d(Units.inchesToMeters(4),
                 Units.inchesToMeters(218.42));
@@ -58,11 +58,11 @@ public final class Constants {
     }
 
     public static final class MechanismSetpointConstants {
-        public static final double armAllowableError = 0.01;
-        public static final double elevatorAllowableError = 0.05;
+        public static final double armAllowableError = 0.005;
+        public static final double elevatorAllowableError = 0.03;
         public static final double climbAllowableError = 0.05;
-        public static final double swerveRotationAllowableError = 0.3;
-        public static final double flywheelVelocityAllowableError = 50; // RPM
+        public static final double swerveRotationAllowableError = 0.1;
+        public static final double flywheelVelocityAllowableError = 150; // RPM
 
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;
@@ -74,8 +74,8 @@ public final class Constants {
         public static final double elevatorSourcePosition = 0;
         public static final double armSourcePosition = 0;
 
-        public static final double elevatorAmpPosition = 0;
-        public static final double armAmpPosition = 0;
+        public static final double elevatorAmpPosition =0.11055;
+        public static final double armAmpPosition = 0.2421875;
 
         public static final double elevatorPreTrapPosition = 0;
         public static final double armPreTrapPosition = 0;
@@ -266,12 +266,12 @@ public final class Constants {
         public static final double sourceIntakeDelaySeconds = 0.5;
 
         // For Intake
-        public static final double outtakePercentSpeed = 0.1;
+        public static final double outtakePercentSpeed = 0.3;
         // For shooter
-        public static final double outtakeRPM = 300;
+        public static final double outtakeRPM = 500;
 
         // Regular shooter/intake preset velocities
-        public static final double shooterLeftRPM = 6000;
+        public static final double shooterLeftRPM = 5000;
         public static final double shooterRightRPM = 4000;
         public static final double intakePercentSpeed = 0.5 ;
     }
@@ -381,7 +381,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 9;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(35.06);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(34.8);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -391,7 +391,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 10;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(112.5);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(112.2);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -401,7 +401,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(171.65);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(172.4);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }
@@ -411,7 +411,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(159.2);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(158.7);
             public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
                     canCoderID, angleOffset);
         }

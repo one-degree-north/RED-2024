@@ -10,6 +10,7 @@ import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.Optional;
@@ -41,6 +42,7 @@ public class Swerve extends SubsystemBase {
     private AHRS gyro;
     private ChassisSpeeds chassisSpeeds;
     private PoseEstimatorSubsystem PoseEstimator;
+    private SwerveDriveOdometry odo;
     private RotationOverride currentOverride = RotationOverride.NONE;
 
     private StructArrayPublisher<Pose3d> cameraFieldPoses = 
@@ -86,6 +88,8 @@ public class Swerve extends SubsystemBase {
             new PhotonRunnable("Arducam11B", VisionConstants.ROBOT_TO_APRILTAG_CAMERA_4)
         );
 
+        odo = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+
         /* Initialize ChassisSpeeds */
         chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -104,7 +108,7 @@ public class Swerve extends SubsystemBase {
             translation.getX(), 
             translation.getY(), 
             rotation, 
-            flippedButNotRotationPose(getPose()).getRotation()
+            getHeading()
         )
         : new ChassisSpeeds(
             translation.getX(), 
@@ -389,12 +393,24 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void zeroHeading() {
+        odo.resetPosition(getYaw(), getModulePositions(), flippedButNotRotationPose(getPose()));
+    }
+
+    public Rotation2d getHeading() {
+        return odo.getPoseMeters().getRotation();
+    }
+
     @Override
     public void periodic(){
+
+        odo.update(getYaw(), getModulePositions());
+
         SmartDashboard.putString("Pose", "(" + getPose().getX()
         + ", " + getPose().getY() + "), " + getPose().getRotation().getDegrees());
 
         SmartDashboard.putNumber("Gyro Rotation", getYaw().getDegrees());
+        SmartDashboard.putNumber("Heading Angle", getHeading().getDegrees());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCANcoder().getDegrees());

@@ -159,6 +159,18 @@ public class TeleopGlobalAutoAim extends Command {
 
 
         SmartDashboard.putNumber("Auto Aim Rotation Error", headingController.getPositionError());
+        SmartDashboard.putBoolean("1",  Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-s_Swerve.getShotData().clampedArmAngle()) 
+        < MechanismSetpointConstants.armAllowableError);
+        SmartDashboard.putBoolean("2", Math.abs(
+          MathUtil.angleModulus(
+            s_Swerve.getShotData().goalHeading()
+            .minus(s_Swerve.getPose().getRotation())
+            .getRadians()
+          )
+        )
+        < MechanismSetpointConstants.swerveRotationAllowableError);
+
+
     }
 
     @Override

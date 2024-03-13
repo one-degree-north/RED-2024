@@ -265,6 +265,7 @@ public class RobotContainer {
             )
         ); 
 
+
         // Source intake
         // mainController.L1().whileTrue(
         //     Commands.sequence(
@@ -282,20 +283,18 @@ public class RobotContainer {
         // );
 
         // Amp score
-        // mainController.R1().whileTrue(
-        //     Commands.sequence(
-        //         Commands.race(
-        //             s_Swerve.goToPose(PathGenerationConstants.ampScoringPose, 0, 0),
-        //             s_Elevatarm.getDefaultCommand(),
-        //             s_Shintake.getDefaultCommand()
-        //         ),
-        //         new ElevatarmCommand(
-        //             MechanismSetpointConstants.armAmpPosition, 
-        //             MechanismSetpointConstants.elevatorAmpPosition, 
-        //             s_Elevatarm, s_Climb),
-        //         new ShintakeCommand(ShintakeMode.AMP_AND_TRAP, s_Shintake, true)
-        //     )
-        // );
+        mainController.R1().whileTrue(
+            Commands.sequence(
+
+                    s_Swerve.goToPose(PathGenerationConstants.ampScoringPose, 0, 0)
+                ,
+                new ElevatarmCommand(
+                    MechanismSetpointConstants.armAmpPosition, 
+                    MechanismSetpointConstants.elevatorAmpPosition, 
+                    s_Elevatarm, s_Climb),
+                new ShintakeCommand(ShintakeMode.AMP_AND_TRAP, s_Shintake, true)
+            )
+        );
 
         // Trap sequence
         // mainController.cross().whileTrue(
