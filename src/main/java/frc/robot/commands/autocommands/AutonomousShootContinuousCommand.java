@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.Constants.MechanismSetpointConstants;
 import frc.robot.Constants.ShintakeConstants;
@@ -22,18 +23,21 @@ import frc.robot.subsystems.Swerve;
 public class AutonomousShootContinuousCommand extends Command {
   private Command m_commandToRun;
   private boolean m_ended;
+  private Trigger m_justShoot;
 
   private Shintake s_Shintake;
   private Swerve s_Swerve;
   private Elevatarm s_Elevatarm;
   private Climb s_Climb;
   /** Creates a new AutonomousShootContinuousCommand. */
-  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm, Climb climb) {
+  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm, Climb climb, Trigger justShoot) {
     this.s_Shintake = shintake;
     this.s_Swerve = swerve;
     this.s_Elevatarm = elevatarm;
     this.s_Climb = climb;
     addRequirements(s_Shintake, s_Elevatarm);
+
+    this.m_justShoot = justShoot;
     
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -64,7 +68,7 @@ public class AutonomousShootContinuousCommand extends Command {
         // wait until arm + swerve are at setpoints (swerve must be behind x position cutoff, and slower than specified velocity)
         // after arm + swerve are at setpoints, feed the note into shooter
       .raceWith(new WaitUntilCommand(() -> {
-            return Math.abs(
+            return (Math.abs(
               MathUtil.angleModulus(
                 s_Swerve.getShotData().goalHeading()
                 .minus(s_Swerve.getPose().getRotation())
@@ -92,6 +96,9 @@ public class AutonomousShootContinuousCommand extends Command {
             && 
             Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
             < MechanismSetpointConstants.flywheelVelocityAllowableError
+            )
+            ||
+            m_justShoot.getAsBoolean()
             ;
         })
         .andThen(

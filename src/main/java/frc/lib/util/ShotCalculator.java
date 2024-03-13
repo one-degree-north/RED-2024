@@ -46,7 +46,8 @@ public class ShotCalculator {
     goalHeading = goalHeading.plus(new Rotation2d(shotSpeed, tangentialComponent)).plus(Rotation2d.fromRotations(0.5));
 
     // (incorrectly) assume that shot time does not change while moving radially
-    double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
+    // double effectiveDist = shotTime * Math.hypot(tangentialComponent, shotSpeed);
+    double effectiveDist = rawDistToGoal;
 
     // This will be replaced with a formula to return arm angle in rotations based on distance in meters
     /* IN ROTATIONS */

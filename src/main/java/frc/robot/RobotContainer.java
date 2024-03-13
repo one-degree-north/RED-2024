@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.util.AllianceFlipUtil;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.ElevatarmConstants;
@@ -80,7 +81,7 @@ public class RobotContainer {
 
     private boolean isGameEnded = false;
 
-    
+    private boolean autoJustShoot = false;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -443,15 +444,15 @@ public class RobotContainer {
     private void configureSmartDashboardCommands() {
         SmartDashboard.putData(autoChooser);
 
-        SmartDashboard.putData(
-            "Enable Compressor",
-            new InstantCommand(() -> s_Climb.enableCompressor())
-        );
+        // SmartDashboard.putData(
+        //     "Enable Compressor",
+        //     new InstantCommand(() -> s_Climb.enableCompressor())
+        // );
 
-        SmartDashboard.putData(
-            "Disable Compressor",
-            new InstantCommand(() -> s_Climb.disableCompressor())
-        );
+        // SmartDashboard.putData(
+        //     "Disable Compressor",
+        //     new InstantCommand(() -> s_Climb.disableCompressor())
+        // );
 
         // SmartDashboard.putData(
         //     "Home Position", 
@@ -527,10 +528,10 @@ public class RobotContainer {
         // //     new ClimbPositionCommand(ClimbPosition.STOWED, s_Climb)
         // // );
 
-        SmartDashboard.putData(
-            "Toggle Pneumatic Break",
-            new InstantCommand(() -> s_Climb.togglePneumaticBreak())
-        );
+        // SmartDashboard.putData(
+        //     "Toggle Pneumatic Break",
+        //     new InstantCommand(() -> s_Climb.togglePneumaticBreak())
+        // );
 
         // SmartDashboard.putData(
         //     "Run Ground Intake",
@@ -559,7 +560,11 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("AutonomousShootContinuousCommand", new AutonomousShootContinuousCommand(s_Shintake, s_Swerve, s_Elevatarm, s_Climb));
+        NamedCommands.registerCommand("AutonomousShootContinuousCommand", new AutonomousShootContinuousCommand(s_Shintake, s_Swerve, s_Elevatarm, s_Climb, 
+            new Trigger(() -> {return autoJustShoot;})));
+        NamedCommands.registerCommand("EnableAutonomousJustShoot", new InstantCommand(() -> {autoJustShoot = true;}));
+        NamedCommands.registerCommand("DisableAutonomousJustShoot", new InstantCommand(() -> {autoJustShoot = false;}));
+
     }
 
     public void robotPeriodic() {

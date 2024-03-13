@@ -85,11 +85,12 @@ public class TeleopGlobalAutoAim extends Command {
         /* Drive */
         translationVal = slewRateLimiterX.calculate(translationVal);
         strafeVal = slewRateLimiterY.calculate(strafeVal);
-        double rotationVal = headingController.calculate(
+        double rotationVal = MathUtil.applyDeadband(headingController.calculate(
         // Use odometry-obtained rotation as measurement 
           MathUtil.angleModulus(s_Swerve.getPose().getRotation().getRadians()), 
           MathUtil.angleModulus(targetShot.goalHeading().getRadians())
-        );
+        ), 
+        0.1*Constants.Swerve.maxAngularVelocity);
 
         s_Swerve.drive(
             new Translation2d(
@@ -159,16 +160,6 @@ public class TeleopGlobalAutoAim extends Command {
 
 
         SmartDashboard.putNumber("Auto Aim Rotation Error", headingController.getPositionError());
-        SmartDashboard.putBoolean("1",  Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-s_Swerve.getShotData().clampedArmAngle()) 
-        < MechanismSetpointConstants.armAllowableError);
-        SmartDashboard.putBoolean("2", Math.abs(
-          MathUtil.angleModulus(
-            s_Swerve.getShotData().goalHeading()
-            .minus(s_Swerve.getPose().getRotation())
-            .getRadians()
-          )
-        )
-        < MechanismSetpointConstants.swerveRotationAllowableError);
 
 
     }

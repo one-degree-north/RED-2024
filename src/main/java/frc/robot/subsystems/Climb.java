@@ -46,13 +46,8 @@ public class Climb extends SubsystemBase {
   private TalonFX m_climbLeft;
   private TalonFX m_climbRight;
 
-  private DoubleSolenoid m_leftPneumaticBreak;
-  private DoubleSolenoid m_rightPneumaticBreak;
-
   private DutyCycleEncoder m_climbLeftEncoder;
   private DutyCycleEncoder m_climbRightEncoder;
-
-  private Compressor m_compressor;
 
   private TalonFXConfiguration climbConfigs = new TalonFXConfiguration();
 
@@ -69,15 +64,10 @@ public class Climb extends SubsystemBase {
     m_climbLeft = new TalonFX(ClimbConstants.leftClimbID, "*");
     m_climbRight = new TalonFX(ClimbConstants.rightClimbID, "*");
 
-    m_leftPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.leftPneumaticBreakPort1, ClimbConstants.leftPneumaticBreakPort2);
-    m_rightPneumaticBreak = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClimbConstants.rightPneumaticBreakPort1, ClimbConstants.rightPneumaticBreakPort2);
-
     m_climbLeftEncoder = new DutyCycleEncoder(ClimbConstants.leftClimbEncoderPort);
     m_climbRightEncoder = new DutyCycleEncoder(ClimbConstants.rightClimbEncoderPort);
 
     m_lockButton = lockButton;
-
-    m_compressor = new Compressor(PneumaticsModuleType.REVPH);
 
     configMotors();
     // enableCompressor();
@@ -85,11 +75,11 @@ public class Climb extends SubsystemBase {
   }
 
   public void enableCompressor() {
-    m_compressor.enableAnalog(70, 120);
+    // m_compressor.enableAnalog(70, 120);
   }
 
   public void disableCompressor() {
-    m_compressor.disable();
+    // m_compressor.disable();
   }
 
   public void configMotors() {
@@ -293,18 +283,18 @@ public class Climb extends SubsystemBase {
   }
 
   public void enablePneumaticBreak() {
-    m_leftPneumaticBreak.set(Value.kForward);
-    m_rightPneumaticBreak.set(Value.kForward);
+    // m_leftPneumaticBreak.set(Value.kForward);
+    // m_rightPneumaticBreak.set(Value.kForward);
   }
 
   public void disablePneumaticBreak() {
-    m_leftPneumaticBreak.set(Value.kReverse);
-    m_rightPneumaticBreak.set(Value.kReverse);
+    // m_leftPneumaticBreak.set(Value.kReverse);
+    // m_rightPneumaticBreak.set(Value.kReverse);
   }
 
   public void togglePneumaticBreak() {
-    m_leftPneumaticBreak.toggle();
-    m_rightPneumaticBreak.toggle();
+    // m_leftPneumaticBreak.toggle();
+    // m_rightPneumaticBreak.toggle();
   }
 
   public void disableClimbMotors() {
@@ -328,10 +318,10 @@ public class Climb extends SubsystemBase {
     SmartDashboard.putNumber("Left Through Bore Pos (m)", getLeftAbsoluteEncoderDistance());
     SmartDashboard.putNumber("Right Through Bore Pos (m)", getRightAbsoluteEncoderDistance());
 
-    SmartDashboard.putBoolean("Left Pneumatic Break State", m_leftPneumaticBreak.get() == Value.kForward);
-    SmartDashboard.putBoolean("Right Pneumatic Break State", m_rightPneumaticBreak.get() == Value.kForward);
+    // SmartDashboard.putBoolean("Left Pneumatic Break State", m_leftPneumaticBreak.get() == Value.kForward);
+    // SmartDashboard.putBoolean("Right Pneumatic Break State", m_rightPneumaticBreak.get() == Value.kForward);
 
-    SmartDashboard.putNumber("Pressure (PSI)", m_compressor.getPressure());
+    // SmartDashboard.putNumber("Pressure (PSI)", m_compressor.getPressure());
   }
   
 }
