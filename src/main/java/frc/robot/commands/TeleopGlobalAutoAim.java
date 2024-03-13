@@ -107,55 +107,55 @@ public class TeleopGlobalAutoAim extends Command {
         || s_Climb.getPositionRight() > ClimbConstants.climbMaxExtensionForElevatarmClearance) {
             s_Climb.setSetpointPositionLeft(MechanismSetpointConstants.climbStowedPosition);
             s_Climb.setSetpointPositionRight(MechanismSetpointConstants.climbStowedPosition);
+        } else if (!m_justShootTrigger.getAsBoolean()) {
+            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition/2);
+            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+        }
+
+        else if (m_justShootTrigger.getAsBoolean()) {
+            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition/2);
+            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+            s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
         }
         // if elevator is not at correct length, do this before running anything else with the elevator / arm
-        else if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) 
-        > MechanismSetpointConstants.elevatorAllowableError) {
-            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-
-        } 
+        
         // if justshoottrigger is pressed, just shoot
-        else if (m_justShootTrigger.getAsBoolean()) {
-            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
-            s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
-        }
              // if the elevator is in the right position BUT arm is not at setpoint and swerve is not at setpoint
         // and swerve is not past the x position cutoff, set arm to auto aim angle
-        else if (
-        Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-s_Swerve.getShotData().clampedArmAngle()) 
-        > MechanismSetpointConstants.armAllowableError
-        ||
-        Math.abs(
-          MathUtil.angleModulus(
-            s_Swerve.getShotData().goalHeading()
-            .minus(s_Swerve.getPose().getRotation())
-            .getRadians()
-          )
-        )
-        > MechanismSetpointConstants.swerveRotationAllowableError
-        ||
-        s_Swerve.getShotData().effectiveRobotToSpeakerDist() 
-        > MechanismSetpointConstants.distanceCutoffToAutoScore
-        ||
-        Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
-        > MechanismSetpointConstants.flywheelVelocityAllowableError
-        ||
-        Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
-        > MechanismSetpointConstants.flywheelVelocityAllowableError
-        ||
-        Math.abs(s_Swerve.getTranslationalSpeed())
-        > MechanismSetpointConstants.allowableVelocityToAutoScore
-        ) {
-            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+        // else if (
+        // Math.abs(s_Elevatarm.getArmRotation2d().getRotations()-s_Swerve.getShotData().clampedArmAngle()) 
+        // > MechanismSetpointConstants.armAllowableError
+        // ||
+        // Math.abs(
+        //   MathUtil.angleModulus(
+        //     s_Swerve.getShotData().goalHeading()
+        //     .minus(s_Swerve.getPose().getRotation())
+        //     .getRadians()
+        //   )
+        // )
+        // > MechanismSetpointConstants.swerveRotationAllowableError
+        // ||
+        // s_Swerve.getShotData().effectiveRobotToSpeakerDist() 
+        // > MechanismSetpointConstants.distanceCutoffToAutoScore
+        // ||
+        // Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+        // > MechanismSetpointConstants.flywheelVelocityAllowableError
+        // ||
+        // Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
+        // > MechanismSetpointConstants.flywheelVelocityAllowableError
+        // ||
+        // Math.abs(s_Swerve.getTranslationalSpeed())
+        // > MechanismSetpointConstants.allowableVelocityToAutoScore
+        // ) {
+        //     s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+        //     s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
 
-        // if all subsystems are at setpoint, feed the note in to the shooter
-        } else {
-            s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-            s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
-            s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
-        }
+        // // if all subsystems are at setpoint, feed the note in to the shooter
+        // } else {
+        //     s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
+        //     s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
+        //     s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
+        // }
 
 
         SmartDashboard.putNumber("Auto Aim Rotation Error", headingController.getPositionError());

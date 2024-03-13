@@ -58,6 +58,7 @@ public class ClimbVelocityCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_commandToRun.end(interrupted);
+    s_Climb.zeroVelocity();
   }
 
   // Returns true when the command should end.
