@@ -20,6 +20,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -234,6 +235,13 @@ public class Swerve extends SubsystemBase {
         Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
         
         return AutoBuilder.pathfindToPoseFlipped(targetPose, constraints, goalEndVelocity, rotationDelayDistance);
+    }
+
+    public Command pathfindToPathThenRun(String pathName) {
+        PathConstraints constraints = new PathConstraints(Constants.AutoConstants.velocityConstraint, Constants.AutoConstants.accelerationConstraint, 
+        Constants.AutoConstants.angularVelocityConstraint, Constants.AutoConstants.angularAccelerationConstraint);
+
+        return AutoBuilder.pathfindThenFollowPath(PathPlannerPath.fromPathFile(pathName), constraints, 0);
     }
 
     /* Gets robot pose (influenced by vision data). 

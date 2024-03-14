@@ -61,8 +61,8 @@ public final class Constants {
         public static final double armAllowableError = 0.005;
         public static final double elevatorAllowableError = 0.06;
         public static final double climbAllowableError = 0.05;
-        public static final double swerveRotationAllowableError = 0.1;
-        public static final double flywheelVelocityAllowableError = 300; // RPM
+        public static final double swerveRotationAllowableError = 0.05;
+        public static final double flywheelVelocityAllowableError = 150; // RPM
 
         // Elevator in meters, arm in rotations
         public static final double elevatorStowedPosition = 0;
@@ -74,7 +74,7 @@ public final class Constants {
         public static final double elevatorSourcePosition = 0;
         public static final double armSourcePosition = 0;
 
-        public static final double elevatorAmpPosition =0.11055;
+        public static final double elevatorAmpPosition = 0.11055;
         public static final double armAmpPosition = 0.2421875;
 
         public static final double elevatorPreTrapPosition = 0;
@@ -116,7 +116,7 @@ public final class Constants {
         public static final int armEncoderPort = 0;
         public static final int elevatarmLockSwitchPort = 9;
 
-        public static final double armAbsoluteEncoderAngleOffset = -0.2778;
+        public static final double armAbsoluteEncoderAngleOffset = -0.313;
         public static final double armForwardSoftLimit = 0.35;
         public static final double armReverseSoftLimit = 0;
 

@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.8137178758443169,
+        "y": 7.12
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8137178758443169,
+        "y": 7.465626274110782
+      },
+      "isLocked": false,
+      "linkedName": "AmpPreScoreTeleop"
+    },
+    {
+      "anchor": {
+        "x": 1.81,
+        "y": 7.821
+      },
+      "prevControl": {
+        "x": 1.81,
+        "y": 7.455810667690831
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "AmpScoreTeleop"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.1,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SetElevatarmToAmpScore"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 0.7,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -90.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

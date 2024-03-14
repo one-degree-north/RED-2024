@@ -173,14 +173,6 @@ public class Elevatarm extends SubsystemBase {
       /* The arm is configured so that on-board units is mechanism rotations */
       isArmEncoderReset = m_armLeader.setPosition(absolutePosition).isOK();
     }
-
-    if (m_elevatorEncoder.isConnected()) {
-      double absolutePosition =
-        getElevatorAbsoluteEncoderDistance()
-        - ElevatarmConstants.elevatorAbsoluteEncoderDistanceOffset;
-      m_elevator.setPosition(absolutePosition
-      * ElevatarmConstants.elevatorMechanismRotationsToMetersRatio).isOK();
-    }
   }
 
   private void zeroElevatorEncoder() {
@@ -350,6 +342,10 @@ public class Elevatarm extends SubsystemBase {
     );
 
     recalculateFeedForward();
+
+    SmartDashboard.putBoolean("Is Arm Encoder Reset", isArmEncoderReset);
+
+    SmartDashboard.putBoolean("Is Elevator Encoder Reset", isElevatorEncoderReset);
 
     SmartDashboard.putNumber("Arm Pos (rot)", getArmRotation2d().getRotations());
     SmartDashboard.putNumber("Arm Through Bore Pos (rot)", getArmAbsoluteEncoderAngle());

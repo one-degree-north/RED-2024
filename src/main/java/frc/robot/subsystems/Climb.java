@@ -312,6 +312,8 @@ public class Climb extends SubsystemBase {
       }
     }
 
+    SmartDashboard.putBoolean("Is Climb Encoders Reset", isClimbEncodersReset);
+
     SmartDashboard.putNumber("Left Climb Pos (m)", getPositionLeft());
     SmartDashboard.putNumber("Right Climb Pos (m)", getPositionRight());
 

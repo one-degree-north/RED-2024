@@ -36,7 +36,7 @@ public class AutoIntakePathfind extends Command {
   public void initialize() {
     m_ended = false;
     m_lastSelectedPosition = m_selectedPositionSupplier.get();
-    m_selectedCommand = m_swerve.goToPose(m_selectedPositionSupplier.get().getPose(), 0, 0);
+    m_selectedCommand = m_swerve.pathfindToPathThenRun(m_selectedPositionSupplier.get().getPath());
     m_selectedCommand.initialize();
   }
 
@@ -77,31 +77,31 @@ public class AutoIntakePathfind extends Command {
   public static enum AutoIntakePosition {
     // TODO: add amp scoring pose, add actual scoring poses
     LEFT, CENTER, RIGHT;
-    private Pose2d getPose() {
+    private String getPath() {
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
         // Swap right with left on red alliance
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.rightSourceIntakingPose;
+            return "LeftSourceIntake";
           case CENTER:
-            return PathGenerationConstants.middleSourceIntakingPose;
+            return "CenterSourceIntake";
           case RIGHT:
-            return PathGenerationConstants.leftSourceIntakingPose;
+            return "RightSourceIntake";
           default:
-            return PathGenerationConstants.middleSourceIntakingPose;
+            return "CenterSourceIntake";
         }
       } else {
         // Regular orientation since standard is blue origin
         switch (this) {
           case LEFT:
-            return PathGenerationConstants.leftSourceIntakingPose;
+            return "RightSourceIntake";
           case CENTER:
-            return PathGenerationConstants.middleSourceIntakingPose;
+            return "CenterSourceIntake";
           case RIGHT:
-            return PathGenerationConstants.rightSourceIntakingPose;
+            return "LeftSourceIntake";
           default:
-            return PathGenerationConstants.middleSourceIntakingPose;
+            return "CenterSourceIntake";
         }
       }
     }
