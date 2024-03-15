@@ -59,6 +59,33 @@ public class ShintakeCommand extends Command {
           .alongWith(new WaitUntilCommand(() -> s_Shintake.isNoteIntaked()).andThen(new WaitCommand(ShintakeConstants.sourceIntakeDelaySeconds)))
         ;
         break;
+      
+      case THROW_NOTE_TO_SPEAKER:
+        m_commandToRun = 
+          new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(ShintakeConstants.throwNoteRPM, ShintakeConstants.throwNoteRPM))
+          .alongWith(
+            new WaitCommand(ShintakeConstants.shooterTimeoutRampTimeSeconds)
+            .raceWith(
+              new WaitUntilCommand(() -> {
+                return 
+                Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.throwNoteRPM)
+                < MechanismSetpointConstants.flywheelVelocityAllowableError
+                && 
+                Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.throwNoteRPM)
+                < MechanismSetpointConstants.flywheelVelocityAllowableError;
+              }
+              )
+            )
+          )
+          .andThen(
+              new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed))
+              .alongWith(
+                new WaitUntilCommand(() -> !s_Shintake.isNoteIntaked())
+                .andThen(new WaitCommand(ShintakeConstants.shooterDelaySeconds))
+              )
+          )
+        ;
+        break;
       case SHOOT:
         m_commandToRun = 
           new InstantCommand(() -> s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM))
@@ -70,7 +97,7 @@ public class ShintakeCommand extends Command {
                 Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
                 < MechanismSetpointConstants.flywheelVelocityAllowableError
                 && 
-                Math.abs(s_Shintake.getLeftShooterVelocityRPM() - ShintakeConstants.shooterLeftRPM)
+                Math.abs(s_Shintake.getRightShooterVelocityRPM() - ShintakeConstants.shooterRightRPM)
                 < MechanismSetpointConstants.flywheelVelocityAllowableError;
               }
               )
@@ -126,6 +153,6 @@ public class ShintakeCommand extends Command {
 
   public enum ShintakeMode {
     FRONT_OUTTAKE, AMP_AND_TRAP, GROUND_INTAKE, SOURCE_INTAKE, SHOOT,
-    JUSTFEEDTOSHOOT;
+    JUSTFEEDTOSHOOT, THROW_NOTE_TO_SPEAKER;
   }
 }

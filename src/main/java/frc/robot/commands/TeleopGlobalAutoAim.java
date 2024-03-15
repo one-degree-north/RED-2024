@@ -90,7 +90,7 @@ public class TeleopGlobalAutoAim extends Command {
           MathUtil.angleModulus(s_Swerve.getPose().getRotation().getRadians()), 
           MathUtil.angleModulus(targetShot.goalHeading().getRadians())
         ), 
-        TeleopConstants.stickDeadband*Constants.Swerve.maxAngularVelocity);
+        TeleopConstants.stickDeadband);
 
         s_Swerve.drive(
             new Translation2d(

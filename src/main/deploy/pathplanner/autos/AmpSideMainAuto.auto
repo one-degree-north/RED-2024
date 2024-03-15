@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.236418604850769,
-      "y": 6.739793300628662
+      "x": 1.136247158050537,
+      "y": 6.72600793838501
     },
-    "rotation": 59.53446714318318
+    "rotation": 60.25514465049405
   },
   "command": {
     "type": "sequential",
@@ -16,13 +16,25 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "AutonomousShootContinuousCommand"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 1.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
@@ -32,9 +44,21 @@
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.1
+                        "name": "AutonomousJustShoot"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "AmpSideAutos.2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
@@ -44,9 +68,9 @@
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.7
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
@@ -56,18 +80,12 @@
                       }
                     },
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 1.0
+                        "name": "AutonomousJustShoot"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutonomousShootContinuousCommand"
                 }
               }
             ]

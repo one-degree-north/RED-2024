@@ -4,8 +4,13 @@
 
 package frc.robot.commands.autocommands;
 
+import java.time.Instant;
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -23,14 +28,14 @@ import frc.robot.subsystems.Swerve;
 public class AutonomousShootContinuousCommand extends Command {
   private Command m_commandToRun;
   private boolean m_ended;
-  private Trigger m_justShoot;
+  private BooleanSupplier m_justShoot;
 
   private Shintake s_Shintake;
   private Swerve s_Swerve;
   private Elevatarm s_Elevatarm;
   private Climb s_Climb;
   /** Creates a new AutonomousShootContinuousCommand. */
-  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm, Climb climb, Trigger justShoot) {
+  public AutonomousShootContinuousCommand(Shintake shintake, Swerve swerve, Elevatarm elevatarm, Climb climb, BooleanSupplier justShoot) {
     this.s_Shintake = shintake;
     this.s_Swerve = swerve;
     this.s_Elevatarm = elevatarm;
@@ -48,7 +53,9 @@ public class AutonomousShootContinuousCommand extends Command {
     s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM);
     m_commandToRun = new SequentialCommandGroup(
       // intake and deploy intake only until note is intaked/only if note isnt intaked
-      new ShintakeCommand(ShintakeMode.GROUND_INTAKE, s_Shintake, false).finallyDo(() -> s_Shintake.stopIntake())
+      new InstantCommand(() -> {s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);
+          s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM);})
+          .andThen(Commands.waitUntil(() -> s_Shintake.isNoteIntaked())).andThen(new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(0)))
       .alongWith(
         new ElevatarmCommand(
           MechanismSetpointConstants.armGroundIntakePosition, 
@@ -60,10 +67,10 @@ public class AutonomousShootContinuousCommand extends Command {
       ,
 
       // run auto aim commands together
-      new AutonomousSwerveAutoAimCommand(s_Swerve)
+      (new AutonomousSwerveAutoAimCommand(s_Swerve)
       .alongWith(
       new AutonomousElevatarmAutoAimCommand(s_Elevatarm, s_Swerve)
-      )
+      ).alongWith(new InstantCommand(() -> {s_Shintake.setShooterVelocityRPM(ShintakeConstants.shooterLeftRPM, ShintakeConstants.shooterRightRPM);})))
       // race the auto aim commands with the following sequence:
         // wait until arm + swerve are at setpoints (swerve must be behind x position cutoff, and slower than specified velocity)
         // after arm + swerve are at setpoints, feed the note into shooter
@@ -102,7 +109,8 @@ public class AutonomousShootContinuousCommand extends Command {
             ;
         })
         .andThen(
-          new ShintakeCommand(ShintakeMode.JUSTFEEDTOSHOOT, s_Shintake, false).finallyDo(() -> s_Shintake.stopIntake())
+          new InstantCommand(() -> {s_Shintake.setIntakePercentSpeed(ShintakeConstants.intakePercentSpeed);})
+          .andThen(Commands.waitUntil(() -> !s_Shintake.isNoteIntaked())).andThen(Commands.waitSeconds(ShintakeConstants.shooterDelaySeconds)).andThen(new InstantCommand(() -> s_Shintake.setIntakePercentSpeed(0)))
         )
       )
     );
