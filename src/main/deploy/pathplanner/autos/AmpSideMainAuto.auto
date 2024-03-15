@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9905114975624361,
-      "y": 4.532868505940574
+      "x": 1.136247158050537,
+      "y": 6.72600793838501
     },
-    "rotation": -56.725112015165024
+    "rotation": 60.25514465049405
   },
   "command": {
     "type": "sequential",
@@ -34,79 +34,55 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "EnableAutonomousJustShoot"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "DisableAutonomousJustShoot"
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "SourceToN6"
+                        "pathName": "AmpSideAutos.1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "N6ToScore"
+                        "pathName": "AmpSideAutos.2"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "EnableAutonomousJustShoot"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "DisableAutonomousJustShoot"
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "SourceScoreToN7"
+                        "pathName": "AmpSideAutos.3"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutonomousJustShoot"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "N7ToSourceScore"
+                        "pathName": "AmpSideAutos.4"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "EnableAutonomousJustShoot"
-                      }
-                    },
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "DisableAutonomousJustShoot"
+                        "name": "AutonomousJustShoot"
                       }
                     }
                   ]
@@ -119,5 +95,5 @@
     }
   },
   "folder": null,
-  "choreoAuto": false
+  "choreoAuto": true
 }

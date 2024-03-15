@@ -151,7 +151,7 @@ public class RobotContainer {
 
         // Instantiate auto chooser after named commands
 
-        autoChooser = AutoBuilder.buildAutoChooser("CenterN2N5N6");
+        autoChooser = AutoBuilder.buildAutoChooser("CenterSideMainAuto");
 
         autoStartingPoseSupplier = 
         () -> {
@@ -616,6 +616,11 @@ public class RobotContainer {
             new Trigger(() -> {return autoJustShoot;})));
         NamedCommands.registerCommand("EnableAutonomousJustShoot", new InstantCommand(() -> {autoJustShoot = true;}));
         NamedCommands.registerCommand("DisableAutonomousJustShoot", new InstantCommand(() -> {autoJustShoot = false;}));
+
+        NamedCommands.registerCommand("AutonomousJustShoot", 
+        new InstantCommand(() -> {autoJustShoot = true;})
+        .andThen(Commands.waitSeconds(0.8))
+        .andThen(new InstantCommand(() -> {autoJustShoot = false;})));
 
         NamedCommands.registerCommand("SetElevatarmToAmpScore", 
             new ElevatarmCommand(
