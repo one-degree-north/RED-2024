@@ -335,13 +335,13 @@ public class LEDs extends VirtualSubsystem {
         case LEFTDRIVE:
           return 0;
         case BACKDRIVE:
-          return 71;
+          return 61;
         case RIGHTDRIVE:
-          return 47;
+          return 37;
         case FRONTDRIVE:
           return 22;
         case SHINTAKE:
-          return 94;
+          return 84;
         default:
           return 0;
       }
@@ -356,13 +356,13 @@ public class LEDs extends VirtualSubsystem {
         case LEFTDRIVE:
           return 22;
         case BACKDRIVE:
-          return 94;
+          return 84;
         case RIGHTDRIVE:
-          return 71;
+          return 61;
         case FRONTDRIVE:
-          return 47;
+          return 37;
         case SHINTAKE:
-          return 121;
+          return 113;
         default:
           return length;
       }

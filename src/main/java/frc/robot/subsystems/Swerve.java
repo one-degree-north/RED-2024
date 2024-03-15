@@ -177,7 +177,7 @@ public class Swerve extends SubsystemBase {
                 return Optional.empty();
             case SPEAKER_AUTO_AIM:
                 Pose2d tempPose = new Pose2d(0, 0, getShotData().goalHeading());
-                tempPose = AllianceFlipUtil.flipPose(tempPose);
+                // tempPose = AllianceFlipUtil.flipPose(tempPose);
                 return Optional.of(tempPose.getRotation());
             default:
                 return Optional.empty();
