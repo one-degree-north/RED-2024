@@ -619,7 +619,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("AutonomousJustShoot", 
         new InstantCommand(() -> {autoJustShoot = true;})
-        .andThen(Commands.waitSeconds(0.8))
+        .andThen(Commands.waitSeconds(1))
         .andThen(new InstantCommand(() -> {autoJustShoot = false;})));
 
         NamedCommands.registerCommand("SetElevatarmToAmpScore", 
