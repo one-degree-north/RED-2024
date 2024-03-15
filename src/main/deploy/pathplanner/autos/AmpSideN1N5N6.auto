@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3711200952529907,
-      "y": 5.518359661102295
+      "x": 1.236418604850769,
+      "y": 6.739793300628662
     },
-    "rotation": -1.0761041295237338e-20
+    "rotation": 59.53446714318318
   },
   "command": {
     "type": "sequential",
@@ -34,7 +34,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.5
                       }
                     },
                     {
@@ -46,7 +46,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterAutos.1"
+                        "pathName": "AmpSideAutos.1"
                       }
                     },
                     {
@@ -76,7 +76,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterAutos.3"
+                        "pathName": "AmpSideAutos.2"
                       }
                     },
                     {
@@ -106,7 +106,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterAutos.4"
+                        "pathName": "AmpSideAutos.3"
                       }
                     },
                     {

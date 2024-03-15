@@ -133,7 +133,7 @@ public class RobotContainer {
                 s_Elevatarm, s_Climb)
         );
 
-        isSwerveActiveTrigger.whileTrue(new TeleopSwerve(s_Swerve, () -> 0, () -> 0, () -> 0, () -> false, () -> false));
+        isSwerveActiveTrigger.whileFalse(new TeleopSwerve(s_Swerve, () -> 0, () -> 0, () -> 0, () -> false, () -> false));
 
         s_Shintake.setDefaultCommand(
             new InstantCommand(() -> s_Shintake.stopAll(), s_Shintake)
@@ -175,13 +175,13 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
 
-        // mainController.povUp().whileTrue(
-        //     new ArmManualControlCommand(0.1, s_Elevatarm, true)
-        // );
+        mainController.povUp().and(isGameEndedTrigger).whileTrue(
+            new ArmManualControlCommand(0.1, s_Elevatarm, true)
+        );
 
-        // mainController.povDown().whileTrue(
-        //     new ArmManualControlCommand(-0.1, s_Elevatarm, true)
-        // );
+        mainController.povDown().and(isGameEndedTrigger).whileTrue(
+            new ArmManualControlCommand(-0.1, s_Elevatarm, true)
+        );
 
         // mainController.povRight().whileTrue(new ElevatarmCommand(
         //     s_Elevatarm.getArmRotation2d().getRotations(), 
@@ -191,8 +191,8 @@ public class RobotContainer {
         //     s_Elevatarm.getArmRotation2d().getRotations(), 
         //     MechanismSetpointConstants.elevatorStowedPosition, s_Elevatarm, s_Climb));
 
-        mainController.triangle().whileTrue(new ClimbVelocityCommand(0.1, ClimbToMove.BOTH, s_Climb));
-        mainController.cross().whileTrue(new ClimbVelocityCommand(-0.1, ClimbToMove.BOTH, s_Climb));
+        mainController.triangle().whileTrue(new ClimbVelocityCommand(0.2, ClimbToMove.BOTH, s_Climb));
+        mainController.cross().whileTrue(new ClimbVelocityCommand(-0.2, ClimbToMove.BOTH, s_Climb));
 
 
 
@@ -268,7 +268,7 @@ public class RobotContainer {
         );
 
         // Global speaker shoot
-        mainController.R2().whileTrue(
+        mainController.R2().and(isGameEndedTrigger.negate()).whileTrue(
             new TeleopGlobalAutoAim(s_Swerve, s_Elevatarm, s_Shintake, s_Climb,
                 () -> -mainController.getLeftY(), 
                 () -> -mainController.getLeftX(), 
@@ -276,6 +276,10 @@ public class RobotContainer {
                 mainController.circle()
             )
         ); 
+
+        mainController.R2().and(isGameEndedTrigger).whileTrue(
+            new ShintakeCommand(ShintakeMode.SHOOT, s_Shintake, true)
+        );
 
 
         // Source intake
@@ -295,7 +299,7 @@ public class RobotContainer {
         // );
 
         // Amp score
-        mainController.R1().whileTrue(
+        mainController.R1().and(isGameEndedTrigger.negate()).whileTrue(
             Commands.sequence(
 
                     s_Swerve.pathfindToPathThenRun("AmpTeleopScore")
@@ -305,6 +309,18 @@ public class RobotContainer {
                     MechanismSetpointConstants.elevatorAmpPosition, 
                     s_Elevatarm, s_Climb),
                 new ShintakeCommand(ShintakeMode.AMP_AND_TRAP, s_Shintake, true)
+            )
+        );
+
+        mainController.R1().and(isGameEndedTrigger).whileTrue(
+            new ShintakeCommand(ShintakeMode.AMP_AND_TRAP, s_Shintake, true)
+        );
+
+        mainController.circle().whileTrue(
+            Commands.sequence(
+                new ElevatarmCommand(MechanismSetpointConstants.armGroundIntakePosition, 
+                MechanismSetpointConstants.elevatorGroundIntakePosition, s_Elevatarm, s_Climb),
+                new ShintakeCommand(ShintakeMode.FRONT_OUTTAKE, s_Shintake, true)
             )
         );
 
@@ -583,6 +599,7 @@ public class RobotContainer {
     }
 
     public void robotPeriodic() {
+        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         SmartDashboard.putBoolean("Closed Loop?", !isGameEnded);
         SmartDashboard.putBoolean("Swerve Active?", isSwerveActive);
 

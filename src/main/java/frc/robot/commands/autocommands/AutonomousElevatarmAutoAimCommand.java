@@ -32,16 +32,8 @@ public class AutonomousElevatarmAutoAimCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Math.abs(s_Elevatarm.getElevatorMeters()-MechanismSetpointConstants.elevatorGroundIntakePosition) > MechanismSetpointConstants.elevatorAllowableError) {
-      s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-    } else if (s_Swerve.isInClimbZone()) {
-      s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-      s_Elevatarm.setArmPosition(MechanismSetpointConstants.armGroundIntakePosition);
-    }
-     else {
-      s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition);
-      s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
-    }
+    s_Elevatarm.setElevatorPosition(MechanismSetpointConstants.elevatorGroundIntakePosition/2);
+    s_Elevatarm.setArmPosition(s_Swerve.getShotData().clampedArmAngle());
     
   }
 

@@ -168,16 +168,14 @@ public class Climb extends SubsystemBase {
   }
 
   public boolean setControlLeft(ControlRequest req) {
-    if (m_climbLeft.isAlive()
-    && isClimbEncodersReset) {
+    if (m_climbLeft.isAlive()) {
       return m_climbLeft.setControl(req).isOK();
     }
     return false;
   }
 
   public boolean setControlRight(ControlRequest req) {
-    if (m_climbRight.isAlive()
-    && isClimbEncodersReset) {
+    if (m_climbRight.isAlive()) {
       return m_climbRight.setControl(req).isOK();
     }
     return false;
@@ -221,6 +219,7 @@ public class Climb extends SubsystemBase {
   }
 
   public boolean setSetpointPositionLeft(double position) {
+    if (isClimbEncodersReset)
     return setControlLeft(climbMotionMagic.withPosition(
       MathUtil.clamp(
       position
@@ -232,9 +231,11 @@ public class Climb extends SubsystemBase {
       ClimbConstants.climbForwardSoftLimit
       *ClimbConstants.climbMechanismRotationsToMetersRatio
       )));
+      else return false;
   }
 
   public boolean setSetpointPositionRight(double position) {
+    if (isClimbEncodersReset)
     return setControlRight(climbMotionMagic.withPosition(
       MathUtil.clamp(
         position
@@ -247,6 +248,7 @@ public class Climb extends SubsystemBase {
         *ClimbConstants.climbMechanismRotationsToMetersRatio
       )
     ));
+    else return false;
   }
 
   public boolean setDutyCycleLeft(double dutyCycle) {
